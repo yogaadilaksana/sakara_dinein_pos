@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 
 export default function LoginPage() {
@@ -23,7 +24,7 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        router.push('/dashboard'); // Redirect to the dashboard page after successful login
+        router.push('/'); // Redirect to the dashboard page after successful login
       } else {
         const data = await response.json();
         setError(data.message);
@@ -39,25 +40,20 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div>
           <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         {error && <p>{error}</p>}
         <button type="submit">Login</button>
       </form>
+
+<p>
+  Don't have an account? <Link href="/auth/signup">Sign Up</Link>
+</p>
+
     </div>
   );
 }
