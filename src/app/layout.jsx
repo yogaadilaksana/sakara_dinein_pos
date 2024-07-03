@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} h-screen grid grid-rows-[1fr_auto] bg-bcprimary`}
+        className={`${poppins.className} h-screen grid grid-rows-[auto_auto] bg-bcprimary gap-10`}
       >
         <main>{children}</main>
         <Footer />

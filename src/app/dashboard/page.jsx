@@ -1,3 +1,4 @@
+import AdminTable from "../_components/_dashboard/AdminTable";
 import Breadcrumb from "../_components/_dashboard/Breadcrumb";
 import SalesCard from "../_components/_dashboard/SalesCard";
 
@@ -26,12 +27,43 @@ const salesSummary = [
   },
 ];
 
+const tableHead = [
+  "Produk",
+  "Produk Terjual",
+  "Penjulan Kotor",
+  "Penjulan Bersih",
+  "Keuntungan Kotor",
+];
+
+const tableContent = [
+  {
+    item: "Cafe Latte",
+    details: ["Pedawa", 16, "1.350.000", "1.000.000", "20.000.000"],
+  },
+  {
+    item: "Pedawa",
+    details: ["Pedawa", 16, "1.350.000", "1.000.000", "20.000.000"],
+  },
+];
+
 export default function dashboard() {
   return (
-    <div className="flex-grow lg:ml-80 pt-20 px-20">
-      <div className="flex flex-col space-y-4">
+    <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
+      <div className="flex flex-col space-y-7 px-20 ">
         <Breadcrumb routes={routes} />
         <SalesCard salesSummary={salesSummary} />
+      </div>
+      <div className="space-y-4 w-full px-6">
+        <div>
+          <h1 className="font-semibold md:text-lg text-sm w-max">
+            Rangkuman Produk
+          </h1>
+        </div>
+        <AdminTable
+          tableHead={tableHead}
+          tableContent={tableContent}
+          className="overflow-x-auto"
+        />
       </div>
     </div>
   );

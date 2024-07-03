@@ -2,7 +2,7 @@ function SalesCard({ salesSummary }) {
   return (
     <div className="text-dpaccent flex flex-col space-y-5">
       <h1 className="font-semibold text-lg">Rekapan Penjualan</h1>
-      <ul className="w-full flex flex-wrap items-center justify-between gap-8">
+      <ul className="w-full flex flex-wrap items-center sm:justify-between justify-evenly gap-8">
         {salesSummary.map((sales, i) => (
           <Card sales={sales} key={i} />
         ))}
