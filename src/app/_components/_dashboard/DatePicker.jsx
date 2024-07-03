@@ -2,7 +2,7 @@
 // import { CalendarIcon } from "@radix-ui/react-icons
 import { FiCalendar } from "react-icons/fi";
 import { format } from "date-fns";
-
+import { id } from "date-fns/locale";
 import { cn } from "@/app/_lib/utils";
 import { Button } from "@/app/_components/ui/button";
 import { Calendar } from "@/app/_components/ui/calendar";
@@ -22,7 +22,7 @@ export default function DatePicker() {
         <Button
           variant={"outline"}
           className={cn(
-            "w-[160px] justify-evenly text-right gap-4 items-center bg-bcsecondary"
+            "min-w-[180px] justify-evenly gap-3 items-center bg-bcsecondary"
           )}
         >
           <span
@@ -32,7 +32,9 @@ export default function DatePicker() {
                 : "text-dpprimary/50 font-light"
             }`}
           >
-            {date ? format(date, "dd/MM/yyyy") : "Pilih tanggal"}
+            {date
+              ? format(date, "eeee, d MMMM yyyy", { locale: id })
+              : "Pilih tanggal"}
           </span>
           <FiCalendar className="h-4 w-4 focus:text-dpaccent " />
         </Button>

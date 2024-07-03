@@ -22,17 +22,18 @@ function SideBar() {
           onMouseOver={() => setArrowColor("#7077A1")}
           onMouseOut={() => setArrowColor("#2D3250")}
           onClick={() => setIsOpenDashboard(!isOpenDashboard)}
-          className="flex items-center gap-3 hover:text-dpprimary transition-all duration-300 hover:translate-x-1"
+          className={`${
+            pathname === "/dashboard"
+              ? "font-semibold text-dpprimary translate-x-2"
+              : "hover:translate-x-1"
+          } flex items-center gap-3 text-dpaccent hover:text-dpprimary transition-all duration-300`}
         >
-          <FiLayout className={`fill-[${arrowColor}]`} />
+          <FiLayout />
           <span>Dashboard</span>
           {isOpenDashboard ? (
-            <FaChevronUp fontSize="0.8em" className={`fill-[${arrowColor}]`} />
+            <FaChevronUp fontSize="0.8em" />
           ) : (
-            <FaChevronDown
-              fontSize="0.8em"
-              className={`fill-[${arrowColor}]`}
-            />
+            <FaChevronDown fontSize="0.8em" />
           )}
         </button>
         {isOpenDashboard && (
@@ -80,7 +81,12 @@ function SideBar() {
           onMouseOver={() => setArrowColor("#7077A1")}
           onMouseOut={() => setArrowColor("#2D3250")}
           onClick={() => setIsOpenReport(!isOpenReport)}
-          className="flex items-center gap-3 hover:text-dpprimary transition-all duration-300 hover:translate-x-1"
+          className={`${
+            pathname === "/dashboard/transaksi" ||
+            pathname === "/dashboard/shift"
+              ? "font-semibold text-dpprimary translate-x-2"
+              : "hover:translate-x-1"
+          } flex items-center gap-3 text-dpaccent hover:text-dpprimary transition-all duration-300`}
         >
           <FiFileText className={`fill-[${arrowColor}]`} />
           <span>Laporan</span>

@@ -1,6 +1,5 @@
 "use client";
 import { FiEdit, FiTrash } from "react-icons/fi";
-
 import {
   Table,
   TableBody,
@@ -13,8 +12,10 @@ import {
 } from "@/app/_components/ui/table";
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
 import { useState } from "react";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
-export default function AdminTable({ tableHead, tableContent, action = "" }) {
+export default function AdminTable({ tableHead, tableContent, type = "" }) {
   const [isEditClicked, setIsEditClicked] = useState(false);
 
   const handleEdit = () => {
@@ -24,17 +25,36 @@ export default function AdminTable({ tableHead, tableContent, action = "" }) {
   const handleDelete = (itemId) => {
     // tableContent.filter((item) => item !== itemId);
   };
-  console.log(tableContent);
+
+  const date = new Date();
+  const dateDemo = format(date, "eeee, d MMMM yyyy", { locale: id });
 
   return (
     <ScrollArea className="whitespace-nowrap">
       <Table>
-        <TableHeader className="bg-dpprimary">
+        {type === "transaction" && (
+          <TableHeader className="bg-dpprimary border-b-4 border-bcprimary">
+            <TableRow>
+              <TableHead colSpan={3} className=" text-bcprimary">
+                {dateDemo}
+              </TableHead>
+              <TableHead className="space-x-6 text-right font-semibold text-lg text-bcprimary">
+                <span>Total:</span>
+                <span>Rp.2.000.000</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+        )}
+        <TableHeader
+          className={`${
+            type === "transaction" ? "bg-dpprimary/70" : "bg-dpprimary"
+          } border-b-2 border-bcprimary`}
+        >
           <TableRow>
             {tableHead.map((headers, i) => (
               <TableHead
                 key={i}
-                className="first:w-[260px] last:text-right text-bcprimary"
+                className="first:w-[260px] last:text-right text-bcprimary font-semibold"
               >
                 {headers}
               </TableHead>
@@ -42,8 +62,8 @@ export default function AdminTable({ tableHead, tableContent, action = "" }) {
           </TableRow>
         </TableHeader>
         <TableBody className="border bg-bcaccent/30">
-          {tableContent.map((content) => (
-            <TableRow key={content.itemId} className="items-center">
+          {tableContent.map((content, i) => (
+            <TableRow key={i} className="items-center">
               <>
                 {content.details.map((details, i) => (
                   <TableCell
@@ -53,7 +73,7 @@ export default function AdminTable({ tableHead, tableContent, action = "" }) {
                     {details}
                   </TableCell>
                 ))}
-                {action === "action" && (
+                {type === "action" && (
                   <TableCell className="text-dpprimary flex justify-end items-center gap-3">
                     <button
                       className="hover:text-dpaccent duration-300 transition-colors"

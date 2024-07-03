@@ -56,7 +56,7 @@ function page() {
           </h1>
         </div>
         <AdminTable
-          action={"action"}
+          type={"action"}
           tableHead={tableHead}
           tableContent={tableContent}
           className="overflow-x-auto"
