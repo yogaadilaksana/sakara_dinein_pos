@@ -16,7 +16,10 @@ function Breadcrumb({ routes }) {
 
 export function RouteList({ route }) {
   return (
-    <Link href={route.path} className="px-4">
+    <Link
+      href={route.path}
+      className="px-4 hover:text-dpaccent/35 duration-300 transition-colors"
+    >
       {route.title}
     </Link>
   );

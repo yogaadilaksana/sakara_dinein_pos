@@ -1,5 +1,7 @@
+"use client";
 import AdminTable from "../_components/_dashboard/AdminTable";
 import Breadcrumb from "../_components/_dashboard/Breadcrumb";
+import DatePicker from "../_components/_dashboard/DatePicker";
 import SalesCard from "../_components/_dashboard/SalesCard";
 
 const routes = [
@@ -54,10 +56,11 @@ export default function dashboard() {
         <SalesCard salesSummary={salesSummary} />
       </div>
       <div className="space-y-4 w-full px-6">
-        <div>
+        <div className="flex justify-between items-center">
           <h1 className="font-semibold md:text-lg text-sm w-max">
             Rangkuman Produk
           </h1>
+          <DatePicker />
         </div>
         <AdminTable
           tableHead={tableHead}

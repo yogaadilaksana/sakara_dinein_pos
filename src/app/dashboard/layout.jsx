@@ -1,5 +1,6 @@
 import Header from "@/app/_components/_dashboard/Header";
 import SideBar from "../_components/_dashboard/SideBar";
+import EditQuantityModal from "../_components/_dashboard/EditQuantityModal";
 
 export const metadata = {
   title: {
@@ -10,12 +11,14 @@ export const metadata = {
 
 function Layout({ children }) {
   return (
-    <div className="overflow-x-hidden overscroll-x-none">
+    <div className="relative overflow-x-hidden overscroll-x-none">
       <Header />
       <div className="flex flex-row h-screen mb-20">
         <SideBar />
         {children}
       </div>
+      {/* Modal Pop Up */}
+      {/* <EditQuantityModal /> */}
     </div>
   );
 }
