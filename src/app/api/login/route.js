@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -22,18 +22,18 @@ export const POST = async (req) => {
     }
 
     // Create a JWT token
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
-    return new Response(JSON.stringify({ token }), {
+    return new Response(JSON.stringify({ token, role: user.role }), {
       status: 200,
       headers: {
         'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=3600`, // Set token in cookies
       },
     });
   } catch (err) {
-    console.log(err);
+    console.error('Error:', err);
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }
 };
