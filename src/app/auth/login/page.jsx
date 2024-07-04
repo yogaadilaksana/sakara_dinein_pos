@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +23,14 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        router.push('/'); // Redirect to the dashboard page after successful login
+        const data = await response.json();
+        if (data.role === 'ADMIN') {
+          router.push('/');
+        } else if (data.role === 'CASHIER') {
+          router.push('/');
+        } else if (data.role === 'SUPER_ADMIN') {
+          router.push('/auth/signup');
+        }
       } else {
         const data = await response.json();
         setError(data.message);
@@ -41,20 +47,15 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2" />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2" />
           </div>
           {error && <p className="text-red-500 text-center">{error}</p>}
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded mt-4">Login</button>
         </form>
-        <p className='mt-4 text-center '>
-            Don't have an account? <Link href="/auth/signup" className='text-blue-600'>SIGN UP</Link>
-          </p>
       </div>
     </div>
   );

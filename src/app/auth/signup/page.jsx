@@ -43,18 +43,15 @@ export default function SignUpPage() {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"
-          />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"/>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"/>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"
-          />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2"/>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">Role</label>
