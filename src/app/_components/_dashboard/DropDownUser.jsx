@@ -4,7 +4,7 @@ function DropDownUser({ userRef }) {
   return (
     <div
       ref={userRef}
-      className="absolute bg-gradient-to-br from-dpprimary/10 backdrop-blur-xl px-8 py-6 md:-left-12 -left-16 top-9 rounded border border-dpprimary/10 flex flex-wrap justify-center divide-y divide-dpaccent/10 space-y-4 shadow-lg shadow-dpaccent/5 text-dpaccent text-sm tracking-wide"
+      className="absolute bg-bcaccent/40 px-8 py-6 md:-left-12 -left-16 top-9 rounded-xl border border-dpaccent/15 flex flex-wrap justify-center divide-y divide-dpaccent/10 space-y-4 shadow-lg shadow-dpaccent/5 text-dpaccent text-sm tracking-wide"
     >
       <Link
         href=""

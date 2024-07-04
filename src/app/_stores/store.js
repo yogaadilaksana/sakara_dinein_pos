@@ -21,6 +21,9 @@ const useToggleUiStore = create((set) => ({
   addItemQty: () => set((state) => ({ itemQty: state.itemQty + 1 })),
   subtractItemQty: () => set((state) => ({ itemQty: state.itemQty - 1 })),
   inputItemQty: (amount) => set({ itemQty: amount }),
+
+  selectedDate: "",
+  setSelectedDate: (date) => set({ selectedDate: date }),
 }));
 
 export default useToggleUiStore;

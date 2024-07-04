@@ -11,10 +11,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/app/_components/ui/popover";
-import { useState } from "react";
+import useToggleUiStore from "@/app/_stores/store";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function DatePicker() {
-  const [date, setDate] = useState();
+  const { selectedDate, setSelectedDate } = useToggleUiStore();
+  const pathName = usePathname();
+
+  useEffect(() => {
+    setSelectedDate("");
+  }, [pathName]);
 
   return (
     <Popover>
@@ -27,23 +34,23 @@ export default function DatePicker() {
         >
           <span
             className={`${
-              date
+              selectedDate
                 ? "text-dpaccent font-normal"
                 : "text-dpprimary/50 font-light"
             }`}
           >
-            {date
-              ? format(date, "eeee, d MMMM yyyy", { locale: id })
+            {selectedDate
+              ? format(selectedDate, "eeee, d MMMM yyyy", { locale: id })
               : "Pilih tanggal"}
           </span>
-          <FiCalendar className="h-4 w-4 focus:text-dpaccent " />
+          <FiCalendar className="h-4 w-4 focus:text-dpaccent text-dpaccent " />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={setDate}
+          selected={selectedDate}
+          onSelect={(date) => setSelectedDate(date)}
           initialFocus
           disabled={(date) =>
             date > new Date() || date < new Date("1900-01-01")

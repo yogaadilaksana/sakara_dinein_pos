@@ -3,8 +3,22 @@ import AdminTable from "@/app/_components/_dashboard/AdminTable";
 import Breadcrumb from "@/app/_components/_dashboard/Breadcrumb";
 import EditQuantityModal from "@/app/_components/_dashboard/EditQuantityModal";
 import SalesCard from "@/app/_components/_dashboard/SalesCard";
-import useToggleUiStore from "@/app/_stores/store";
 import { useState } from "react";
+
+import { FiEdit, FiTrash } from "react-icons/fi";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_components/ui/table";
+import useToggleUiStore from "@/app/_stores/store";
+import EmptyTable from "@/app/_components/_dashboard/EmptyTable";
+import { NumericFormat } from "react-number-format";
 
 const routes = [
   {
@@ -30,23 +44,42 @@ const salesSummary = [
   },
 ];
 
-const tableHead = ["Menu", "Jumlah", "Harga", "Opsi"];
-
 const tableData = [
   {
-    itemId: 123,
-    item: "Cafe Latte",
-    details: ["Cafe Latte", 16, "20.000"],
+    itemId: "23sawaw",
+    itemName: "Nasi Buduh",
+    quantity: 20,
+    price: 25000,
   },
   {
-    itemId: 456,
-    item: "Pedawa",
-    details: ["Pedawa", 16, "22.000"],
+    itemId: "asw21w",
+    itemName: "Milk Shake Cokelat",
+    quantity: 12,
+    price: 24000,
+  },
+  {
+    itemId: "2jvlol",
+    itemName: "Susu Tobrud",
+    quantity: 8,
+    price: 666,
   },
 ];
 
 function page() {
   const [tableContent, setTableContent] = useState(tableData);
+
+  const { setIsModalOpen, setItemName, setItemQty } = useToggleUiStore();
+
+  const handleOpenModal = (data) => {
+    setIsModalOpen();
+    setItemName(data.itemName);
+    setItemQty(data.quantity);
+  };
+
+  const handleDeleteItem = (id) => {
+    // console.log(id);
+    setTableContent(tableContent.filter((item) => item.itemId !== id));
+  };
 
   return (
     <>
@@ -55,20 +88,74 @@ function page() {
           <Breadcrumb routes={routes} />
           <SalesCard salesSummary={salesSummary} />
         </div>
-        <div className="space-y-4 w-full px-6">
-          <div>
-            <h1 className="font-semibold md:text-lg text-sm w-max">
-              Rangkuman Produk
-            </h1>
+
+        {tableContent.length > 0 ? (
+          <div className="space-y-4 w-full px-6">
+            <div>
+              <h1 className="font-semibold md:text-lg text-sm w-max">
+                Rangkuman Produk
+              </h1>
+            </div>
+
+            {/* Table */}
+            <AdminTable className="overflow-x-auto">
+              <TableHeader
+                className={`bg-dpprimary border-b-2 border-bcprimary`}
+              >
+                <TableRow>
+                  <TableHead className="first:w-[260px] text-bcprimary font-semibold">
+                    Menu
+                  </TableHead>
+                  <TableHead className="text-bcprimary font-semibold">
+                    Jumlah
+                  </TableHead>
+                  <TableHead className="text-bcprimary font-semibold">
+                    Harga
+                  </TableHead>
+                  <TableHead className="last:text-right text-bcprimary font-semibold">
+                    Opsi
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="border bg-bcaccent/30">
+                {tableContent.map((content, i) => (
+                  <TableRow key={i} className="items-center">
+                    <TableCell className="first:font-medium last:text-right text-dpaccent">
+                      {content.itemName}
+                    </TableCell>
+                    <TableCell className="text-dpaccent">
+                      {content.quantity}
+                    </TableCell>
+                    <TableCell className="text-dpaccent">
+                      <NumericFormat
+                        displayType="text"
+                        value={content.price}
+                        prefix={"Rp."}
+                        thousandSeparator
+                      />
+                    </TableCell>
+                    <TableCell className="text-dpprimary flex justify-end items-center gap-3">
+                      <button
+                        className="hover:text-dpaccent duration-300 transition-colors"
+                        onClick={() => handleOpenModal(content)}
+                      >
+                        <FiEdit size="1.4rem" />
+                      </button>
+                      <button
+                        className="hover:text-error text-error/60 duration-300 transition-colors"
+                        onClick={() => handleDeleteItem(content.itemId)}
+                      >
+                        <FiTrash size="1.4rem" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </AdminTable>
           </div>
-          <AdminTable
-            setTableContent={setTableContent}
-            type={"action"}
-            tableHead={tableHead}
-            tableContent={tableContent}
-            className="overflow-x-auto"
-          />
-        </div>
+        ) : (
+          <EmptyTable />
+        )}
       </div>
 
       {/* Modal Pop Up */}

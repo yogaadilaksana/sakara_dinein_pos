@@ -9,7 +9,7 @@ import useToggleUiStore from "@/app/_stores/store";
 function Header() {
   const { isUserOpen, setIsUserOpen, setIsSideBarOpen, setCloseUser } =
     useToggleUiStore();
-  const isOverTabletView = window.matchMedia(`(max-width: 1023px)`).matches;
+  // const isOverTabletView = window.matchMedia(`(max-width: 1023px)`).matches;
 
   const userRef = useRef();
 
@@ -30,9 +30,7 @@ function Header() {
   return (
     <header>
       <div className="fixed z-20 w-full h-12 flex items-center justify-between md:px-24 px-10 py-4border border-b border-dpprimary/15 bg-bcaccent/30 backdrop-blur-sm">
-        {isOverTabletView && (
-          <MobileBurgerButton setIsOpen={setIsSideBarOpen} />
-        )}
+        <MobileBurgerButton setIsOpen={setIsSideBarOpen} />
         <Logo />
         <div className="relative">
           <User isOpen={isUserOpen} setIsOpen={setIsUserOpen} />
