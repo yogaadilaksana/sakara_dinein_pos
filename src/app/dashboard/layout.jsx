@@ -1,6 +1,5 @@
 import Header from "@/app/_components/_dashboard/Header";
 import SideBar from "../_components/_dashboard/SideBar";
-import EditQuantityModal from "../_components/_dashboard/EditQuantityModal";
 
 export const metadata = {
   title: {
@@ -17,8 +16,6 @@ function Layout({ children }) {
         <SideBar />
         {children}
       </div>
-      {/* Modal Pop Up */}
-      {/* <EditQuantityModal /> */}
     </div>
   );
 }

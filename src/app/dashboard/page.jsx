@@ -1,4 +1,3 @@
-"use client";
 import AdminTable from "../_components/_dashboard/AdminTable";
 import Breadcrumb from "../_components/_dashboard/Breadcrumb";
 import DatePicker from "../_components/_dashboard/DatePicker";

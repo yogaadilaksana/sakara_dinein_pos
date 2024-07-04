@@ -1,7 +1,10 @@
 "use client";
 import AdminTable from "@/app/_components/_dashboard/AdminTable";
 import Breadcrumb from "@/app/_components/_dashboard/Breadcrumb";
+import EditQuantityModal from "@/app/_components/_dashboard/EditQuantityModal";
 import SalesCard from "@/app/_components/_dashboard/SalesCard";
+import useToggleUiStore from "@/app/_stores/store";
+import { useState } from "react";
 
 const routes = [
   {
@@ -29,7 +32,7 @@ const salesSummary = [
 
 const tableHead = ["Menu", "Jumlah", "Harga", "Opsi"];
 
-const tableContent = [
+const tableData = [
   {
     itemId: 123,
     item: "Cafe Latte",
@@ -43,26 +46,34 @@ const tableContent = [
 ];
 
 function page() {
+  const [tableContent, setTableContent] = useState(tableData);
+
   return (
-    <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
-      <div className="flex flex-col space-y-7 px-20 ">
-        <Breadcrumb routes={routes} />
-        <SalesCard salesSummary={salesSummary} />
-      </div>
-      <div className="space-y-4 w-full px-6">
-        <div>
-          <h1 className="font-semibold md:text-lg text-sm w-max">
-            Rangkuman Produk
-          </h1>
+    <>
+      <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
+        <div className="flex flex-col space-y-7 px-20 ">
+          <Breadcrumb routes={routes} />
+          <SalesCard salesSummary={salesSummary} />
         </div>
-        <AdminTable
-          type={"action"}
-          tableHead={tableHead}
-          tableContent={tableContent}
-          className="overflow-x-auto"
-        />
+        <div className="space-y-4 w-full px-6">
+          <div>
+            <h1 className="font-semibold md:text-lg text-sm w-max">
+              Rangkuman Produk
+            </h1>
+          </div>
+          <AdminTable
+            setTableContent={setTableContent}
+            type={"action"}
+            tableHead={tableHead}
+            tableContent={tableContent}
+            className="overflow-x-auto"
+          />
+        </div>
       </div>
-    </div>
+
+      {/* Modal Pop Up */}
+      <EditQuantityModal />
+    </>
   );
 }
 

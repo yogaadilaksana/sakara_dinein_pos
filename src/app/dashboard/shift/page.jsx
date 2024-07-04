@@ -1,7 +1,6 @@
 import AdminTable from "@/app/_components/_dashboard/AdminTable";
 import Breadcrumb from "@/app/_components/_dashboard/Breadcrumb";
 import DatePicker from "@/app/_components/_dashboard/DatePicker";
-import SalesCard from "@/app/_components/_dashboard/SalesCard";
 import { Button } from "@/app/_components/ui/button";
 
 const routes = [

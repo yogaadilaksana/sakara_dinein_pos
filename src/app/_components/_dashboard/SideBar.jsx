@@ -1,7 +1,8 @@
 "use client";
+import useToggleUiStore from "@/app/_stores/store";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { FiLayout, FiArchive, FiFileText, FiServer } from "react-icons/fi";
 
@@ -9,11 +10,23 @@ function SideBar() {
   const [arrowColor, setArrowColor] = useState("#2D3250");
   const [isOpenDashboard, setIsOpenDashboard] = useState(false);
   const [isOpenReport, setIsOpenReport] = useState(false);
+  const { isSideBarOpen, setCloseSideBar } = useToggleUiStore();
   const pathname = usePathname();
+
+  const sideBarRef = useRef();
+
+  useEffect(() => {
+    setCloseSideBar();
+  }, [pathname]);
+
+  // if (!isSideBarOpen) return null;
 
   return (
     <div
-      className={`lg:fixed lg:visible z-10 collapse fixed h-screen bg-bcsecondary border border-r border-dpprimary/15 min-w-80 pt-28 pl-20 space-y-7 flex flex-col justify-start items-start tracking-wide text-dpaccent`}
+      ref={sideBarRef}
+      className={`${
+        isSideBarOpen ? "visible" : "collapse"
+      } lg:fixed lg:visible z-10 fixed h-screen from-bcaccent bg-gradient-to-br via-bcaccent backdrop-blur-sm border border-r border-dpprimary/15 min-w-80 pt-28 pl-20 space-y-7 flex flex-col justify-start items-start tracking-wide text-dpaccent`}
     >
       {/* Dashboard */}
       <div>

@@ -11,23 +11,30 @@ import {
   TableRow,
 } from "@/app/_components/ui/table";
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
-import { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import useToggleUiStore from "@/app/_stores/store";
 
-export default function AdminTable({ tableHead, tableContent, type = "" }) {
-  const [isEditClicked, setIsEditClicked] = useState(false);
-
-  const handleEdit = () => {
-    setIsEditClicked(!isEditClicked);
-  };
-
-  const handleDelete = (itemId) => {
-    // tableContent.filter((item) => item !== itemId);
-  };
-
+export default function AdminTable({
+  tableHead,
+  tableContent,
+  type = "",
+  setTableContent,
+}) {
   const date = new Date();
   const dateDemo = format(date, "eeee, d MMMM yyyy", { locale: id });
+
+  const { setIsModalOpen, setItemName, setItemQty } = useToggleUiStore();
+
+  const handleOpenModal = (data) => {
+    setIsModalOpen();
+    setItemName(data.details[0]);
+    setItemQty(data.details[1]);
+  };
+
+  const handleDeleteItem = (id) => {
+    setTableContent(tableContent.filter((item) => item.itemId !== id));
+  };
 
   return (
     <ScrollArea className="whitespace-nowrap">
@@ -77,13 +84,13 @@ export default function AdminTable({ tableHead, tableContent, type = "" }) {
                   <TableCell className="text-dpprimary flex justify-end items-center gap-3">
                     <button
                       className="hover:text-dpaccent duration-300 transition-colors"
-                      onClick={() => handleEdit(content.itemId)}
+                      onClick={() => handleOpenModal(content)}
                     >
                       <FiEdit size="1.4rem" />
                     </button>
                     <button
                       className="hover:text-error text-error/60 duration-300 transition-colors"
-                      onClick={() => handleDelete(content.itemId)}
+                      onClick={() => handleDeleteItem(content.itemId)}
                     >
                       <FiTrash size="1.4rem" />
                     </button>

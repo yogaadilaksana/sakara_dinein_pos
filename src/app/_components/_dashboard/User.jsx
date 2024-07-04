@@ -8,7 +8,7 @@ function User({ isOpen, setIsOpen }) {
     <div>
       <button
         className="flex justify-between items-center w-[55px]"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen()}
       >
         <Image
           src={UserIcon}
