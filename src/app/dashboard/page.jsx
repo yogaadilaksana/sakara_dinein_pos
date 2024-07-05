@@ -27,12 +27,12 @@ const salesSummary = [
     desc: "200.492.000", // {databse.grossSales} Diambil dari API. Penjualan kotor bulan sekarang di reduce, store ke sini
   },
   {
-    title: "Keuntungan Kotor",
+    title: "Penjualan Bersih",
     type: "price",
     desc: "2.492.000", // {databse.grossProfit} Diambil dari API. Pendapatan kotor bulan sekarang di reduce, store ke sini
   },
   {
-    title: "Penjualan bersih",
+    title: "Item Terjual",
     type: "quantity",
     desc: "69", // {databse.netSales} Diambil dari API. Penjualan bersih bulan sekarang di reduce, store ke sini
   },

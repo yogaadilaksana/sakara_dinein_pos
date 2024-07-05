@@ -25,7 +25,7 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         if (data.role === 'ADMIN') {
-          router.push('/');
+          router.push('/dashboard');
         } else if (data.role === 'CASHIER') {
           router.push('/');
         } else if (data.role === 'SUPER_ADMIN') {
