@@ -24,12 +24,36 @@ model User {
 enum Role {
   ADMIN
   CASHIER
+  SUPER_ADMIN
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          BigInt  @id @default(autoincrement())
   name        String
   description String
+  image       String
   price       Decimal
-  stock       Int     @default(0)
+  stock       BigInt  @default(0)
+
+  OrderItem OrderItem[]
+}
+
+model Order {
+  id           BigInt   @id @default(autoincrement())
+  table_number BigInt
+  total        Decimal
+  order_date   DateTime @default(now())
+
+  OrderItem OrderItem[]
+}
+
+model OrderItem {
+  id         BigInt  @id @default(autoincrement())
+  order_id   BigInt
+  product_id BigInt
+  price      Decimal
+  quantity   BigInt
+
+  product Product @relation(fields: [product_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
 }
