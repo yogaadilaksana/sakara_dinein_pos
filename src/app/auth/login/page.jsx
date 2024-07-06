@@ -50,9 +50,9 @@ export default function LoginPage() {
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2" />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
+            <label className="block text-gray-700">Password</label>     
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-2 border border-gray-300 rounded mt-2" />
-          </div>
+          </div>  
           {error && <p className="text-red-500 text-center">{error}</p>}
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded mt-4">Login</button>
         </form>

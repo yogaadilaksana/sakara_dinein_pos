@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/app/_components/ui/table";
 import { NumericFormat } from "react-number-format";
+import { useEffect, useState } from "react";
 
 const routes = [
   {
@@ -20,49 +21,37 @@ const routes = [
   },
 ];
 
-const salesSummary = [
-  {
-    title: "Penjualan Kotor",
-    type: "price",
-    desc: "200.492.000", // {databse.grossSales} Diambil dari API. Penjualan kotor bulan sekarang di reduce, store ke sini
-  },
-  {
-    title: "Penjualan Bersih",
-    type: "price",
-    desc: "2.492.000", // {databse.grossProfit} Diambil dari API. Pendapatan kotor bulan sekarang di reduce, store ke sini
-  },
-  {
-    title: "Item Terjual",
-    type: "quantity",
-    desc: "69", // {databse.netSales} Diambil dari API. Penjualan bersih bulan sekarang di reduce, store ke sini
-  },
-];
+export default function Page() {
+  const [tableContent, setTableContent] = useState([]);
 
-const tableContent = [
-  {
-    itemName: "Cafe Latte",
-    itemSold: 16,
-    grossSales: 2492000,
-    grossProfit: 2982000,
-    netSales: 69,
-  },
-  {
-    itemName: "Pedawa",
-    itemSold: 30,
-    grossSales: 2492000,
-    grossProfit: 2982000,
-    netSales: 69,
-  },
-  {
-    itemName: "Seblak Mang Jajang",
-    itemSold: 1000,
-    grossSales: 2492000,
-    grossProfit: 2982000,
-    netSales: 69,
-  },
-];
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch("/api/products");
+      const data = await response.json();
+      setTableContent(data);
+    }
 
-export default function page() {
+    fetchData();
+  }, []);
+
+  const salesSummary = [
+    {
+      title: "Penjualan Kotor",
+      type: "price",
+      desc: `${tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0), 0).toLocaleString()}`,
+    },
+    {
+      title: "Penjualan Bersih",
+      type: "price",
+      desc: `${tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0), 0).toLocaleString()}`,
+    },
+    {
+      title: "Item Terjual",
+      type: "quantity",
+      desc: tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.quantity, 0), 0),
+    },
+  ];
+
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
       <div className="flex flex-col space-y-7 px-20 ">
@@ -100,29 +89,29 @@ export default function page() {
               </TableRow>
             </TableHeader>
             <TableBody className="border bg-bcaccent/30">
-              {tableContent.map((content, i) => (
+              {tableContent.map((product, i) => (
                 <TableRow key={i} className="items-center">
                   <TableCell className="first:font-medium last:text-right text-dpaccent">
-                    {content.itemName}
+                    {product.name}
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {content.itemSold}
+                    {product.orderItems.reduce((acc, order) => acc + order.quantity, 0)}
                   </TableCell>
                   <TableCell className="text-dpaccent">
                     <NumericFormat
                       displayType="text"
-                      value={content.grossSales}
+                      value={product.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0)}
                       prefix={"Rp."}
                       thousandSeparator
                     />
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {content.netSales}
+                    {product.orderItems.reduce((acc, order) => acc + order.quantity, 0)}
                   </TableCell>
                   <TableCell className="last:text-right text-dpaccent">
                     <NumericFormat
                       displayType="text"
-                      value={content.grossProfit}
+                      value={product.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0)}
                       prefix={"Rp."}
                       thousandSeparator
                     />
