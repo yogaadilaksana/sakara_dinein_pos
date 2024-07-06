@@ -32,9 +32,11 @@ model Product {
   name        String
   description String
   image       String
+  category_id BigInt
   price       Decimal
   stock       BigInt  @default(0)
 
+  category  Category    @relation(fields: [category_id], references: [id])
   OrderItem OrderItem[]
 }
 
@@ -53,7 +55,15 @@ model OrderItem {
   product_id BigInt
   price      Decimal
   quantity   BigInt
+  subtotal   Decimal
 
   product Product @relation(fields: [product_id], references: [id])
   order   Order   @relation(fields: [order_id], references: [id])
+}
+
+model Category {
+  id   BigInt @id @default(autoincrement())
+  name String
+
+  product Product[]
 }
