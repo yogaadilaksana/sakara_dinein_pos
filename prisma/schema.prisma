@@ -14,11 +14,14 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       BigInt @id @default(autoincrement())
   name     String
   email    String @unique
   password String
   role     Role   @default(CASHIER)
+
+  shift  Shift?
+  Refund Refund[]
 }
 
 enum Role {
@@ -36,8 +39,11 @@ model Product {
   price       Decimal
   stock       BigInt  @default(0)
 
-  category  Category    @relation(fields: [category_id], references: [id])
-  OrderItem OrderItem[]
+  refund_detail  Refund_Detail[]
+  category       Category         @relation(fields: [category_id], references: [id])
+  OrderItem      OrderItem[]
+  Receipt_Detail Receipt_Detail[]
+  extras         extras[]
 }
 
 model Order {
@@ -45,6 +51,7 @@ model Order {
   table_number BigInt
   total        Decimal
   order_date   DateTime @default(now())
+  status       String
 
   OrderItem OrderItem[]
 }
@@ -66,4 +73,83 @@ model Category {
   name String
 
   product Product[]
+}
+
+model Shift {
+  id             BigInt   @id @default(autoincrement())
+  user_id        BigInt   @unique
+  start_time     DateTime @default(now())
+  end_time       DateTime
+  total_expected Decimal
+  total_actual   Decimal
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Receipt {
+  id             String   @id @default(uuid())
+  total          Decimal
+  diskon         Decimal
+  pajak          Decimal
+  date_time      DateTime @default(now())
+  payment_id     BigInt
+  payment_status String
+
+  refund         Refund[]
+  payment        Payment          @relation(fields: [payment_id], references: [id])
+  Receipt_Detail Receipt_Detail[]
+}
+
+model Receipt_Detail {
+  id         BigInt  @id @default(autoincrement())
+  receipt_id String
+  product_id BigInt
+  quantity   BigInt
+  subtotal   Decimal
+
+  receipt Receipt @relation(fields: [receipt_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+}
+
+model Payment {
+  id           BigInt   @id @default(autoincrement())
+  payment_name String
+  snap_token   String?
+  expiry       DateTime
+
+  receipt Receipt[]
+}
+
+model Refund {
+  id         String   @id @default(uuid())
+  receipt_id String
+  total      Decimal
+  date_time  DateTime @default(now())
+  status     String
+  reason     String
+  user_id    BigInt
+
+  user          User            @relation(fields: [user_id], references: [id])
+  refund_detail Refund_Detail[]
+  receipt       Receipt         @relation(fields: [receipt_id], references: [id])
+}
+
+model Refund_Detail {
+  id         BigInt  @id @default(autoincrement())
+  refund_id  String
+  product_id BigInt
+  quantity   BigInt
+  subtotal   Decimal
+
+  product Product @relation(fields: [product_id], references: [id])
+  refund  Refund  @relation(fields: [refund_id], references: [id])
+}
+
+model extras {
+  id         BigInt  @id @default(autoincrement())
+  product_id BigInt
+  name       String
+  price      Decimal
+
+  product Product @relation(fields: [product_id], references: [id])
 }
