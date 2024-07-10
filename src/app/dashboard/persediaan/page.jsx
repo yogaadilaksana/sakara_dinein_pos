@@ -3,7 +3,7 @@ import AdminTable from "@/app/_components/_dashboard/AdminTable";
 import Breadcrumb from "@/app/_components/_dashboard/Breadcrumb";
 import EditQuantityModal from "@/app/_components/_dashboard/EditQuantityModal";
 import SalesCard from "@/app/_components/_dashboard/SalesCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { FiEdit, FiTrash } from "react-icons/fi";
 import {
@@ -44,41 +44,52 @@ const salesSummary = [
   },
 ];
 
-const tableData = [
-  {
-    itemId: "23sawaw",
-    itemName: "Nasi Buduh",
-    quantity: 20,
-    price: 25000,
-  },
-  {
-    itemId: "asw21w",
-    itemName: "Milk Shake Cokelat",
-    quantity: 12,
-    price: 24000,
-  },
-  {
-    itemId: "2jvlol",
-    itemName: "Susu Tobrud",
-    quantity: 8,
-    price: 666,
-  },
-];
-
-function page() {
-  const [tableContent, setTableContent] = useState(tableData);
-
+export default function Page() {
+  const [tableContent, setTableContent] = useState([]);
   const { setIsModalOpen, setItemName, setItemQty } = useToggleUiStore();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/product");
+        if (response.ok) {
+          const data = await response.json();
+          setTableContent(data);
+        } else {
+          console.error('Failed to fetch data:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleOpenModal = (data) => {
     setIsModalOpen();
-    setItemName(data.itemName);
-    setItemQty(data.quantity);
+    setItemName(data.name);
+    setItemQty(data.stock);
   };
 
-  const handleDeleteItem = (id) => {
-    // console.log(id);
-    setTableContent(tableContent.filter((item) => item.itemId !== id));
+  const handleDeleteItem = async (id) => {
+    try {
+      const response = await fetch("/api/product", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (response.ok) {
+        setTableContent(tableContent.filter((item) => item.id !== id));
+      } else {
+        console.error('Failed to delete item:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
   return (
@@ -121,10 +132,10 @@ function page() {
                 {tableContent.map((content, i) => (
                   <TableRow key={i} className="items-center">
                     <TableCell className="first:font-medium last:text-right text-dpaccent">
-                      {content.itemName}
+                      {content.name}
                     </TableCell>
                     <TableCell className="text-dpaccent">
-                      {content.quantity}
+                      {content.stock}
                     </TableCell>
                     <TableCell className="text-dpaccent">
                       <NumericFormat
@@ -143,7 +154,7 @@ function page() {
                       </button>
                       <button
                         className="hover:text-error text-error/60 duration-300 transition-colors"
-                        onClick={() => handleDeleteItem(content.itemId)}
+                        onClick={() => handleDeleteItem(content.id)}
                       >
                         <FiTrash size="1.4rem" />
                       </button>
@@ -163,5 +174,3 @@ function page() {
     </>
   );
 }
-
-export default page;

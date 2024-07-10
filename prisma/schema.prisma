@@ -28,21 +28,21 @@ enum Role {
 }
 
 model Product {
-  id          BigInt  @id @default(autoincrement())
+  id          Int  @id @default(autoincrement())
   name        String
   description String
   image       String
-  category_id BigInt
+  category_id Int
   price       Decimal
-  stock       BigInt  @default(0)
+  stock       Int  @default(0)
 
   category  Category    @relation(fields: [category_id], references: [id])
   OrderItem OrderItem[]
 }
 
 model Order {
-  id           BigInt   @id @default(autoincrement())
-  table_number BigInt
+  id           Int   @id @default(autoincrement())
+  table_number Int
   total        Decimal
   order_date   DateTime @default(now())
 
@@ -50,11 +50,11 @@ model Order {
 }
 
 model OrderItem {
-  id         BigInt  @id @default(autoincrement())
-  order_id   BigInt
-  product_id BigInt
+  id         Int  @id @default(autoincrement())
+  order_id   Int
+  product_id Int
   price      Decimal
-  quantity   BigInt
+  quantity   Int
   subtotal   Decimal
 
   product Product @relation(fields: [product_id], references: [id])
@@ -62,7 +62,7 @@ model OrderItem {
 }
 
 model Category {
-  id   BigInt @id @default(autoincrement())
+  id   Int @id @default(autoincrement())
   name String
 
   product Product[]

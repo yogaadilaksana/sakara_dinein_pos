@@ -26,9 +26,17 @@ export default function Page() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("/api/products");
-      const data = await response.json();
-      setTableContent(data);
+      try {
+        const response = await fetch("/api/product");
+        if (response.ok) {
+          const data = await response.json();
+          setTableContent(data);
+        } else {
+          console.error('Failed to fetch data:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     }
 
     fetchData();
@@ -38,23 +46,23 @@ export default function Page() {
     {
       title: "Penjualan Kotor",
       type: "price",
-      desc: `${tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0), 0).toLocaleString()}`,
+      desc: '2.000.000'
     },
     {
       title: "Penjualan Bersih",
       type: "price",
-      desc: `${tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0), 0).toLocaleString()}`,
+      desc: "1.000.000"
     },
     {
       title: "Item Terjual",
       type: "quantity",
-      desc: tableContent.reduce((acc, item) => acc + item.orderItems.reduce((acc, order) => acc + order.quantity, 0), 0),
+      desc: "30"
     },
   ];
 
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
-      <div className="flex flex-col space-y-7 px-20 ">
+      <div className="flex flex-col space-y-7 px-20">
         <Breadcrumb routes={routes} />
         <SalesCard salesSummary={salesSummary} />
       </div>
@@ -75,16 +83,16 @@ export default function Page() {
                   Produk
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Produk Terjual
+                  Stok
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Penjualan Kotor
+                  Deskripsi
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Penjualan Bersih
+                  Harga
                 </TableHead>
-                <TableHead className="last:text-right text-bcprimary font-semibold">
-                  Keuntungan Kotor
+                <TableHead className="text-bcprimary font-semibold">
+                  Kategori
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -95,26 +103,21 @@ export default function Page() {
                     {product.name}
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {product.orderItems.reduce((acc, order) => acc + order.quantity, 0)}
+                    {product.stock}
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    <NumericFormat
+                    {product.description}
+                  </TableCell>
+                  <TableCell className="text-dpaccent">
+                  <NumericFormat
                       displayType="text"
-                      value={product.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0)}
+                      value= {product.price}
                       prefix={"Rp."}
                       thousandSeparator
                     />
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {product.orderItems.reduce((acc, order) => acc + order.quantity, 0)}
-                  </TableCell>
-                  <TableCell className="last:text-right text-dpaccent">
-                    <NumericFormat
-                      displayType="text"
-                      value={product.orderItems.reduce((acc, order) => acc + order.price * order.quantity, 0)}
-                      prefix={"Rp."}
-                      thousandSeparator
-                    />
+                    {product.category?.name}
                   </TableCell>
                 </TableRow>
               ))}
