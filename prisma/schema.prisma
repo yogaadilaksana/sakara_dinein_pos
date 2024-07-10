@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id       BigInt @id @default(autoincrement())
-  name     String
+  name     String @db.VarChar(255)
   email    String @unique
   password String
   role     Role   @default(CASHIER)
@@ -32,8 +32,8 @@ enum Role {
 
 model Product {
   id          BigInt  @id @default(autoincrement())
-  name        String
-  description String
+  name        String  @db.VarChar(255)
+  description String  @db.Text
   image       String
   category_id BigInt
   price       Decimal
@@ -70,7 +70,7 @@ model OrderItem {
 
 model Category {
   id   BigInt @id @default(autoincrement())
-  name String
+  name String @db.VarChar(255)
 
   product Product[]
 }
@@ -92,7 +92,7 @@ model Receipt {
   diskon         Decimal
   pajak          Decimal
   date_time      DateTime @default(now())
-  payment_id     BigInt
+  payment_id     String
   payment_status String
 
   refund         Refund[]
@@ -112,12 +112,19 @@ model Receipt_Detail {
 }
 
 model Payment {
-  id           BigInt   @id @default(autoincrement())
+  id           String             @id @default(uuid()) @db.VarChar(110)
   payment_name String
-  snap_token   String?
+  snap_token   String?            @db.VarChar(255)
+  status       transaction_status
   expiry       DateTime
 
   receipt Receipt[]
+}
+
+enum transaction_status {
+  PENDING_PAYMENT
+  PAID
+  CANCELED
 }
 
 model Refund {
@@ -148,7 +155,7 @@ model Refund_Detail {
 model extras {
   id         BigInt  @id @default(autoincrement())
   product_id BigInt
-  name       String
+  name       String  @db.VarChar(255)
   price      Decimal
 
   product Product @relation(fields: [product_id], references: [id])
