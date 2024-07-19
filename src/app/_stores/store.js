@@ -24,6 +24,19 @@ const useToggleUiStore = create((set) => ({
 
   selectedDate: "",
   setSelectedDate: (date) => set({ selectedDate: date }),
+
+  isAddItemFormOpen: false,
+  setIsAddItemFormOpen: () =>
+    set((state) => ({
+      isAddItemFormOpen: !state.isAddItemFormOpen,
+      selectedItemData: [],
+    })),
+  setCloseAddItemForm: () => set({ isAddItemFormOpen: false }),
+
+  selectedItemData: {},
+  setSelectedItemData: (data) =>
+    set({ selectedItemData: data, isAddItemFormOpen: false }),
+  setCloseSelectedItem: () => set({ selectedItemData: {} }),
 }));
 
 export default useToggleUiStore;

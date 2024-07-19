@@ -61,7 +61,7 @@ const tableContent = [
   },
 ];
 
-function page() {
+function Page() {
   const { selectedDate } = useToggleUiStore();
   console.log(selectedDate);
 
@@ -160,4 +160,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

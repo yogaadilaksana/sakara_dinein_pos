@@ -15,7 +15,7 @@ function EditQuantityModal() {
     subtractItemQty,
     inputItemQty,
   } = useToggleUiStore();
-  console.log(itemQty);
+  // console.log(itemQty);
   // const [quantity, setQuantity] = useState(itemQty);
 
   const handleAddQty = () => {
@@ -29,7 +29,7 @@ function EditQuantityModal() {
 
   const handleInputQty = (e) => {
     // e.preventDefault();
-    const value = e.target.value;
+    const value = parseInt(e.target.value);
 
     if (value >= 0) {
       inputItemQty(value);

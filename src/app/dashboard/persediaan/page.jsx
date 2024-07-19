@@ -19,6 +19,9 @@ import {
 import useToggleUiStore from "@/app/_stores/store";
 import EmptyTable from "@/app/_components/_dashboard/EmptyTable";
 import { NumericFormat } from "react-number-format";
+import Image from "next/image";
+import AddItemForm from "@/app/_components/_dashboard/AddItemForm";
+import EditItemForm from "@/app/_components/_dashboard/EditItemForm";
 
 const routes = [
   {
@@ -33,14 +36,14 @@ const routes = [
 
 const salesSummary = [
   {
-    title: "Harga Total",
-    type: "price",
-    desc: "10.250.000", // {databse.grossSales} Diambil dari API. Penjualan kotor bulan sekarang di reduce, store ke sini
-  },
-  {
     title: "Jumlah Produk",
     type: "quantity",
-    desc: "30", // {databse.grossProfit} Diambil dari API. Pendapatan kotor bulan sekarang di reduce, store ke sini
+    desc: 30, // {databse.grossSales} Diambil dari API. Penjualan kotor bulan sekarang di reduce, store ke sini
+  },
+  {
+    title: "Jumlah Kategori",
+    type: "quantity",
+    desc: 6, // {databse.grossProfit} Diambil dari API. Pendapatan kotor bulan sekarang di reduce, store ke sini
   },
 ];
 
@@ -48,32 +51,52 @@ const tableData = [
   {
     itemId: "23sawaw",
     itemName: "Nasi Buduh",
+    category: "Main Course",
     quantity: 20,
-    price: 25000,
+    price: 26000,
+    img: "/dashboard/rice-bowl.jpg",
   },
   {
     itemId: "asw21w",
     itemName: "Milk Shake Cokelat",
+    category: "Milkshake",
     quantity: 12,
     price: 24000,
+    img: "/dashboard/milkshake.jpg",
   },
   {
     itemId: "2jvlol",
     itemName: "Susu Tobrud",
+    category: "Milk Based",
     quantity: 8,
     price: 666,
+    img: "/dashboard/tante-erni.jpg",
   },
 ];
 
-function page() {
+function Page() {
   const [tableContent, setTableContent] = useState(tableData);
 
-  const { setIsModalOpen, setItemName, setItemQty } = useToggleUiStore();
+  const {
+    setIsModalOpen,
+    setItemName,
+    setItemQty,
+    isAddItemFormOpen,
+    setIsAddItemFormOpen,
+    selectedItemData,
+    setSelectedItemData,
+  } = useToggleUiStore();
+
+  console.log(selectedItemData);
 
   const handleOpenModal = (data) => {
     setIsModalOpen();
     setItemName(data.itemName);
     setItemQty(data.quantity);
+  };
+
+  const handleOpenEditForm = (data) => {
+    setSelectedItemData(data);
   };
 
   const handleDeleteItem = (id) => {
@@ -83,18 +106,29 @@ function page() {
 
   return (
     <>
-      <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
+      <div className="flex-grow lg:ml-80 mt-28 space-y-10 lg:w-auto w-screen">
         <div className="flex flex-col space-y-7 px-20 ">
           <Breadcrumb routes={routes} />
-          <SalesCard salesSummary={salesSummary} />
+          <SalesCard salesSummary={salesSummary}>Rangkuman Produk</SalesCard>
         </div>
 
+        {isAddItemFormOpen && <AddItemForm />}
+        {!selectedItemData && <EditItemForm />}
         {tableContent.length > 0 ? (
           <div className="space-y-4 w-full px-6">
-            <div>
+            <div className="flex justify-between items-center">
               <h1 className="font-semibold md:text-lg text-sm w-max">
-                Rangkuman Produk
+                Pustaka Produk
               </h1>
+              {!isAddItemFormOpen && (
+                <button
+                  type="button"
+                  className="px-5 py-2 rounded-lg bg-dpaccent hover:bg-dpaccent/50 duration-300 transition-colors text-sm text-bcaccent"
+                  onClick={setIsAddItemFormOpen}
+                >
+                  Tambah Produk
+                </button>
+              )}
             </div>
 
             {/* Table */}
@@ -104,9 +138,15 @@ function page() {
               >
                 <TableRow>
                   <TableHead className="first:w-[260px] text-bcprimary font-semibold">
+                    Foto
+                  </TableHead>
+                  <TableHead className="text-bcprimary font-semibold">
                     Menu
                   </TableHead>
                   <TableHead className="text-bcprimary font-semibold">
+                    Kategori
+                  </TableHead>
+                  <TableHead className="text-bcprimary font-semibold w-[150px]">
                     Jumlah
                   </TableHead>
                   <TableHead className="text-bcprimary font-semibold">
@@ -119,12 +159,37 @@ function page() {
               </TableHeader>
               <TableBody className="border bg-bcaccent/30">
                 {tableContent.map((content, i) => (
-                  <TableRow key={i} className="items-center">
+                  <TableRow key={i}>
                     <TableCell className="first:font-medium last:text-right text-dpaccent">
+                      <div
+                        style={{
+                          position: "relative",
+                          width: `${70}px`,
+                          height: `${70}px`,
+                        }}
+                      >
+                        <Image
+                          src={content.img}
+                          alt="Foto Produk"
+                          fill
+                          style={{ objectFit: "cover" }}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-dpaccent">
                       {content.itemName}
                     </TableCell>
                     <TableCell className="text-dpaccent">
+                      {content.category}
+                    </TableCell>
+                    <TableCell
+                      className="text-dpaccent flex justify-between gap-2"
+                      onClick={() => handleOpenModal(content)}
+                    >
                       {content.quantity}
+                      <button className="text-dpprimary pr-9 hover:text-dpaccent duration-300 transition-colors">
+                        <FiEdit size="1.4rem" />
+                      </button>
                     </TableCell>
                     <TableCell className="text-dpaccent">
                       <NumericFormat
@@ -134,10 +199,10 @@ function page() {
                         thousandSeparator
                       />
                     </TableCell>
-                    <TableCell className="text-dpprimary flex justify-end items-center gap-3">
+                    <TableCell className="text-dpprimary flex justify-end mt-5 space-x-4">
                       <button
-                        className="hover:text-dpaccent duration-300 transition-colors"
-                        onClick={() => handleOpenModal(content)}
+                        className="text-dpprimary hover:text-dpaccent duration-300 transition-colors"
+                        onClick={() => handleOpenEditForm(content)}
                       >
                         <FiEdit size="1.4rem" />
                       </button>
@@ -164,4 +229,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

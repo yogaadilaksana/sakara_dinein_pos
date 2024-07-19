@@ -62,18 +62,18 @@ const tableContent = [
   },
 ];
 
-export default function page() {
+export default function Page() {
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
       <div className="flex flex-col space-y-7 px-20 ">
         <Breadcrumb routes={routes} />
-        <SalesCard salesSummary={salesSummary} />
+        <SalesCard salesSummary={salesSummary}>Rangkuman Penjualan</SalesCard>
       </div>
       {tableContent.length > 0 ? (
         <div className="space-y-4 w-full px-6">
           <div className="flex justify-between items-center">
             <h1 className="font-semibold md:text-lg text-sm w-max">
-              Rangkuman Produk
+              Penjualan Produk
             </h1>
             <DatePicker />
           </div>

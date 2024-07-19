@@ -140,19 +140,6 @@ function SideBar() {
           </div>
         )}
       </div>
-
-      {/* Barang */}
-      <Link
-        href="/dashboard/pustaka_barang"
-        className={`${
-          pathname === "/dashboard/pustaka_barang"
-            ? "font-semibold text-dpprimary translate-x-2"
-            : "hover:translate-x-1"
-        } flex items-center gap-3 hover:text-dpprimary transition-all duration-300`}
-      >
-        <FiServer />
-        Pustaka Barang
-      </Link>
     </div>
   );
 }
