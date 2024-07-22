@@ -9,3 +9,17 @@
     margin: 0;
   }
 }
+/* For WebKit browsers (e.g., Chrome, Safari) */
+.custom-scrollbar-x::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.custom-scrollbar-x {
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Optional: Disable scrollbar visibility but keep functionality */
+.custom-scrollbar-x {
+  -ms-overflow-style: none; /* IE and Edge */
+}

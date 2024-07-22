@@ -49,4 +49,7 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  corePlugins: {
+    scrollbar: false, // Disable Tailwind's built-in scrollbar styles
+  },
 };
