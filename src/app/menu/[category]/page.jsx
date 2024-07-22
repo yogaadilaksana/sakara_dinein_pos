@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 const getData = async (category) => {
     const res = await fetch(`http://localhost:3000/api/products?name=${category}`, {
         cache: "no-store"
@@ -22,7 +24,8 @@ const CategoryPage = async ({ params: { category } }) => {
         <div className="w-max flex">
           {/* SINGLE ITEM */}
           {products.map((item) => (
-            <div
+            <Link
+              href={`/product/${item.id}`}
               key={item.id}
               className="w-screen h-[60vh] flex flex-col items-center justify-around p-4 hover:bg-fuchsia-50 transition-all duration-300 md:w-[50vw] xl:w-[33vw] xl:h-[90vh]"
             >
@@ -36,7 +39,7 @@ const CategoryPage = async ({ params: { category } }) => {
                   Add to Cart
                 </button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

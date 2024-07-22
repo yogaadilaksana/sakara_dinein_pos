@@ -13,7 +13,7 @@ export const GET = async (req) => {
     try {
       const products = await prisma.product.findMany({
         where: {
-          ...(name ? { category_name: name } : { isFeatured: true }),
+          ...(name ? { category_name: name } : {}),
         },
       });
       return new NextResponse(JSON.stringify(products), { status: 200 });
