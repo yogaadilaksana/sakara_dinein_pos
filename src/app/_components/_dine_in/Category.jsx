@@ -4,9 +4,9 @@ function Category({ category, onSelectedCat, catSelected }) {
       {category.length > 0 ? (
         <ul className="flex flex-row">
           <button
-            onClick={() => onSelectedCat("")}
+            onClick={() => onSelectedCat(0)}
             className={`rounded-full ${
-              catSelected === "" ? "bg-qrprimary" : "bg-qraccent"
+              catSelected === 0 ? "bg-qrprimary" : "bg-qraccent"
             } bg-qraccent px-4 py-2 mr-5 text-xs capitalize text-bcsecondary`}
           >
             <p>All</p>
@@ -17,7 +17,7 @@ function Category({ category, onSelectedCat, catSelected }) {
               category={items}
               onSelectedCat={onSelectedCat}
               catSelected={catSelected}
-              key={items.type}
+              key={items.id}
             />
           ))}
         </ul>
@@ -31,16 +31,15 @@ function Category({ category, onSelectedCat, catSelected }) {
 }
 
 function CategoryList({ category, onSelectedCat, catSelected }) {
-  console.log(catSelected);
   return (
     <li>
       <button
-        onClick={() => onSelectedCat(category)}
+        onClick={() => onSelectedCat(category.id)}
         className={`whitespace-nowrap rounded-full ${
-          catSelected === category.type ? "bg-qrprimary" : "bg-qraccent"
+          catSelected === category.id ? "bg-qrprimary" : "bg-qraccent"
         } px-4 py-2 text-xs capitalize text-bcsecondary mr-4`}
       >
-        <p>{category.type}</p>
+        <p>{category.name}</p>
       </button>
     </li>
   );

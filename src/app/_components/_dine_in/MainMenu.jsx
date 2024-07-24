@@ -1,140 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Category from "../_dine_in/Category";
 import MenuList from "../_dine_in/MenuList";
 import EmptyList from "../_dine_in/EmptyList";
 
-const products = [
-  {
-    id: 1,
-    name: "Pedawa",
-    type: "coffee",
-    image: "/dine_in/cookies-eat.jpg",
-    description: "Es kopi susu dengan citarasa aren",
-    variants: [
-      {
-        version: "Iced",
-        price: 20000,
-      },
-    ],
-    addons: [],
-  },
-  {
-    id: 2,
-    name: "Hazelnut latte",
-    type: "coffee",
-    image: "/dine_in/cookies-give.jpg",
-    description: "Es kopi susu dengan citarasa kacang hazelnut",
-    variants: [
-      {
-        version: "Iced",
-        price: 22000,
-      },
-      {
-        version: "Hot",
-        price: 20000,
-      },
-    ],
-    addons: [
-      {
-        name: "Extra Shots",
-        price: 3000,
-      },
-      {
-        name: "Almond Milk",
-        price: 3000,
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Taro",
-    type: "milk-based",
-    image: "/dine_in/stack-cookies.jpg",
-    description: "Creamy taro susu",
-    variants: [
-      {
-        version: "Iced",
-        price: 22000,
-      },
-      {
-        version: "Hot",
-        price: 2000,
-      },
-    ],
-    addons: [
-      {
-        name: "Cheese Cream",
-        price: 3000,
-      },
-    ],
-  },
-  {
-    id: 4,
-    name: "Almond Croissant",
-    type: "pastry",
-    image: "/dine_in/cookies-give.jpg",
-    description: "Fresh croisant dengan taburan kacang almond",
-    variants: [
-      {
-        version: "Reg",
-        price: 13000,
-      },
-    ],
-    addons: [],
-  },
-  {
-    id: 5,
-    name: "Roti Bakar",
-    type: "snack",
-    image: "/dine_in/stack-cookies.jpg",
-    description: "6 potong roti bakar dengan pilihan rasa",
-    variants: [
-      {
-        version: "Coco Crunchy",
-        price: 15000,
-      },
-      {
-        version: "Tiramisu",
-        price: 15000,
-      },
-    ],
-    addons: [],
-  },
-];
-
-const categories = [
-  {
-    id: 1,
-    type: "coffee",
-  },
-  {
-    id: 2,
-    type: "signature",
-  },
-  {
-    id: 3,
-    type: "snack",
-  },
-  {
-    id: 4,
-    type: "pastry",
-  },
-  {
-    id: 5,
-    type: "milk-based",
-  },
-];
-
 function MainMenu({ onSelectProduct }) {
-  const [menu, setMenu] = useState(products);
-  const [category, setCategory] = useState(categories);
-  const [catSelected, setCatSelected] = useState("");
+  const [menu, setMenu] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [catSelected, setCatSelected] = useState(0);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await fetch("/api/categories");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setCategory(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setMenu(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+
+    fetchProducts();
+  }, [catSelected]);
 
   function handleSelectedCat(selection) {
     setCatSelected((cat) =>
-      selection === "" ? "" : cat.type === selection ? "" : selection.type
+      selection === 0 ? 0 : cat.id === selection ? "" : selection
     );
   }
+  console.log(catSelected);
 
   return (
     <div className="grid min-h-screen grid-rows-[auto_1fr]">
@@ -148,9 +62,9 @@ function MainMenu({ onSelectProduct }) {
       {menu.length > 0 ? (
         <div className="overflow-y-auto px-12 pt-6">
           {catSelected ? (
-            <ul className="grid grid-cols-2 gap-5">
+            <ul className="grid grid-cols-2 ml-3 gap-5">
               {menu
-                .filter((items) => items.type === catSelected)
+                .filter((items) => items.category_id === catSelected)
                 .map((items) => (
                   <MenuList
                     menu={items}
