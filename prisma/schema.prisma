@@ -13,57 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(CASHIER)
-}
-
-enum Role {
-  ADMIN
-  CASHIER
-  SUPER_ADMIN
-}
-
 model Product {
-  id          Int  @id @default(autoincrement())
-  name        String
-  description String
-  image       String
-  category_id Int
-  price       Decimal
-  stock       Int  @default(0)
+  id            Int     @id @default(autoincrement())
+  name          String
+  description   String
+  image         String
+  price         Decimal
+  isFeatured    Boolean @default(false)
+  stock         Int     @default(0)
+  category_name String
 
-  category  Category    @relation(fields: [category_id], references: [id])
-  OrderItem OrderItem[]
-}
-
-model Order {
-  id           Int   @id @default(autoincrement())
-  table_number Int
-  total        Decimal
-  order_date   DateTime @default(now())
-
-  OrderItem OrderItem[]
-}
-
-model OrderItem {
-  id         Int  @id @default(autoincrement())
-  order_id   Int
-  product_id Int
-  price      Decimal
-  quantity   Int
-  subtotal   Decimal
-
-  product Product @relation(fields: [product_id], references: [id])
-  order   Order   @relation(fields: [order_id], references: [id])
+  category Category @relation(fields: [category_name], references: [name])
 }
 
 model Category {
-  id   Int @id @default(autoincrement())
-  name String
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   product Product[]
 }

@@ -1,4 +1,35 @@
-function Category({ category, onSelectedCat, catSelected }) {
+import { useEffect, useState } from "react";
+
+const getData = async () => {
+  const res = await fetch("http://localhost:3000/api/category", {
+      cache: "no-store"
+  })
+
+  if(!res.ok) {
+      throw new Error("failed to fetch data")
+  }
+
+  return res.json()
+  
+}
+
+
+function Category({onSelectedCat}) {
+
+  const [category, setCategory] = useState([]);
+  const [catSelected, setCatSelected] = useState('');
+
+  useEffect(() => {
+    getData()
+      .then(data => setCategory(data))
+      .catch(error => console.error("Error fetching data:", error));
+  }, []);
+
+  const handleSelectedCat = (category) => {
+    setCatSelected(category.id);
+    onSelectedCat(category.name);
+  };
+
   return (
     <div className="mb-2 mt-5 px-12">
       {category.length > 0 ? (
@@ -15,9 +46,9 @@ function Category({ category, onSelectedCat, catSelected }) {
           {category.map((items) => (
             <CategoryList
               category={items}
-              onSelectedCat={onSelectedCat}
+              onSelectedCat={handleSelectedCat}
               catSelected={catSelected}
-              key={items.type}
+              key={items.id}
             />
           ))}
         </ul>
@@ -37,10 +68,10 @@ function CategoryList({ category, onSelectedCat, catSelected }) {
       <button
         onClick={() => onSelectedCat(category)}
         className={`whitespace-nowrap rounded-full ${
-          catSelected === category.type ? "bg-qrprimary" : "bg-qraccent"
+          catSelected === category.name ? "bg-qrprimary" : "bg-qraccent"
         } px-4 py-2 text-xs capitalize text-bcsecondary mr-4`}
       >
-        <p>{category.type}</p>
+        <p>{category.name}</p>
       </button>
     </li>
   );
