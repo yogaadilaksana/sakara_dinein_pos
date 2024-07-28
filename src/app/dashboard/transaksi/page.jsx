@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_components/ui/table";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 import { NumericFormat } from "react-number-format";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";

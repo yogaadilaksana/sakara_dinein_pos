@@ -5,6 +5,7 @@ import EmptyList from "../../_components/_dine_in/EmptyList";
 import { PiArrowUUpLeft } from "react-icons/pi";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
+import { useCartDineIn } from "@/app/_stores/store";
 
 const data = [
   //   {
@@ -46,29 +47,33 @@ const data = [
 ];
 
 function Page() {
-  const [menu, setMenu] = useState(data);
-  console.log(menu);
+  const { cart, setCart } = useCartDineIn();
+  const totalPriceToPay = handleTotalPrice();
 
   function handleAddQty(id) {
-    setMenu((prevItems) =>
-      prevItems.map((menu) =>
-        menu.cartId === id ? { ...menu, quantity: menu.quantity + 1 } : menu
+    setCart((prevItems) =>
+      prevItems.map((cart) =>
+        cart.cartId === id ? { ...cart, quantity: cart.quantity + 1 } : cart
       )
     );
   }
 
   function handleSubtractQty(id) {
-    setMenu((prevItems) =>
+    setCart((prevItems) =>
       prevItems
-        .map((menu) =>
-          menu.cartId === id ? { ...menu, quantity: menu.quantity - 1 } : menu
+        .map((cart) =>
+          cart.cartId === id ? { ...cart, quantity: cart.quantity - 1 } : cart
         )
-        .filter((menu) => menu.quantity > 0)
+        .filter((cart) => cart.quantity > 0)
     );
   }
 
+  function handleTotalPrice() {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }
+
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] overflow-y-auto overflow-x-hidden">
+    <div className="grid grid-rows-[auto_1fr_auto] overflow-y-auto overflow-x-hidden min-h-screen">
       <div className="fixed flex w-full items-center space-x-6 border-b border-qraccent/20 bg-bcprimary px-6 pb-6 pt-8">
         <Link href="/dine_in">
           <PiArrowUUpLeft
@@ -78,22 +83,22 @@ function Page() {
         </Link>
         <h1 className="grow text-lg text-qrprimary">Keranjang Belanja</h1>
       </div>
-      {menu.length > 0 ? (
+      {cart.length > 0 ? (
         <div>
           <div className="mb-40 mt-28 px-2">
             <ul>
-              {menu.map((items) => (
+              {cart.map((items, i) => (
                 <CartItem
-                  menu={items}
-                  key={items.cartId}
+                  product={items}
+                  key={i}
                   onAddQty={handleAddQty}
                   onSubtractQty={handleSubtractQty}
                 />
               ))}
             </ul>
           </div>
-          <div className="fixed bottom-0 mt-4 w-full border-t border-qraccent/20 bg-bcsecondary px-6 py-6">
-            <TotalPriceCard />
+          <div className="fixed bottom-0 w-full border-t border-qraccent/20 bg-bcsecondary px-6 py-6">
+            <TotalPriceCard totalPriceToPay={totalPriceToPay} />
           </div>
         </div>
       ) : (
@@ -108,86 +113,57 @@ function Page() {
   );
 }
 
-function CartItem({ menu, onAddQty, onSubtractQty }) {
+function CartItem({ product, onAddQty, onSubtractQty }) {
   return (
-    <li className="my-1 grid grid-cols-[auto_auto] items-center space-x-4 border border-qraccent/20 bg-bcsecondary px-8 py-6">
-      <div className="min-w-64">
+    <li className="space-x-4 border border-qraccent/20 bg-bcsecondary px-8 py-6 mb-2">
+      <div>
         <div className="flex w-full items-start">
-          <p className="text-md max-w-24 font-semibold text-qrprimary">
-            {menu.name}
-          </p>
-          <p className="mx-1 line-clamp-1 text-qrprimary">
-            / {menu.variants[0].version}
+          <p className="truncate text-md font-semibold text-qrprimary">
+            {product.name}
           </p>
         </div>
 
-        <ul className="mt-2">
-          <p className="text-sm font-semibold text-qraccent">Addons:</p>
-          {menu.addons.length > 0 ? (
-            menu.addons?.map((items) => (
-              <li className="text-xs font-light text-qraccent" key={items.name}>
-                {items.name}
-              </li>
-            ))
-          ) : (
-            <p className="text-sm font-light text-qraccent">tidak ada</p>
-          )}
-        </ul>
-        <div className="mt-2">
-          <p className="font-semibold text-qrprimary">
+        <div className="flex justify-between items-center">
+          <p className="font-semibold text-qrprimary text-lg">
             <NumericFormat
               displayType="text"
-              value={menu.sumPrice}
+              value={product.price * product.quantity}
               prefix={"Rp."}
               thousandSeparator
             />
           </p>
+          <div className="flex items-center space-x-4">
+            <button
+              type="button"
+              className="border border-qraccent px-2 text-xs text-qraccent focus:bg-qraccent focus:text-bcprimary"
+              onClick={() => onSubtractQty(product.id)}
+            >
+              -
+            </button>
+            <p className="my-2 font-semibold">{product.quantity}</p>
+            <button
+              type="button"
+              className="border border-qraccent px-2 text-xs text-qraccent focus:bg-qraccent focus:text-bcprimary"
+              onClick={() => onAddQty(product.id)}
+            >
+              +
+            </button>
+          </div>
         </div>
-        {/* <div className="mt-2">
-          <button
-            type="button"
-            className="flex items-center space-x-1 rounded-lg bg-bc px-2 py-1 text-xs font-thin text-accent"
-          >
-            <img
-              src="../public/icons/icon-ubah-keranjang.png"
-              alt=""
-              className="w-3"
-            />
-            <p>Ubah</p>
-          </button>
-        </div> */}
-      </div>
-
-      <div className="flex flex-col items-center space-y-3">
-        <button
-          type="button"
-          className="border border-qraccent px-1 text-sm text-qraccent focus:bg-qraccent focus:text-bcprimary"
-          onClick={() => onAddQty(menu.cartId)}
-        >
-          +
-        </button>
-        <p className="my-2 font-semibold">{menu.quantity}</p>
-        <button
-          type="button"
-          className="border border-qraccent px-1 text-sm text-qraccent focus:bg-qraccent focus:text-bcprimary"
-          onClick={() => onSubtractQty(menu.cartId)}
-        >
-          -
-        </button>
       </div>
     </li>
   );
 }
 
-function TotalPriceCard() {
+function TotalPriceCard({ totalPriceToPay }) {
   return (
     <>
       <div className="flex items-center justify-between px-2">
-        <h1 className="font-semibold">Total Harga</h1>
-        <p className="text-lg">
+        <h1 className="text-md">Total Harga</h1>
+        <p className="text-xl font-semibold">
           <NumericFormat
             displayType="text"
-            value={1000}
+            value={totalPriceToPay}
             prefix={"Rp."}
             thousandSeparator
           />

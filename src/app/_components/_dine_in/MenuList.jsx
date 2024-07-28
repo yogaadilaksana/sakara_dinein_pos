@@ -24,7 +24,7 @@ function MenuList({ menu, onSelectProduct }) {
           </div>
         </div>
         <div className="flex flex-col">
-          <p className="font-regular text-sm tracking-wide text-qraccent">
+          <p className="w-32 truncate font-regular text-sm tracking-wide text-qraccent">
             {menu.name}
           </p>
           <p className="text-lg font-bold text-qrprimary">

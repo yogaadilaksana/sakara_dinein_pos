@@ -13,7 +13,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/app/_components/ui/scroll-area";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 
 export default function AdminTable({
   tableHead,

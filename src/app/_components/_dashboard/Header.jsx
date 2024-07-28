@@ -4,7 +4,7 @@ import DropDownUser from "./DropDownUser";
 import Logo from "./Logo";
 import User from "./User";
 import MobileBurgerButton from "./MobileBurgerButton";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 
 function Header() {
   const { isUserOpen, setIsUserOpen, setIsSideBarOpen, setCloseUser } =

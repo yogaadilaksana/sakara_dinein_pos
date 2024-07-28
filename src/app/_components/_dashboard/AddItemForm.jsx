@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_components/ui/select";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 
 const categories = ["Signature", "Coffee", "Tea", "Snack", "Main Course"];
 

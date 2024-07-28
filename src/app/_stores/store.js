@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-const useToggleUiStore = create((set) => ({
+export const useToggleUiStore = create((set) => ({
   isUserOpen: false,
   setIsUserOpen: () => set((state) => ({ isUserOpen: !state.isUserOpen })),
   setCloseUser: () => set({ isUserOpen: false }),
@@ -22,7 +22,6 @@ const useToggleUiStore = create((set) => ({
   subtractItemQty: () => set((state) => ({ itemQty: state.itemQty - 1 })),
   inputItemQty: (amount) => set({ itemQty: amount }),
 
-
   selectedDate: "",
   setSelectedDate: (date) => set({ selectedDate: date }),
 
@@ -40,4 +39,23 @@ const useToggleUiStore = create((set) => ({
   setCloseSelectedItem: () => set({ selectedItemData: {} }),
 }));
 
-export default useToggleUiStore;
+export const useCartDineIn = create((set) => ({
+  cart: [],
+  setCart: (item) =>
+    set((state) => {
+      const itemIndex = state.cart.findIndex(
+        (cartItem) => cartItem.id === item.id
+      );
+
+      if (itemIndex !== -1) {
+        const updatedCart = state.cart.map((cartItem, index) =>
+          index === itemIndex
+            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
+            : cartItem
+        );
+        return { cart: updatedCart };
+      } else {
+        return { cart: [...state.cart, item] };
+      }
+    }),
+}));

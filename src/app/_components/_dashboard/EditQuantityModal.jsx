@@ -3,7 +3,7 @@
 import { FiX } from "react-icons/fi";
 import { FaSquarePlus, FaSquareMinus } from "react-icons/fa6";
 import { useState } from "react";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 
 function EditQuantityModal() {
   const {

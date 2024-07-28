@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_components/ui/table";
-import useToggleUiStore from "@/app/_stores/store";
+import { useToggleUiStore } from "@/app/_stores/store";
 import EmptyTable from "@/app/_components/_dashboard/EmptyTable";
 import { NumericFormat } from "react-number-format";
 import Image from "next/image";

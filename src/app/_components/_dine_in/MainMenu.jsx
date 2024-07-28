@@ -61,29 +61,32 @@ function MainMenu({ onSelectProduct }) {
       </div>
       {menu.length > 0 ? (
         <div className="overflow-y-auto px-12 pt-6">
-          {catSelected ? (
-            <ul className="grid grid-cols-2 ml-3 gap-5">
-              {menu
-                .filter((items) => items.category_id === catSelected)
-                .map((items) => (
+          <div className="flex justify-center">
+            {/* <p>hai</p> */}
+            {catSelected ? (
+              <ul className="grid grid-cols-2">
+                {menu
+                  .filter((items) => items.category_id === catSelected)
+                  .map((items) => (
+                    <MenuList
+                      menu={items}
+                      key={items.id}
+                      onSelectProduct={onSelectProduct}
+                    />
+                  ))}
+              </ul>
+            ) : (
+              <ul className="flex flex-wrap justify-around gap-4">
+                {menu.map((items) => (
                   <MenuList
                     menu={items}
                     key={items.id}
                     onSelectProduct={onSelectProduct}
                   />
                 ))}
-            </ul>
-          ) : (
-            <ul className="grid grid-cols-2 ml-3 gap-9">
-              {menu.map((items) => (
-                <MenuList
-                  menu={items}
-                  key={items.id}
-                  onSelectProduct={onSelectProduct}
-                />
-              ))}
-            </ul>
-          )}
+              </ul>
+            )}
+          </div>
         </div>
       ) : (
         <div className="px-12">

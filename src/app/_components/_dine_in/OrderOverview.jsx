@@ -3,6 +3,12 @@ import { PiShoppingBagOpen } from "react-icons/pi";
 import { NumericFormat } from "react-number-format";
 
 function OrderOverview({ cart, totalPrice }) {
+  const totalProductInCart = handleTotalProduct();
+
+  function handleTotalProduct() {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  }
+
   return (
     <Link href="/dine_in/keranjang">
       <div className="flex h-full items-center justify-between border-t border-t-bcaccent/20 bg-gradient-to-t from-bcprimary via-bcprimary to-transparent backdrop-blur-sm px-9 py-6">
@@ -12,7 +18,7 @@ function OrderOverview({ cart, totalPrice }) {
           </p>
           {cart.length ? (
             <p className="text-lg font-semibold tracking-wider text-qrprimary">
-              {cart.length} barang
+              {totalProductInCart} produk
             </p>
           ) : (
             <p className="text-lg font-semibold tracking-wider text-qrprimary">
