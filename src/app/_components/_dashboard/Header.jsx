@@ -32,9 +32,9 @@ function Header() {
       <div className="fixed z-20 w-full h-12 flex items-center justify-between md:px-24 px-10 py-4border border-b border-dpprimary/15 bg-bcaccent/30 backdrop-blur-sm">
         <MobileBurgerButton setIsOpen={setIsSideBarOpen} />
         <Logo />
-        <div className="relative">
+        <div className="relative" ref={userRef}>
           <User isOpen={isUserOpen} setIsOpen={setIsUserOpen} />
-          {isUserOpen && <DropDownUser userRef={userRef} />}
+          {isUserOpen && <DropDownUser />}
         </div>
       </div>
     </header>

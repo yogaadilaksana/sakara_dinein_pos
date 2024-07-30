@@ -45,7 +45,7 @@ function OrderMenu({ menu, onCloseSelectedProduct, onSubmitProduct }) {
       <div className="mx-14 min-h-[360px] w-full rounded-2xl bg-bcsecondary">
         <div className="relative h-330">
           <div
-            className="flex justify-between"
+            className="items-center"
             style={{
               position: "relative",
               width: `${320}px`,
@@ -57,7 +57,7 @@ function OrderMenu({ menu, onCloseSelectedProduct, onSubmitProduct }) {
               alt={menu.name}
               fill
               style={{ objectFit: "cover" }}
-              className="rounded-t-2xl"
+              className="rounded-t-2xl sm"
             />
           </div>
           <PiArrowUUpLeft

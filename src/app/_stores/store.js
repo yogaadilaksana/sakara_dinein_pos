@@ -58,4 +58,20 @@ export const useCartDineIn = create((set) => ({
         return { cart: [...state.cart, item] };
       }
     }),
+  handleAddQty: (itemId) =>
+    set((state) => {
+      const sortedCart = state.cart.map((cart) =>
+        cart.id === itemId ? { ...cart, quantity: cart.quantity + 1 } : cart
+      );
+      return { cart: sortedCart };
+    }),
+  handleSubtractQty: (itemId) =>
+    set((state) => {
+      const sortedCart = state.cart
+        .map((cart) =>
+          cart.id === itemId ? { ...cart, quantity: cart.quantity - 1 } : cart
+        )
+        .filter((cart) => cart.quantity > 0);
+      return { cart: sortedCart };
+    }),
 }));

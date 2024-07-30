@@ -48,11 +48,10 @@ function MainMenu({ onSelectProduct }) {
       selection === 0 ? 0 : cat.id === selection ? "" : selection
     );
   }
-  console.log(catSelected);
 
   return (
-    <div className="grid min-h-screen grid-rows-[auto_1fr]">
-      <div className="custom-scrollbar-x to-transparent xs:top-24 z-8 sticky top-20 overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
+    <div className="min-h-screen flex flex-col items-center">
+      <div className="w-screen custom-scrollbar-x to-transparent xs:top-24 z-8 sticky top-20 overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
         <Category
           category={category}
           catSelected={catSelected}
@@ -60,33 +59,30 @@ function MainMenu({ onSelectProduct }) {
         />
       </div>
       {menu.length > 0 ? (
-        <div className="overflow-y-auto px-12 pt-6">
-          <div className="flex justify-center">
-            {/* <p>hai</p> */}
-            {catSelected ? (
-              <ul className="grid grid-cols-2">
-                {menu
-                  .filter((items) => items.category_id === catSelected)
-                  .map((items) => (
-                    <MenuList
-                      menu={items}
-                      key={items.id}
-                      onSelectProduct={onSelectProduct}
-                    />
-                  ))}
-              </ul>
-            ) : (
-              <ul className="flex flex-wrap justify-around gap-4">
-                {menu.map((items) => (
+        <div className="overflow-y-auto mt-10 w-screen flex flex-col">
+          {catSelected ? (
+            <ul className="container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {menu
+                .filter((items) => items.category_id === catSelected)
+                .map((items) => (
                   <MenuList
                     menu={items}
                     key={items.id}
                     onSelectProduct={onSelectProduct}
                   />
                 ))}
-              </ul>
-            )}
-          </div>
+            </ul>
+          ) : (
+            <ul className="container grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-6">
+              {menu.map((items) => (
+                <MenuList
+                  menu={items}
+                  key={items.id}
+                  onSelectProduct={onSelectProduct}
+                />
+              ))}
+            </ul>
+          )}
         </div>
       ) : (
         <div className="px-12">

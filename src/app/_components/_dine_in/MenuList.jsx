@@ -4,8 +4,11 @@ import { NumericFormat } from "react-number-format";
 function MenuList({ menu, onSelectProduct }) {
   const placeholderImage = "/dine_in/placeholder-image.png";
   return (
-    <li className="">
-      <div className="w-auto pt-4" onClick={() => onSelectProduct(menu)}>
+    <li>
+      <div
+        className="items-center flex flex-col"
+        onClick={() => onSelectProduct(menu)}
+      >
         <div className="mb-3">
           <div
             style={{

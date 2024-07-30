@@ -7,66 +7,9 @@ import Link from "next/link";
 import { NumericFormat } from "react-number-format";
 import { useCartDineIn } from "@/app/_stores/store";
 
-const data = [
-  //   {
-  //     cartId: 1,
-  //     name: "Pedawa",
-  //     variants: [{ version: "Iced", price: 20000 }],
-  //     addons: [],
-  //     description: "",
-  //     quantity: 1,
-  //     sumPrice: 20000,
-  //   },
-  //   {
-  //     cartId: 2,
-  //     name: "Taro",
-  //     variants: [{ version: "Hot", price: 20000 }],
-  //     addons: [
-  //       {
-  //         name: "Cheese Cream",
-  //         price: 3000,
-  //       },
-  //       {
-  //         name: "Extra Shots",
-  //         price: 3000,
-  //       },
-  //     ],
-  //     description: "",
-  //     quantity: 1,
-  //     sumPrice: 26000,
-  //   },
-  //   {
-  //     cartId: 3,
-  //     name: "Roti Bakar",
-  //     variants: [{ version: "Coco Crunchy coco", price: 15000 }],
-  //     addons: [],
-  //     description: "",
-  //     quantity: 2,
-  //     sumPrice: 15000,
-  //   },
-];
-
 function Page() {
-  const { cart, setCart } = useCartDineIn();
+  const { cart, handleAddQty, handleSubtractQty } = useCartDineIn();
   const totalPriceToPay = handleTotalPrice();
-
-  function handleAddQty(id) {
-    setCart((prevItems) =>
-      prevItems.map((cart) =>
-        cart.cartId === id ? { ...cart, quantity: cart.quantity + 1 } : cart
-      )
-    );
-  }
-
-  function handleSubtractQty(id) {
-    setCart((prevItems) =>
-      prevItems
-        .map((cart) =>
-          cart.cartId === id ? { ...cart, quantity: cart.quantity - 1 } : cart
-        )
-        .filter((cart) => cart.quantity > 0)
-    );
-  }
 
   function handleTotalPrice() {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);

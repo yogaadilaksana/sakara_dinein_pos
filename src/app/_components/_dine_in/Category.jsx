@@ -1,6 +1,6 @@
 function Category({ category, onSelectedCat, catSelected }) {
   return (
-    <div className="mb-2 mt-5 px-12">
+    <div className="mb-2 mt-5 px-12 md:px-16">
       {category.length > 0 ? (
         <ul className="flex flex-row">
           <button
