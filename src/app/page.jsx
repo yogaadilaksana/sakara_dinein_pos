@@ -15,7 +15,7 @@ export default function Page() {
       <div className="flex gap-x-9 items-center">
         <Link href="/auth/login">
           <button className="bg-neutral-900 text-bcprimary px-5 py-3 hover:ring-2 ring-offset-4 ring-neutral-900 transition duration-300">
-            Masuk Sebagai Admin
+            Masuk Sebagai Adminaaa
           </button>
         </Link>
         <span className="text-xl">/</span>
