@@ -22,7 +22,7 @@ function MenuList({ menu, onSelectProduct }) {
               alt={menu.name}
               fill
               style={{ objectFit: "cover" }}
-              className="-z-10 border-2 border-qrprimary/10 rounded-sm"
+              className="border-2 border-qrprimary/10 rounded-sm hover:-translate-y-1 duration-300"
             />
           </div>
         </div>

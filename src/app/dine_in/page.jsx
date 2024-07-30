@@ -44,7 +44,7 @@ function Page() {
 
       <div className="relative mb-32 grid min-h-screen grid-rows-[auto_1fr_auto]">
         {/* Header */}
-        <div className="fixed w-full">
+        <div className="fixed w-full z-10">
           <Header />
         </div>
         {/* Header */}

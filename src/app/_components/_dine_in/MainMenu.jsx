@@ -51,7 +51,7 @@ function MainMenu({ onSelectProduct }) {
 
   return (
     <div className="min-h-screen flex flex-col items-center">
-      <div className="w-screen custom-scrollbar-x to-transparent xs:top-24 z-8 sticky top-20 overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
+      <div className="w-screen custom-scrollbar-x to-transparent xs:top-24 z-10 sticky top-20 overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
         <Category
           category={category}
           catSelected={catSelected}
@@ -59,7 +59,7 @@ function MainMenu({ onSelectProduct }) {
         />
       </div>
       {menu.length > 0 ? (
-        <div className="overflow-y-auto mt-10 w-screen flex flex-col">
+        <div className="overflow-y-auto pt-10 w-screen flex flex-col">
           {catSelected ? (
             <ul className="container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {menu
