@@ -4,7 +4,7 @@ CREATE TABLE `User` (
     `name` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
-    `role` ENUM('ADMIN', 'CASHIER', 'SUPER ADMIN') NOT NULL DEFAULT 'CASHIER',
+    `role` ENUM('ADMIN', 'CASHIER') NOT NULL DEFAULT 'CASHIER',
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
