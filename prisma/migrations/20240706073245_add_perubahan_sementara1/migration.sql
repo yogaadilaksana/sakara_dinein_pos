@@ -6,10 +6,10 @@
 
 */
 -- AlterTable
-ALTER TABLE `orderitem` ADD COLUMN `subtotal` DECIMAL(65, 30) NOT NULL;
+ALTER TABLE `OrderItem` ADD COLUMN `subtotal` DECIMAL(65, 30) NOT NULL;
 
 -- AlterTable
-ALTER TABLE `product` ADD COLUMN `category_id` BIGINT NOT NULL;
+ALTER TABLE `Product` ADD COLUMN `category_id` BIGINT NOT NULL;
 
 -- CreateTable
 CREATE TABLE `Category` (

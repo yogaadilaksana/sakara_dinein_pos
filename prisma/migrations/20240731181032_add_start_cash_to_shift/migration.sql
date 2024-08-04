@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Shift` ADD COLUMN `start_cash` DECIMAL(65, 30) NOT NULL DEFAULT 0.0;

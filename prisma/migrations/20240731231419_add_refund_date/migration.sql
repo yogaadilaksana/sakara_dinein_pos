@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Refund_Detail` ADD COLUMN `refund_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);
