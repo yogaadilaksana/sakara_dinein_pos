@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import formidable from 'formidable';
-import { IncomingForm } from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import multer from 'multer';
@@ -170,10 +168,10 @@ export const config = {
 export async function PUT(req) {
   try {
     const { id, name, stock, price, categoryId, description, image } = await req.json();
-    const form = new formidable.IncomingForm({
-      uploadDir: './public/uploads', // Directory to save uploads
-      keepExtensions: true,
-  });
+  //   const form = new formidable.IncomingForm({
+  //     uploadDir: './public/uploads', // Directory to save uploads
+  //     keepExtensions: true,
+  // });
   
     console.log("berapakah id yang masuk kesini?", id);
     const updatedProduct = await prisma.product.update({
