@@ -64,12 +64,12 @@ function SideBar() {
               Beranda
             </Link>
             {/* Dashboard Grafik */}
-            {/* <Link
-            href=""
+            <Link
+            href="/dashboard/charts"
             className="hover:text-dpprimary transition-all hover:translate-x-1 duration-300"
             >
             Grafik Penjualan
-            </Link> */}
+            </Link>
           </div>
         )}
       </div>

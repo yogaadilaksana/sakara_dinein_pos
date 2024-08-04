@@ -2,8 +2,7 @@
 import AdminTable from "@/app/_components/_dashboard/AdminTable";
 import Breadcrumb from "@/app/_components/_dashboard/Breadcrumb";
 import EditQuantityModal from "@/app/_components/_dashboard/EditQuantityModal";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import {
   TableBody,
@@ -27,6 +26,8 @@ const routes = [
   },
 ];
 
+/*
+notUSE
 const tableData = [
   {
     itemId: "23sawaw",
@@ -47,11 +48,31 @@ const tableData = [
     price: 666,
   },
 ];
-
+*/
 function page() {
-  const [tableContent, setTableContent] = useState(tableData);
+
+  const [tableContent, setTableContent] = useState([]);
 
   const { setIsModalOpen, setItemName, setItemQty } = useToggleUiStore();
+
+  useEffect(() => {
+    fetch("/api/pustakaBarang")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTableContent(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching shifts:", error);
+        setError(error);
+      });
+  }, []);
+
+ 
 
   const handleOpenModal = (data) => {
     setIsModalOpen();
@@ -100,7 +121,7 @@ function page() {
               {tableContent.map((content, i) => (
                 <TableRow key={i} className="items-center">
                   <TableCell className="first:font-medium last:text-right text-dpaccent">
-                    {content.itemName}
+                    {content.product.name}
                   </TableCell>
                   <TableCell className="text-dpaccent">
                     {content.quantity}

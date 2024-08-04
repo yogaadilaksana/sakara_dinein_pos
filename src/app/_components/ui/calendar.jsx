@@ -2,11 +2,18 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
-
 import { cn } from "@/app/_lib/utils";
 import { buttonVariants } from "@/app/_components/ui/button";
+import "react-day-picker/dist/style.css"; // pastikan untuk mengimpor gaya CSS react-day-picker
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
+function Calendar({ className, classNames, showOutsideDays = true, onSelectDate, ...props }) {
+  const handleDayClick = (day, modifiers) => {
+    console.log("Day clicked:", day, "Modifiers:", modifiers);
+    if (onSelectDate) {
+      onSelectDate(day);
+    }
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -50,6 +57,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
+      onDayClick={handleDayClick}
       {...props}
     />
   );

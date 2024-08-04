@@ -46,7 +46,7 @@ const tableData = [
 ];
 
 function page() {
-  const [tableContent, setTableContent] = useState(tableData);
+  // const [tableContent, setTableContent] = useState(tableData);
 
   return (
     <>

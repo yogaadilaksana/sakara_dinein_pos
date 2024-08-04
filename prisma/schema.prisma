@@ -20,7 +20,6 @@ model User {
   password String
   role     Role   @default(CASHIER)
 
-  shift  Shift?
   Refund Refund[]
 }
 
@@ -78,14 +77,13 @@ model Category {
 
 model Shift {
   id             BigInt   @id @default(autoincrement())
-  user_id        BigInt   @unique
+  user_id        BigInt   
   start_time     DateTime @default(now())
   end_time       DateTime?
   start_cash     Decimal  @default(0.0)
   total_expected Decimal
   total_actual   Decimal
 
-  user User @relation(fields: [user_id], references: [id])
 }
 
 model Receipt {

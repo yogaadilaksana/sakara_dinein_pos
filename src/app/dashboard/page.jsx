@@ -4,6 +4,8 @@ import Breadcrumb from "../_components/_dashboard/Breadcrumb";
 import DatePicker from "../_components/_dashboard/DatePicker";
 import SalesCard from "../_components/_dashboard/SalesCard";
 import EmptyTable from "../_components/_dashboard/EmptyTable";
+import useToggleUiStore from "@/app/_stores/store";
+
 import {
   TableBody,
   TableCell,
@@ -23,43 +25,60 @@ const routes = [
 
 export default function Page() {
   const [tableContent, setTableContent] = useState([]);
+  const [salesSummary, setsalesSummary] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const { selectedDate: selectedDateFromStore } = useToggleUiStore();
+  useEffect(() => {
+    setSelectedDate(selectedDateFromStore);
+  }, [selectedDateFromStore]);
+
+  const handleSelectDate = (date) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
+
+  function formatDate(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
-        const response = await fetch("/api/product");
+        setLoading(true);
+
+        let url = "/api/transaction";
+        if (selectedDate) {
+          const formattedDate = formatDate(selectedDate);
+          url = `/api/transaction/bydate?startDate=${formattedDate}&endDate=${formattedDate}`;
+        }
+
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
-          setTableContent(data);
+          setTableContent(data.transactionData);
+          setsalesSummary(data.salesSummaryFormatted);
         } else {
           console.error('Failed to fetch data:', await response.text());
+          setTableContent([]); // Set table content to empty array if response is not ok
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setTableContent([]); // Set table content to empty array in case of error
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     fetchData();
-  }, []);
-
-  const salesSummary = [
-    {
-      title: "Penjualan Kotor",
-      type: "price",
-      desc: '2.000.000'
-    },
-    {
-      title: "Penjualan Bersih",
-      type: "price",
-      desc: "1.000.000"
-    },
-    {
-      title: "Item Terjual",
-      type: "quantity",
-      desc: "30"
-    },
-  ];
-
+  }, [selectedDate]);
+  
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
       <div className="flex flex-col space-y-7 px-20">
@@ -72,7 +91,7 @@ export default function Page() {
             <h1 className="font-semibold md:text-lg text-sm w-max">
               Rangkuman Produk
             </h1>
-            <DatePicker />
+            <DatePicker onClick={handleSelectDate}/>
           </div>
 
           {/* Table */}
@@ -80,19 +99,19 @@ export default function Page() {
             <TableHeader className={`bg-dpprimary border-b-2 border-bcprimary`}>
               <TableRow>
                 <TableHead className="first:w-[260px] text-bcprimary font-semibold">
-                  Produk
+                  Item
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Stok
+                  Item Sold
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Deskripsi
+                  Gross Sales
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Harga
+                  Net Sales
                 </TableHead>
                 <TableHead className="text-bcprimary font-semibold">
-                  Kategori
+                  Gross Profit
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -100,24 +119,24 @@ export default function Page() {
               {tableContent.map((product, i) => (
                 <TableRow key={i} className="items-center">
                   <TableCell className="first:font-medium last:text-right text-dpaccent">
-                    {product.name}
+                    {product.product.name}
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {product.stock}
+                    {product.quantity}
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {product.description}
+                    {product.receipt.total}
                   </TableCell>
                   <TableCell className="text-dpaccent">
                   <NumericFormat
                       displayType="text"
-                      value= {product.price}
+                      value= {parseInt(product.receipt.total) - parseInt(product.receipt.pajak) - parseInt(product.receipt.diskon)}
                       prefix={"Rp."}
                       thousandSeparator
                     />
                   </TableCell>
                   <TableCell className="text-dpaccent">
-                    {product.category?.name}
+                      {parseInt(product.receipt.total) - parseInt(product.receipt.pajak) - parseInt(product.receipt.diskon)}
                   </TableCell>
                 </TableRow>
               ))}
