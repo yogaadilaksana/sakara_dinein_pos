@@ -1,19 +1,146 @@
-"use client";
-
-import { useState } from "react";
-import EmptyList from "../../_components/_dine_in/EmptyList";
-import { PiArrowUUpLeft } from "react-icons/pi";
-import Link from "next/link";
-import { NumericFormat } from "react-number-format";
-import { useCartDineIn } from "@/app/_stores/store";
+'use client'
+import { checkPaymentStatus } from '../../utils/api';
+import { PiArrowUUpLeft } from 'react-icons/pi';
+import Link from 'next/link';
+import { NumericFormat } from 'react-number-format';
+import { useCartDineIn } from '@/app/_stores/store';
+import { loadSnap } from '../../utils/loadSnap';
+import { useEffect, useState } from 'react';
+import EmptyList from '@/app/_components/_dine_in/EmptyList';
 
 function Page() {
   const { cart, handleAddQty, handleSubtractQty } = useCartDineIn();
+  const [orderId, setOrderId] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const totalPriceToPay = handleTotalPrice();
 
   function handleTotalPrice() {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   }
+
+  async function handleCheckout() {
+    try {
+      const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tableNumber: 1,  // Replace with the actual table number if needed
+          items: cart,
+          customerDetails: {
+            first_name: 'Uncle',
+            last_name: 'BOB',
+            email: 'customer@example.com',
+            phone: '08111222333',
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const { token } = await response.json();
+        const snap = await loadSnap();
+
+        snap.pay(token, {
+          onSuccess: async function(result) {
+            console.log('Payment Success:', result);
+            try {
+              setOrderId(result.order_id);
+              alert('Payment Successful!', result.order_id);
+              // Print invoice after successful payment
+              await printInvoice();
+            } catch (error) {
+              alert('Failed to update order status.');
+            }
+          },
+          onPending: function(result) {
+            console.log('Payment Pending:', result);
+            alert('Payment Pending!');
+          },
+          onError: function(result) {
+            console.log('Payment Error:', result);
+            alert('Payment Failed!');
+          },
+          onClose: function() {
+            console.log('Customer closed the payment popup');
+            alert('Payment popup closed.');
+          }
+        });
+      } else {
+        const { error } = await response.json();
+        console.error('Payment Initialization Error:', error);
+        alert('Failed to initiate payment.');
+      }
+    } catch (error) {
+      console.error('Payment Processing Error:', error);
+      alert('An error occurred during payment processing.');
+    }
+  }
+
+  useEffect(() => {
+    if (orderId) {
+      const checkPaymentStatus = async () => {
+        try {
+          const response = await fetch('/api/order/checkPayment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ orderId }),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            setPaymentStatus(result.paymentStatus);  // Update payment status
+          } else {
+          }
+        } catch (error) {
+          console.error('Error checking payment status:', error);
+        }
+      };
+
+      // Polling or check status periodically
+      const interval = setInterval(() => {
+        checkPaymentStatus();
+      }, 5000); // Check every 5 seconds, adjust as needed
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [orderId]);
+
+  // Define printInvoice function
+  const printInvoice = async () => {
+    const strukData = `
+      Nama Toko
+      Alamat Toko
+      --------------------
+      ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+      --------------------
+      Total: Rp ${totalPriceToPay}
+    `;
+
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455'] // UUID layanan dari gambar
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455'); // UUID layanan dari gambar
+      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3'); // UUID karakteristik yang mendukung Write without Response
+
+      if (!characteristic) {
+        console.error('Characteristic not found');
+        return;
+      }
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+      console.log('Data sent to printer');
+    } catch (error) {
+      console.error('Failed to print:', error);
+    }
+  };
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] overflow-y-auto overflow-x-hidden min-h-screen">
@@ -41,7 +168,7 @@ function Page() {
             </ul>
           </div>
           <div className="fixed bottom-0 w-full border-t border-qraccent/20 bg-bcsecondary px-6 py-6">
-            <TotalPriceCard totalPriceToPay={totalPriceToPay} />
+            <TotalPriceCard totalPriceToPay={totalPriceToPay} onCheckout={handleCheckout} />
           </div>
         </div>
       ) : (
@@ -98,24 +225,19 @@ function CartItem({ product, onAddQty, onSubtractQty }) {
   );
 }
 
-function TotalPriceCard({ totalPriceToPay }) {
+function TotalPriceCard({ totalPriceToPay, onCheckout }) {
   return (
-    <>
-      <div className="flex items-center justify-between px-2">
-        <h1 className="text-md">Total Harga</h1>
-        <p className="text-xl font-semibold">
-          <NumericFormat
-            displayType="text"
-            value={totalPriceToPay}
-            prefix={"Rp."}
-            thousandSeparator
-          />
-        </p>
-      </div>
-      <button className="mt-4 flex w-full justify-center rounded-xl bg-qraccent px-6 py-2 text-bcprimary transition-colors duration-300 focus:bg-qrprimary">
-        Pembayaran
+    <div className="flex justify-between items-center">
+      <p className="text-lg font-semibold text-qrprimary">
+        Total: <NumericFormat value={totalPriceToPay} prefix={"Rp."} thousandSeparator />
+      </p>
+      <button
+        onClick={onCheckout}
+        className="bg-qrprimary text-bcprimary py-2 px-4 rounded"
+      >
+        Checkout
       </button>
-    </>
+    </div>
   );
 }
 
