@@ -62,12 +62,12 @@ export default function Page() {
 
 
   const increaseQuantity = () => {
-      setQuantity(quantity + 1);
+      setQuantity(parseInt(quantity) + 1);
   };
 
   const decreaseQuantity = () => {
       if (quantity > 0) {
-          setQuantity(quantity - 1);
+          setQuantity(parseInt(quantity) - 1);
       }
   };
   useEffect(() => {
@@ -599,91 +599,90 @@ export default function Page() {
           </div>
         </div>
       )}
-       {editAllItem && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg w-full max-w-4xl">
-              <h2 className="text-2xl font-bold mb-6">Create Item</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                      <label className="block text-gray-700 mb-1">Name</label>
-                      <input
-                          type="text"
-                          value={currentItem.name}
-                          onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      />
-                  </div>
-                  <div>
-                      <label className="block text-gray-700 mb-1">Quantity</label>
-                      <input
-                          type="number"
-                          value={currentItem.stock}
-                          onChange={(e) => setCurrentItem({ ...currentItem, qty: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      />
-                  </div>
-                  <div>
-                      <label className="block text-gray-700 mb-1">Price</label>
-                      <input
-                          type="number"
-                          value={currentItem.price}
-                          onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      />
-                  </div>
-                  <div>
-                      <label className="block text-gray-700 mb-1">Description</label>
-                      <input
-                          type="text"
-                          value={currentItem.description}
-                          onChange={(e) => setCurrentItem({ ...currentItem, description: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      />
-                  </div>
-                  <div>
-                      <label className="block text-gray-700 mb-1">Category</label>
-                      <select
-                          value={currentItem.category || ''}
-                          onChange={(e) => setCurrentItem({ ...currentItem, category: e.target.value })}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      >
-                          <option value="" disabled>Select a category</option>
-                          {categories.map((category) => (
-                              <option key={category.id} value={category.id}>
-                                  {category.name}
-                              </option>
-                          ))}
-                      </select>
-                  </div>
-                  <div>
-                      <label className="block text-gray-700 mb-1">Image</label>
-                      <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="w-full p-2 border border-gray-300 rounded"
-                      />
-                  </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                  <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                      onClick={handleSaveItem}
-                  >
-                      Save
-                  </button>
-                  <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                      onClick={handleCloseEditFull}
-                  >
-                      Cancel
-                  </button>
-              </div>
+       {editAllItem && currentItem && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-white p-8 rounded-lg w-full max-w-4xl">
+          <h2 className="text-2xl font-bold mb-6">Create Item</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-gray-700 mb-1">Name</label>
+              <input
+                type="text"
+                value={currentItem.name || ''}
+                onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Quantity</label>
+              <input
+                type="number"
+                value={currentItem.stock || ''}
+                // onChange={(e) => setCurrentItem({ ...currentItem, stock: currentItem.stock })}
+                className="w-full p-2 border border-gray-300 rounded" readOnly
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Price</label>
+              <input
+                type="number"
+                value={currentItem.price || ''}
+                onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Description</label>
+              <input
+                type="text"
+                value={currentItem.description || ''}
+                onChange={(e) => setCurrentItem({ ...currentItem, description: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Category</label>
+              <select
+                value={currentItem.category || ''}
+                onChange={(e) => setCurrentItem({ ...currentItem, category: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded"
+              >
+                <option value="" disabled>Select a category</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              onClick={handleSaveItem}
+            >
+              Save
+            </button>
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              onClick={handleCloseEditFull}
+            >
+              Cancel
+            </button>
           </div>
         </div>
-    
-    
+      </div>
       )}
+
     </>
   );
 }
