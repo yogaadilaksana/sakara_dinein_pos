@@ -1,4 +1,4 @@
-export default function Home() {
+export default function Page() {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen px-4">
       <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center">

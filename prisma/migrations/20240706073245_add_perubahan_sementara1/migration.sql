@@ -6,10 +6,17 @@
 
 */
 -- AlterTable
+<<<<<<< HEAD
 ALTER TABLE `OrderItem` ADD COLUMN `subtotal` DECIMAL(65, 30) NOT NULL;
 
 -- AlterTable
 ALTER TABLE `Product` ADD COLUMN `category_id` BIGINT NOT NULL;
+=======
+ALTER TABLE `orderitem` ADD COLUMN `subtotal` DECIMAL(65, 30) NOT NULL;
+
+-- AlterTable
+ALTER TABLE `product` ADD COLUMN `category_id` BIGINT NOT NULL;
+>>>>>>> dine_in
 
 -- CreateTable
 CREATE TABLE `Category` (

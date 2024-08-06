@@ -6,14 +6,22 @@
 
 */
 -- AlterTable
+<<<<<<< HEAD
 ALTER TABLE `Product` DROP PRIMARY KEY,
+=======
+ALTER TABLE `product` DROP PRIMARY KEY,
+>>>>>>> dine_in
     ADD COLUMN `image` VARCHAR(191) NOT NULL,
     MODIFY `id` BIGINT NOT NULL AUTO_INCREMENT,
     MODIFY `stock` BIGINT NOT NULL DEFAULT 0,
     ADD PRIMARY KEY (`id`);
 
 -- AlterTable
+<<<<<<< HEAD
 ALTER TABLE `User` MODIFY `role` ENUM('ADMIN', 'CASHIER', 'SUPER_ADMIN') NOT NULL DEFAULT 'CASHIER';
+=======
+ALTER TABLE `user` MODIFY `role` ENUM('ADMIN', 'CASHIER', 'SUPER_ADMIN') NOT NULL DEFAULT 'CASHIER';
+>>>>>>> dine_in
 
 -- CreateTable
 CREATE TABLE `Order` (

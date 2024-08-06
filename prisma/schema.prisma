@@ -27,6 +27,7 @@ enum Role {
   ADMIN
   CASHIER
   SUPER_ADMIN
+  SUPER_ADMIN
 }
 
 model Product {

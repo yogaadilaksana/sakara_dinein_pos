@@ -3,9 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    @apply m-0 p-0 w-full h-full box-border;
+  }
+
+  #root, #__next {
+    @apply w-full h-full;
+  }
+
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  /* For WebKit browsers (e.g., Chrome, Safari) */
+  .custom-scrollbar-x::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* For Firefox */
+  .custom-scrollbar-x {
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Optional: Disable scrollbar visibility but keep functionality */
+  .custom-scrollbar-x {
+    -ms-overflow-style: none; /* IE and Edge */
   }
 }

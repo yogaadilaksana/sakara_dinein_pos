@@ -69,7 +69,7 @@ export async function POST(req) {
         stock: qty,
         price,
         category_id: category,
-        image: image
+        image: image.replace('./public', '')
       },
     });
     
@@ -114,54 +114,7 @@ export const config = {
   },
 };
 
-// export async function POST(req, res) {
-//   try {
-//     // Wait for the middleware to process the request
-//     upload.single('file')(req, res, async function (err) {
-//       if (err) {
-//         console.error('Error uploading file:', err);
-//         return res.status(500).json({ error: 'File upload failed' });
-//       }
 
-//       // Extract fields from the request body
-//       const { name, qty, price, category, description } = req.body;
-//       const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-//       // let formData = req.formData();
-//       // let body = Object.fromEntries(formData);
-
-//       console.log("File path:", filePath);  // Log the file path
-//       console.log("Form fields:", { name, qty, price, category, description });  // Log form fields
-
-//       // Handle product creation logic here
-//       const newProduct = {
-//         name,
-//         qty,
-//         price,
-//         category,
-//         description,
-//         image: filePath,
-//       };
-
-//       console.log(newProduct);  // Log the new product
-//       return new Response(JSON.stringify(newProduct), {
-//         status: 200,
-//         headers: {
-//           'Content-Type': 'application/json',
-//         }
-//       })
-
-//     });
-//   } catch (error) {
-//     console.error('Error handling upload:', error);
-//     return new Response(JSON.stringify(newProduct), {
-//       status: 200,
-//       headers: {
-//         'Content-Type': 'application/json',
-//       }
-//     })
-//   }
-// }
 
 // PUT to update a product
 export async function PUT(req) {

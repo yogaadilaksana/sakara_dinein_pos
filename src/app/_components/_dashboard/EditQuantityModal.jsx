@@ -28,7 +28,7 @@ const EditQuantityModal = ()=> {
 
   const handleInputQty = (e) => {
     // e.preventDefault();
-    const value = e.target.value;
+    const value = parseInt(e.target.value);
 
     if (value >= 0) {
       inputItemQty(value);

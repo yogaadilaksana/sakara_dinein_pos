@@ -1,9 +1,20 @@
 import { useState } from 'react';
 import { FaPlus, FaMinus, FaTable } from 'react-icons/fa';
 import Modal from './Modal';
+import PaymentModal from './PaymentModal';
 
-const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const BillSummary = ({
+  billItems,
+  addTable,
+  updateQuantity,
+  tables,
+  setTables,
+  selectedPaymentMethod,
+  setSelectedPaymentMethod,
+  updateBillItems
+}) => {
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [newTableName, setNewTableName] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
 
@@ -26,12 +37,67 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
   };
 
   const handleSelectTable = (tableName) => {
+    const updatedBillItems = billItems.map(item => ({
+      ...item,
+      table: [{ name: tableName, details: 'Details here' }] // Assuming `table` is an array
+    }));
+    updateBillItems(updatedBillItems);
     setSelectedTable(tableName);
   };
 
   const subTotal = billItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  const pajak = parseInt(subTotal) * 0.1;
-  const total = parseInt(subTotal) + parseInt(pajak);
+  const pajak = subTotal * 0.1;
+  const total = subTotal + pajak;
+  
+  const updatePaymentMethod = async (method) => {
+    const updatedBillItems = billItems.map(item => ({
+      ...item,
+      paymentMethod: method,
+      total: total,
+      subTotal: subTotal
+    }));
+
+    setSelectedPaymentMethod(method);
+    updateBillItems(updatedBillItems);
+
+    // Format data
+    const formattedData = {
+      tableNumber: selectedTable.match(/\d+/)?.[0],
+      type:'CASHIER', // Extract table number as string
+      items: updatedBillItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price.toString(),
+        quantity: item.quantity
+      }))
+    };
+
+    console.log("Data to be posted:", formattedData);
+
+    // Post data to API
+    try {
+      const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formattedData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log('Success:', result);
+      
+      // Clear bill items after successful post
+      updateBillItems([]);
+      setIsPaymentModalOpen(false); // Close payment modal after successful payment
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const connectToPrinter = async () => {
     try {
@@ -77,8 +143,8 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
     }
   };
 
-  const handlePayment = async () => {
-    alert("hehehehe")
+  const handlePayment = () => {
+    setIsPaymentModalOpen(true);
   };
 
   return (
@@ -87,7 +153,7 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
         <h2 className="text-base md:text-lg">Bills Summary</h2>
         <div className="flex items-center space-x-2 md:space-x-4">
           <span className="text-xs md:text-sm">{selectedTable}</span>
-          <button onClick={() => setIsModalOpen(true)} className="text-blue-500 text-xs md:text-sm">
+          <button onClick={() => setIsTableModalOpen(true)} className="text-blue-500 text-xs md:text-sm">
             <FaTable />
           </button>
         </div>
@@ -110,7 +176,7 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
             <div className="flex items-center space-x-1 md:space-x-2 mt-2 md:mt-0">
               <button
                 onClick={() => updateQuantity(item.name, item.quantity - 1)}
-                className="bg-gray-200 text-gray-600 px-1 py-0.5 rounded-l text-xs md:text-sm"
+                className="bg-slate-500 text-white px-1 py-0.5 rounded-l text-xs md:text-sm"
                 disabled={item.quantity === 1}
               >
                 <FaMinus />
@@ -118,7 +184,7 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
               <span className="px-1 md:px-2">{item.quantity}</span>
               <button
                 onClick={() => updateQuantity(item.name, item.quantity + 1)}
-                className="bg-gray-200 text-gray-600 px-1 py-0.5 rounded-r text-xs md:text-sm"
+                className="bg-slate-500 text-white px-1 py-0.5 rounded-r text-xs md:text-sm"
               >
                 <FaPlus />
               </button>
@@ -134,60 +200,51 @@ const BillSummary = ({ billItems, addTable, updateQuantity, tables, setTables })
         <p className="flex justify-between">
           Pajak <span>{rupiah(pajak)}</span>
         </p>
-        <p className="flex justify-between">
+        <p className="flex justify-between font-semibold">
           Total <span>{rupiah(total)}</span>
         </p>
       </div>
       
-      <div className="border-t mt-4 pt-4 flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-3 items-center text-xs md:text-sm">
-        <button
-          onClick={handlePrint}
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full lg:w-1/2"
-        >
-          Print
-        </button>
-        <button
-          onClick={handlePayment}
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full lg:w-1/2"
-        >
-          Payment
-        </button>
+      <div className="flex justify-end mt-4 space-x-3">
+        <button onClick={handlePrint} className="bg-slate-500 text-white px-4 py-2 rounded">Print Bills</button>
+        <button onClick={handlePayment} className="bg-slate-500 text-white px-4 py-2 rounded">Payment</button>
       </div>
       
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="mb-4 text-xs md:text-sm">
-          <h3 className="text-base md:text-lg mb-2">Select Table:</h3>
-          <div className="border-t">
-            {tables.map((table, index) => (
-              <div
-                key={index}
-                className={`flex justify-between items-center p-2 cursor-pointer ${selectedTable === table.name ? 'bg-blue-900 text-white' : ''}`}
-                onClick={() => handleSelectTable(table.name)}
-              >
-                <span>{table.name}</span>
-                <button onClick={(e) => { e.stopPropagation(); handleDeleteTable(table.name); }} className="text-red-500 text-xs md:text-sm">
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4">
+      <Modal isOpen={isTableModalOpen} onClose={() => setIsTableModalOpen(false)}>
+        <div className="p-4 w-full">
+          <h3 className="text-lg font-semibold mb-4">Manage Tables</h3>
+          <div className="mb-4">
+            <label htmlFor="newTableName" className="block text-sm font-medium text-gray-700">
+              Table Name
+            </label>
             <input
-              type="text"
+              id="newTableName"
               value={newTableName}
               onChange={(e) => setNewTableName(e.target.value)}
-              className="border p-2 w-full text-xs md:text-sm"
-              placeholder="New table name"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
-            <button
-              onClick={handleAddTable}
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-2 w-full text-xs md:text-sm"
-            >
-              Add Table
-            </button>
           </div>
+          <button onClick={handleAddTable} className="bg-blue-500 text-white px-4 py-2 rounded mb-4">Add Table</button>
+          <ul className="space-y-2">
+            {tables.map((table) => (
+              <li key={table.name} className="flex justify-between items-center p-2 border border-gray-300 rounded">
+                <span>{table.name}</span>
+                <div className="flex space-x-2">
+                  <button onClick={() => handleSelectTable(table.name)} className="bg-gray-300 text-gray-700 px-4 py-2 rounded">Select</button>
+                  <button onClick={() => handleDeleteTable(table.name)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </Modal>
+
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        setSelectedPaymentMethod={updatePaymentMethod}
+        totalPayment={rupiah(total)}
+      />
     </div>
   );
 };

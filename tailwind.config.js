@@ -11,9 +11,10 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
       screens: {
-        'xl': '1280px', // Custom breakpoint
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
       },
     },
     extend: {
@@ -49,4 +50,7 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  corePlugins: {
+    scrollbar: false, // Disable Tailwind's built-in scrollbar styles
+  },
 };

@@ -37,7 +37,7 @@ const formatTime = (dateTime) => {
   return `${hours}:${minutes}`;
 };
 
-function page() {
+function Page() {
   const [tableContent, setTableContent] = useState([]);
   const [salesSummary, setsalesSummary] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -223,4 +223,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

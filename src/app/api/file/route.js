@@ -56,7 +56,7 @@ export async function POST(req) {
     
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
-    const filePath = `./public/uploads/${file.name}`;
+    const filePath = `./public/dine_in/${file.name}`;
 
     await fs.writeFile(filePath, buffer);
 

@@ -1,7 +1,7 @@
-function SalesCard({ salesSummary }) {
+function SalesCard({ salesSummary, children }) {
   return (
     <div className="text-dpaccent flex flex-col space-y-5">
-      <h1 className="font-semibold text-lg">Rekapan Penjualan</h1>
+      <h1 className="font-semibold text-lg">{children}</h1>
       <ul
         className={`w-full flex flex-wrap items-center ${
           salesSummary.length < 3

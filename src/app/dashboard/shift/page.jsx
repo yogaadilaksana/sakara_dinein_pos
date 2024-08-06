@@ -106,10 +106,13 @@ function Page() {
   }, [selectedDate]);
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-10 lg:w-auto w-screen">
-      <div className="flex flex-col px-20 ">
+      <div className="flex flex-col px-20">
         <Breadcrumb routes={routes} />
       </div>
       <div className="space-y-4 w-full px-6">
+        <h1 className="font-semibold md:text-lg text-sm w-max">
+          Riwayat Shift
+        </h1>
         <div className="flex justify-between items-center">
           <DatePicker />
           <Button onClick={handleGenerateExcel} className="bg-dpprimary">Export</Button>
