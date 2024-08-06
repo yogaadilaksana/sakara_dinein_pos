@@ -1,39 +1,16 @@
-import { useState } from 'react';
-
-const Modal = ({ isOpen, onClose, onAddTable }) => {
-    const [tableName, setTableName] = useState("");
-  
-    const handleAddTable = () => {
-      if (tableName.trim() !== "") {
-        onAddTable(tableName);
-        setTableName("");
-        onClose();
-      }
-    };
+const Modal = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null;
   
     return (
-      isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-1/3">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Add Table</h2>
-              <button onClick={onClose} className="text-gray-600">&times;</button>
-            </div>
-            <input
-              type="text"
-              value={tableName}
-              onChange={(e) => setTableName(e.target.value)}
-              placeholder="Table Name"
-              className="w-full p-2 border rounded-lg mb-4"
-            />
-            <div className="flex justify-end">
-              <button onClick={handleAddTable} className="bg-blue-900 text-white px-4 py-2 rounded-lg">
-                Add Table
-              </button>
-            </div>
-          </div>
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="absolute inset-0 bg-gray-800 opacity-50"></div>
+        <div className="bg-white p-6 rounded-lg shadow-lg z-10">
+          <button onClick={onClose} className="absolute top-2 right-2 text-gray-500">
+            ✖
+          </button>
+          {children}
         </div>
-      )
+      </div>
     );
   };
   

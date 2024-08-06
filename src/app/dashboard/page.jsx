@@ -80,7 +80,7 @@ export default function Page() {
   }, [selectedDate]);
   
   return (
-    <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto w-screen">
+    <div className="flex-grow lg:ml-80 mt-28 space-y-14 lg:w-auto">
       <div className="flex flex-col space-y-7 px-20">
         <Breadcrumb routes={routes} />
         <SalesCard salesSummary={salesSummary} />
@@ -95,7 +95,7 @@ export default function Page() {
           </div>
 
           {/* Table */}
-          <AdminTable className="overflow-x-auto">
+          <AdminTable className="overflow-hidden">
             <TableHeader className={`bg-dpprimary border-b-2 border-bcprimary`}>
               <TableRow>
                 <TableHead className="first:w-[260px] text-bcprimary font-semibold">

@@ -13,34 +13,11 @@ const Page = () => {
     fetch('/api/shift/historypenjualan')
       .then(response => response.json())
       .then(data => {
-        console.log("apasih si data", data)
         setItemSold(data.itemsSold);
       })
       .catch(error => console.error("Error fetching shift data:", error));
   }, []); 
-  console.log('this is itemsold', itemsSold)
-    // const itemsSold = [
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    //   { name: 'Extrajoss Susu', quantity: 1 },
-    //   { name: 'Sakara Tea', quantity: 2 },
-    //   { name: 'Hot Cafe Latte', quantity: 3 },
-    // ];
+
   
     const totalItems = itemsSold.length ? itemsSold.length :0;
   

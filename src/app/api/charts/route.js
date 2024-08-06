@@ -35,11 +35,9 @@ export async function GET() {
     const categoryVolume = data.reduce((acc, item) => {
       const categoryName = item.product.category.name;
       const quantity = Number(item.quantity)
-      console.log("this is meleyoot", categoryName, item.quantity);
       acc[categoryName] = (acc[categoryName] || 0) + quantity;
       return acc;
     }, {});
-    console.log("aku akan si babi", categoryVolume);
     const pieChartData = {
       labels: Object.keys(categoryVolume),
       datasets: [

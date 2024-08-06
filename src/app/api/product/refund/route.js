@@ -31,13 +31,11 @@ export async function GET(req) {
       });
       const productsObj = toObject(orderItems);
 
-      console.log("this is item refund", orderItems, startTime, newStartDate);
       // Mengelompokkan data berdasarkan orderId dan menghitung total kuantitas untuk setiap produk
       const orderQuantities = productsObj.reduce((acc, item) => {
         const quantity = typeof item.quantity === 'number' ? item.quantity : parseFloat(item.quantity);
         return acc + quantity;
     }, 0);
-      console.log("total angka yang refund", orderQuantities);
 
     return new Response(JSON.stringify(orderQuantities), {
       status: 200,

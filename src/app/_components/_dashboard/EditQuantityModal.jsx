@@ -15,7 +15,6 @@ const EditQuantityModal = ()=> {
     subtractItemQty,
     inputItemQty,
   } = useToggleUiStore();
-  console.log(itemQty);
   // const [quantity, setQuantity] = useState(itemQty);
 
   const handleAddQty = () => {

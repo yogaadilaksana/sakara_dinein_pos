@@ -12,12 +12,12 @@ const Page = () => {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [showSendReceiptModal, setShowSendReceiptModal] = useState(false);
+  const [selectedStatus, setSelectedStatus ] = useState(null)
 
   useEffect(() => {
     async function fetchActivities() {
       const response = await fetch('/api/activities');
       const data = await response.json();
-      console.log("this is data fetch", data);
       setActivities(data);
     }
 
@@ -27,7 +27,7 @@ const Page = () => {
   const handleClick = async (activity) => {
     const response = await fetch(`/api/activities/${activity.id}`);
     const data = await response.json();
-    console.log("this is data from activityID", data);
+    setSelectedStatus(activity.status)
     setSelectedActivity(data);
   };
 
@@ -164,64 +164,66 @@ const Page = () => {
 
       {/* Details Section */}
       {selectedActivity && (
-       <div className="w-1/2 p-4">
-       <h2 className="text-2xl font-semibold mb-4">Details</h2>
-       <div className="bg-gray-100 p-4 mb-4">
-         <div className="flex justify-between mb-4">
-           <div>
-             <p>
-               <span className="font-semibold">Receipt Number:</span> {selectedActivity.receiptNumber}
-             </p>
-             <p>
-               <span className="font-semibold">Payment Method:</span> {selectedActivity.paymentMethod}
-             </p>
-             <p>
-               <span className="font-semibold">Time of Transaction:</span> {selectedActivity.transactionTime}
-             </p>
-           </div>
-           <div className="flex flex-col space-y-2">
-             <button
-               onClick={() => setShowSendReceiptModal(true)}
-               className="py-2 px-4 border border-red-500 text-red-500 rounded"
-             >
-               Send Receipt
-             </button>
-             <button
-               onClick={() => setShowRefundModal(true)} // Update this if needed
-               className="py-2 px-4 border border-blue-500 text-blue-500 rounded"
-             >
-               Refund Request
-             </button>
-           </div>
-         </div>
-         <h3 className="text-xl font-semibold mb-2">Items</h3>
-         <div>
-           {selectedActivity.items.map((item, index) => (
-             <div key={index} className="flex bg-gray-300 justify-between items-center mb-4 p-3">
-               <div className="flex items-center space-x-2">
-                 <span className="bg-gray-200 p-1 rounded">{item.code}</span>
-                 <span>{item.name}</span>
-               </div>
-               <span>{item.quantity}x</span>
-               <span>{item.product_price}</span>
-             </div>
-           ))}
-         </div>
-         <div className="flex justify-between font-semibold mb-2">
-           <span>Sub Total:</span>
-           <span>{selectedActivity.subTotal}</span>
-         </div>
-         <div className="flex justify-between font-semibold mb-2">
-           <span>PPN (10%):</span>
-           <span>{selectedActivity.tax}</span>
-         </div>
-         <div className="flex justify-between font-semibold mb-2">
-           <span>Total:</span>
-           <span>{selectedActivity.total}</span>
-         </div>
-       </div>
-     </div>
+        <div className="w-1/2 p-4">
+          <h2 className="text-2xl font-semibold mb-4">Details</h2>
+          <div className="bg-gray-100 p-4 mb-4">
+            <div className="flex justify-between mb-4">
+              <div>
+                <p>
+                  <span className="font-semibold">Receipt Number:</span> {selectedActivity.receiptNumber}
+                </p>
+                <p>
+                  <span className="font-semibold">Payment Method:</span> {selectedActivity.paymentMethod}
+                </p>
+                <p>
+                  <span className="font-semibold">Time of Transaction:</span> {selectedActivity.transactionTime}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <button
+                  onClick={() => setShowSendReceiptModal(true)}
+                  className="py-2 px-4 border border-red-500 text-red-500 rounded"
+                >
+                  Send Receipt
+                </button>
+                <button
+                  onClick={() => setShowRefundModal(true)}
+                  className={`py-2 px-4 rounded ${selectedActivity.status === 'CANCELED' ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'border border-blue-500 text-blue-500'}`}
+                  disabled={selectedStatus === 'CANCELED'}
+                >
+                  Refund Request
+                </button>
+              </div>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Items</h3>
+            <div>
+              {selectedActivity.items.map((item, index) => (
+                <div key={index} className="flex bg-gray-300 justify-between items-center mb-4 p-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-gray-200 p-1 rounded">{item.code}</span>
+                    <span>{item.name}</span>
+                  </div>
+                  <span>{item.quantity}x</span>
+                  <span>{item.product_price}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between font-semibold mb-2">
+              <span>Sub Total:</span>
+              <span>{selectedActivity.subTotal}</span>
+            </div>
+            <div className="flex justify-between font-semibold mb-2">
+              <span>PPN (10%):</span>
+              <span>{selectedActivity.tax}</span>
+            </div>
+            <div className="flex justify-between font-semibold mb-2">
+              <span>Total:</span>
+              <span>{selectedActivity.total}</span>
+            </div>
+          </div>
+        </div>
       )}
+
       {/* Modals */}
       <Modal show={showRefundModal} onClose={() => setShowRefundModal(false)}>
         <RefundTransaction

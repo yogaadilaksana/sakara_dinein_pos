@@ -49,7 +49,6 @@ export async function GET(req) {
     };
 
     const item = toObject(result)
-    console.log("this is item sold", itemsSold)
     // Send the data as JSON
     return new Response(JSON.stringify(item), {
       status: 200,

@@ -56,23 +56,15 @@ function toObject(obj) {
         const shiftStart = new Date(shift.start_time);
         const shiftEnd = new Date(shift.end_time);
 
-        console.log('Shift Start:', shiftStart.toISOString());
-        console.log('Shift End:', shiftEnd.toISOString());
-        console.log("income", incomeExpensesData)
         const shiftIncomeExpenses = incomeExpensesData.filter(ie => {
             const ieDate = new Date(ie.transactionDate);
-    
-            console.log('Raw Income/Expense Date:', ie.transactionDate);
-            console.log('Parsed Income/Expense Date:', ieDate.toISOString());
-
+   
             // Periksa apakah tanggal income/expense berada dalam rentang shift
             const withinRange = ieDate >= shiftStart;
-            console.log('Is Income/Expense Date within range?', withinRange,ieDate,shiftStart,shiftEnd);
 
             return withinRange;
         });
 
-        console.log('Filtered Income/Expenses:', shiftIncomeExpenses);
         const totalIncome = shiftIncomeExpenses
           .filter(ie => ie.type === 'INCOME')
           .reduce((sum, ie) => sum + ie.amount, 0);

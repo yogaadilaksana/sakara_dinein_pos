@@ -86,7 +86,6 @@ function Page() {
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
-          console.log("apakah keluar dia?", data.users)
           setShifts(data);
           setLoading(false);
         } else {
@@ -105,7 +104,6 @@ function Page() {
 
     fetchData();
   }, [selectedDate]);
-console.log("this is sift admin", shifts)
   return (
     <div className="flex-grow lg:ml-80 mt-28 space-y-10 lg:w-auto w-screen">
       <div className="flex flex-col px-20 ">

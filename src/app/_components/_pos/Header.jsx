@@ -1,11 +1,20 @@
-const Header = () => {
-    return (
-      <div className="flex justify-between items-center p-4 bg-gray-200">
-        <input type="text" placeholder="Cari Menu" className="px-4 py-2 border rounded-lg"/>
-        <button className="bg-blue-900 text-white px-4 py-2 rounded-lg">Custom Menu</button>
+import { FaSearch } from 'react-icons/fa';
+
+const Header = ({ searchTerm, setSearchTerm }) => {
+  return (
+    <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center w-96 bg-white rounded-md shadow p-2">
+        <input
+          type="text"
+          placeholder="Search Menu"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="outline-none px-2 w-96"
+        />
+        <FaSearch className="text-gray-400" />
       </div>
-    );
-  };
-  
-  export default Header;
-  
+    </div>
+  );
+};
+
+export default Header;

@@ -20,7 +20,6 @@ const Page = () => {
     const now = new Date().toISOString(); // Current date and time in ISO 8601 format
     const payload = {type: isIncome ? "INCOME" : "EXPENSE", amount: amount, description: description, transactionDate: now}
 
-    console.log("this is payload", payload)
     const response = await fetch("/api/shift/transaction",{
       method: "POST",
       headers: { "Content-Type": "application/json"},
@@ -56,7 +55,6 @@ const Page = () => {
 
   const total = parseInt(totalIncome) - parseInt(totalExpense);
 
-  console.log(transactions);
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />

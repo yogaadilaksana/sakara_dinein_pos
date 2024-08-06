@@ -27,7 +27,6 @@ export async function GET(req) {
     const member = toObject(members)
     const shifts = toObject(shift) 
     let data = {shifts, member}
-    console.log("data jahanam", data);
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
@@ -54,7 +53,6 @@ export async function POST(req) {
     });
     // const test = JSON.parse(req.body);
     const existShift = toObject(existingShift)
-    console.log('apakah dia exist', userId, startingCash, existShift ? true : false);
     if (existingShift) {
       return new Response(JSON.stringify(existShift), {
         status: 200,
@@ -63,7 +61,6 @@ export async function POST(req) {
         },
       });
     } else {
-        console.log("user id ada?", startingCash);
         const shift = await prisma.shift.create({
           data: {
             user_id: userId,

@@ -109,7 +109,6 @@ export default function Page() {
   }, []);
 
   const handleOpenModal = (data) => {
-    console.log("what is this data?", data);
     // setIsModalOpen();
     setModalEdit(true);
     setQuantity(data.stock)
@@ -182,7 +181,6 @@ export default function Page() {
   };
 
   const handleEditFull = async(data) =>{
-    console.log("this is data", data)
     setCurrentItem(data)
     seteditAllItem(true);
   }
@@ -195,104 +193,7 @@ export default function Page() {
     setSelectedFile(e.target.files[0]);
   };
 
-  // const handleSaveItem = async (e) => {
-  //   e.preventDefault();
-  //   if (currentItem.id) {
-  //     // Update item
-  //     try {
-  //       const updatedItem = {
-  //         ...currentItem,
-  //         stock: quantity
-  //       };
-  //       console.log("this is current item", currentItem);
-  //       const response = await fetch(`/api/product`, {
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(updatedItem),
-  //       });
 
-  //       if (response.ok) {
-  //         setTableContent(tableContent.map(item => item.id === currentItem.id ? currentItem : item));
-  //         setIsCreating(false);
-  //         setCurrentItem(null);
-  //         setModalEdit(false);
-  //         setCurrentItem(null)
-  //       } else {
-  //         console.error('Failed to update item:', await response.text());
-  //       }
-  //     } catch (error) {
-  //       console.error('Error updating item:', error);
-  //     }
-  //   } else {
-  //     // Create item
-  //     try {
-  //         const formData = new FormData();
-  //         formData.append('file', selectedFile);  // Pastikan image adalah File object          
-  //         const fileUploadResponse = await fetch(`/api/file`, {
-  //           method: "POST",
-  //           body: formData
-  //         });
-  //         const fileUploadResult = await fileUploadResponse.json();
-
-  //         if (fileUploadResponse.ok) {
-  //           setCurrentItem(prevItem => ({
-  //             ...prevItem,
-  //             image: fileUploadResult.filePath
-  //           }));
-  //         }
-
-  //         // setCurrentItem({"image": fileUploadResult.filePath})
-  //         console.log("currentItembaru", currentItem);
-  //       if(fileUploadResponse.ok){
-  //         const response = await fetch("/api/product", {
-  //           method: "POST",
-  //           headers: {
-  //             "content-type" : "application/json"
-  //           },
-  //           body:JSON.stringify(currentItem),
-  //         });
-  //         if (response.ok) {
-  //           console.log("this is response", response);
-  //           console.log("this is response2", selectedFile);
-  
-  //           const newItem = await response.json();
-  //           if (selectedFile) {
-  //             const formData = new FormData();
-  //             formData.append('file', selectedFile);  // Pastikan image adalah File object
-  //             console.log("this is file", formData);
-  //             for (let pair of formData.entries()) {
-  //               console.log(`${pair[0]}: ${pair[1]}`);  // Log each key-value pair
-  //             }
-  //             console.log(currentItem.image);
-              
-  //             const fileUploadResponse = await fetch(`/api/file`, {
-  //               method: "POST",
-  //               body: formData
-  //             });
-    
-  //             if (!fileUploadResponse.ok) {
-  //               throw new Error('File upload failed');
-  //             }
-    
-  //             const fileUploadResult = await fileUploadResponse.json();
-  //             newItem.image = fileUploadResult.filePath; // Update image path in the new item
-  //           }
-  //           setTableContent([...tableContent, newItem]);
-  //           setIsCreating(false);
-  //           setCurrentItem(null);
-  //           setModalEdit(false)
-  //         } else {
-  //           console.error('Failed to create item:', await response.text());
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error creating item:', error);
-  //     }
-  //   }
-  // };
-  
   const handleSaveItem = async (e) => {
     e.preventDefault();
   
@@ -352,7 +253,6 @@ export default function Page() {
           image: imageFilePath, // Set image path to currentItem
         };
         
-        console.log("this is new item data from scratsh", newItem)
         // Post new item
         const response = await fetch("/api/product", {
           method: "POST",

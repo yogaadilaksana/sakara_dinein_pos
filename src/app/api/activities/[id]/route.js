@@ -47,7 +47,6 @@ export async function GET(req, { params }) {
       };
 
       const newReponse = toObject(selectedActivity)
-      console.log("selected activity api",selectedActivity )
       return new Response(JSON.stringify(newReponse), {
         status: 200,
         headers: {

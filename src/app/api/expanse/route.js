@@ -39,7 +39,6 @@ export async function GET(req) {
   
       // Calculate net amount
       const netAmount = totalIncome - totalExpense;
-      console.log("this is data amount", totalIncome,totalExpense)
       // Prepare result
       const result = {
         data: dataObj,
@@ -68,7 +67,6 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const { name, qty, price, category, description, image } = await req.json();
-    console.log(name, qty, price, category, description, image );
     const newProduct = await prisma.product.create({
       data: {
         name,
@@ -179,7 +177,6 @@ export async function PUT(req) {
       keepExtensions: true,
   });
   
-    console.log("berapakah id yang masuk kesini?", id);
     const updatedProduct = await prisma.product.update({
       where: { id },
       data: {

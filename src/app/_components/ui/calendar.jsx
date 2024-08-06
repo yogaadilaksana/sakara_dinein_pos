@@ -8,7 +8,6 @@ import "react-day-picker/dist/style.css"; // pastikan untuk mengimpor gaya CSS r
 
 function Calendar({ className, classNames, showOutsideDays = true, onSelectDate, ...props }) {
   const handleDayClick = (day, modifiers) => {
-    console.log("Day clicked:", day, "Modifiers:", modifiers);
     if (onSelectDate) {
       onSelectDate(day);
     }

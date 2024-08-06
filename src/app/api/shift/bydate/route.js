@@ -50,7 +50,6 @@ export async function GET(req) {
     });
 
     const shifts = toObject(shift);
-    console.log("what is new shift", shifts)
     return new Response(JSON.stringify(shifts), {
       status: 200,
       headers: {

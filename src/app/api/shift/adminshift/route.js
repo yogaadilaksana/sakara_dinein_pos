@@ -32,7 +32,6 @@ export async function GET(req) {
       };
     });
 
-    console.log("Combined data:", combinedData);
 
     return new Response(JSON.stringify(toObject(combinedData)), {
       status: 200,

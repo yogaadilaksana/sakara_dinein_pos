@@ -11,16 +11,16 @@ const poppins = Poppins({
 export const metadata = {
   title: "Selamat Datang | Sakara Kopi Bali",
   description:
-    "Dashboard dan website Sakara Kopi Bali, tempat bersantai sambil menikmati kopi di daerah Denpasar Utara, Bali.Tempat yang nyaman dan luas bisa menjadi tempat kerja terbaikmu sambil menikmati berbagai menu yang lezat dengan harga terjangkau",
+    "Dashboard dan website Sakara Kopi Bali, tempat bersantai sambil menikmati kopi di daerah Denpasar Utara, Bali. Tempat yang nyaman dan luas bisa menjadi tempat kerja terbaikmu sambil menikmati berbagai menu yang lezat dengan harga terjangkau",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} h-screen grid grid-rows-[auto_auto] bg-bcprimary gap-10`}
+        className={`${poppins.className} flex flex-col min-h-screen bg-bcprimary`}
       >
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

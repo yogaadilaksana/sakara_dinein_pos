@@ -84,7 +84,6 @@ export async function GET(request) {
     });
 
     const penjulanBersih = parseInt(salesSummary._sum.total) - parseInt(salesSummary._sum.diskon) - parseInt(salesSummary._sum.pajak);
-    console.log("this is data transactional", penjulanBersih);
 
     const transactionDataFormatted = toObject(transactionData);
     const allSalesSummary = {
@@ -115,7 +114,6 @@ export async function GET(request) {
       salesSummaryFormatted
     };
 
-    console.log("this is data manipulation from date", finalTransactionData);
     return NextResponse.json(finalTransactionData, { status: 200 });
   } catch (error) {
     console.error("Something went wrong", error);

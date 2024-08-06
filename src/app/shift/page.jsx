@@ -40,10 +40,8 @@ const Page = () => {
     async function fetchData() {
       try {
         const response = await fetch(`/api/shift?userId=${encodeURIComponent(userId)}`);
-        console.log("Response status:", response.status); // Tambahan log
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched data:", data); // Tambahan log
           setMemberData(data.shifts);
           setUserData(data.member);
         } else {
@@ -76,9 +74,7 @@ const Page = () => {
       .then(data => setExpansi(data));
   }, []);
 
-  console.log("this is fuck", productTerjual, productRefund, expansi);
   useEffect(() => {
-    console.log("Updated memberData:", memberData); // Tambahan log untuk memberData
   }, [memberData]);
 
   const handleSubmit = async () => {

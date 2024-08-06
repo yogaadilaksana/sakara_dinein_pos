@@ -24,12 +24,6 @@ const SendReceiptModal = ({ show, onClose, transaction }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div id="modal-content" className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-red-500 border border-red-500 px-2 py-1 rounded"
-        >
-          Back
-        </button>
         <h2 className="text-center text-2xl font-semibold mb-4">Send Receipt</h2>
         <div className="text-center text-4xl font-bold mb-2">{transaction.total}</div>
         <div className="text-center mb-4">How would you like to receive your receipt?</div>

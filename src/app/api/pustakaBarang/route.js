@@ -18,7 +18,6 @@ export async function GET() {
         product: true,
       },
     });
-    console.log("this is data shift", barang);
     const pustakaBarang = toObject(barang)
     return NextResponse.json(pustakaBarang, { status: 200 });
   } catch (error) {

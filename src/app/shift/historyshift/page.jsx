@@ -52,7 +52,6 @@ const Page = () => {
   }, [openShifts, closedShifts]);
 
   const handleShiftClick = (id) => {
-    console.log("Shift ID clicked:", id);
     setShiftId(id);
   };
 

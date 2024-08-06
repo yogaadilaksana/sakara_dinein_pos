@@ -45,7 +45,6 @@ const RefundTransaction = ({ onClose, transaction, userId }) => {
       setOtherReason('');
     }
   };
-console.log("data item di refund trx", items)
   const handleRefund = async () => {
     try {
       const response = await fetch('/api/activities', {
