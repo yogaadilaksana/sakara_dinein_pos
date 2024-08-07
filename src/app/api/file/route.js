@@ -52,7 +52,6 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const file = formData.get("file");
-    console.log("file inside", file);
     
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);

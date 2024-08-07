@@ -15,7 +15,6 @@ export const GET = async (req, { params }) => {
         });
         return new NextResponse(JSON.stringify(product), { status: 200 })
     }catch(err){
-        console.log(err)
         return new NextResponse(JSON.stringify({message: "ada yang error"}), {status: 500})
     }
 }

@@ -23,7 +23,6 @@ function EditItemForm() {
   const [quantity, setQuantity] = useState(selectedItemData.quantity);
   const [price, setPrice] = useState(selectedItemData.price);
 
-  console.log(selectedItemData.img);
 
   const handleFileChange = (e) => {
     if (e.target.files) {

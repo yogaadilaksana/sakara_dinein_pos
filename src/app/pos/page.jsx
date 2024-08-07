@@ -18,7 +18,6 @@ const Page = () => {
   const [showCustomMenu, setShowCustomMenu] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
-  console.log('this is item', billItems);
 
   useEffect(() => {
     fetch('/api/product')
@@ -67,7 +66,6 @@ const Page = () => {
   
 
   const updateBillItems = async (updatedItems) => {
-    console.log('updated bill items', updatedItems)
     setBillItems(updatedItems);
 
     //sebelum post kita mapping data supaya sesuai dengan req order api

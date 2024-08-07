@@ -54,7 +54,6 @@ export async function GET(req, { params }) {
         },
       });    
     } catch (error) {
-      console.log("this is error", error)
       return new Response(JSON.stringify({error: "something went wrong"}), {
         status: 500,
         headers: {

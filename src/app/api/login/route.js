@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { getToken } from 'next-auth/jwt';
 
 const prisma = new PrismaClient();
 
@@ -36,4 +37,19 @@ export const POST = async (req) => {
     console.error('Error:', err);
     return new Response(JSON.stringify({ message: 'Internal server error' }), { status: 500 });
   }
+}
+
+export async function GET(req){
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!token) {
+    return new Response(JSON.stringify({ token, role: user.role }), {
+      status: 500,
+    });
+  }
+
+  const userId = token.id; // Assuming the token has the userId field
+  return new Response(JSON.stringify({ userID: userId }), {
+    status: 200,
+  });
 };

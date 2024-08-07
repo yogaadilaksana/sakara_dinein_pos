@@ -4,20 +4,30 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { FiLayout, FiArchive, FiFileText, FiServer } from "react-icons/fi";
+import { FiLayout, FiArchive, FiFileText, FiUsers } from "react-icons/fi";
+import { useSession } from 'next-auth/react';
 
 function SideBar() {
   const [arrowColor, setArrowColor] = useState("#2D3250");
   const [isOpenDashboard, setIsOpenDashboard] = useState(false);
   const [isOpenReport, setIsOpenReport] = useState(false);
+  const [isOpenUsers, setIsOpenUsers] = useState(false);
   const { isSideBarOpen, setCloseSideBar } = useToggleUiStore();
   const pathname = usePathname();
+  const { data: session, status } = useSession(); // Get session data
 
   const sideBarRef = useRef();
 
   useEffect(() => {
     setCloseSideBar();
   }, [pathname]);
+
+  useEffect(() => {
+    if (status === "loading") return; // Wait for the session to load
+    if (session && session.user.role !== 'SUPER_ADMIN') {
+      setIsOpenUsers(false); // Hide the user management section if not SUPER_ADMIN
+    }
+  }, [session, status]);
 
   // if (!isSideBarOpen) return null;
 
@@ -50,7 +60,7 @@ function SideBar() {
           )}
         </button>
         {isOpenDashboard && (
-          // {/* Children */}
+          // Children
           <div className="text-sm flex flex-col space-y-2 mt-2 ml-[29px]">
             {/* Dashboard Beranda */}
             <Link
@@ -65,10 +75,10 @@ function SideBar() {
             </Link>
             {/* Dashboard Grafik */}
             <Link
-            href="/dashboard/charts"
-            className="hover:text-dpprimary transition-all hover:translate-x-1 duration-300"
+              href="/dashboard/charts"
+              className="hover:text-dpprimary transition-all hover:translate-x-1 duration-300"
             >
-            Grafik Penjualan
+              Grafik Penjualan
             </Link>
           </div>
         )}
@@ -113,7 +123,7 @@ function SideBar() {
           )}
         </button>
         {isOpenReport && (
-          // {/* Children */}
+          // Children
           <div className="text-sm flex flex-col space-y-2 mt-2 ml-[28px]">
             {/* Transaksi */}
             <Link
@@ -140,6 +150,47 @@ function SideBar() {
           </div>
         )}
       </div>
+
+      {/* User Management */}
+      {session?.user.role === 'SUPER_ADMIN' && (
+        <div>
+          <button
+            type="button"
+            onMouseOver={() => setArrowColor("#7077A1")}
+            onMouseOut={() => setArrowColor("#2D3250")}
+            onClick={() => setIsOpenUsers(!isOpenUsers)}
+            className={`${
+              pathname.startsWith("/dashboard/users")
+                ? "font-semibold text-dpprimary translate-x-2"
+                : "hover:translate-x-1"
+            } flex items-center gap-3 text-dpaccent hover:text-dpprimary transition-all duration-300`}
+          >
+            <FiUsers />
+            <span>User Management</span>
+            {isOpenUsers ? (
+              <FaChevronUp fontSize="0.8em" />
+            ) : (
+              <FaChevronDown fontSize="0.8em" />
+            )}
+          </button>
+          {isOpenUsers && (
+            // Children
+            <div className="text-sm flex flex-col space-y-2 mt-2 ml-[29px]">
+              {/* User List */}
+              <Link
+                href="/dashboard/users"
+                className={`${
+                  pathname === "/dashboard/users"
+                    ? "font-semibold text-dpprimary translate-x-2"
+                    : "hover:translate-x-1"
+                } hover:text-dpprimary transition-all duration-300`}
+              >
+                User List
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

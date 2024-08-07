@@ -14,7 +14,6 @@ let snap = new midtransClient.Snap({
 
 export async function POST(req, res) {
   const { tableNumber, items, customerDetails, type='' } = await req.json();
-  console.log("this is item order", items);
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const discount = 0; // Define your discount calculation if applicable
   const tax = total * 0.1; // Define your tax calculation if applicable

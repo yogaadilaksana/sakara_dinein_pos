@@ -10,7 +10,6 @@ const PaymentModal = ({ isOpen, onClose, setSelectedPaymentMethod, totalPayment 
   ];
 
   const handlePaymentMethodSelect = (method) => {
-    console.log(`Selected Payment Method: ${method}`); // Debug log
     setSelectedPaymentMethod(method);
     onClose();
   };

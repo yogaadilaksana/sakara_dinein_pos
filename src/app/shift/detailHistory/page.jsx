@@ -4,10 +4,6 @@ import Sidebar from "@/app/_components/_shift/sidebar";
 import RightSidebar from "@/app/_components/_shift/righSidebar";
 
 const Page = () => {
-  // const router = useRouter();
-  // const { date } = router.query;
-  // console.log("this is tanggal", date);
-
   // Data dummy untuk demonstrasi
   const [dataShifts, setDataShifts] = useState(null)
   useEffect(() => {

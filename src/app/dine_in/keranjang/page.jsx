@@ -46,7 +46,6 @@ function Page() {
 
         snap.pay(token, {
           onSuccess: async function(result) {
-            console.log('Payment Success:', result);
             try {
               setOrderId(result.order_id);
               alert('Payment Successful!', result.order_id);
@@ -56,15 +55,12 @@ function Page() {
             }
           },
           onPending: function(result) {
-            console.log('Payment Pending:', result);
             alert('Payment Pending!');
           },
           onError: function(result) {
-            console.log('Payment Error:', result);
             alert('Payment Failed!');
           },
           onClose: function() {
-            console.log('Customer closed the payment popup');
             alert('Payment popup closed.');
           }
         });
@@ -135,7 +131,6 @@ function Page() {
       const encoder = new TextEncoder();
       const data = encoder.encode(strukData);
       await characteristic.writeValue(data);
-      console.log('Data sent to printer');
     } catch (error) {
       console.error('Failed to print:', error);
     }

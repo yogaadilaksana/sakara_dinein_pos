@@ -58,7 +58,6 @@ const Page = () => {
 
   const groupedActivities = groupActivitiesByDate(activities);
 
-  console.log("this is data send to refund modal", selectedActivity)
   return (
     <div className="flex p-4 pl-14">
       {/* Sidebar */}

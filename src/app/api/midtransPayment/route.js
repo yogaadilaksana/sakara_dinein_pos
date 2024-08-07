@@ -19,7 +19,6 @@ function toObject(obj) {
 export async function POST(req, res) {
     try {
       const { items, customerDetails } = await req.json();
-        console.log("this is data from body", items);
       const parameter = {
         transaction_details: {
           order_id: `order-id-${Math.floor(Math.random() * 1000000000)}`,
@@ -42,7 +41,6 @@ export async function POST(req, res) {
         },
       });
     } catch (err) {
-        console.log("this is error", err);
         return new Response(JSON.stringify({error: err}), {
             status: 500,
             headers: {

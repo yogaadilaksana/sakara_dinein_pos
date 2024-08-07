@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -13,30 +13,26 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.role === 'ADMIN') {
-          router.push('/dashboard');
-        } else if (data.role === 'CASHIER') {
-          router.push('/');
-        } else if (data.role === 'SUPER_ADMIN') {
-          router.push('/auth/signup');
-        }
-      } else {
-        const data = await response.json();
-        setError(data.message);
+    if (result.ok) {
+      const session = await fetch('/api/auth/session');
+      const data = await session.json();
+      const role = data.user.role;
+
+      if (role === 'ADMIN') {
+        router.push('/dashboard');
+      } else if (role === 'CASHIER') {
+        router.push('/pos');
+      } else if (role === 'SUPER_ADMIN') {
+        router.push('/dashboard/superadmin');
       }
-    } catch (err) {
-      setError('An unexpected error occurred.');
+    } else {
+      setError(result.error || 'An unexpected error occurred.');
     }
   };
 

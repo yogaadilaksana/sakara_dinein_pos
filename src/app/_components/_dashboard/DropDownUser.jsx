@@ -1,6 +1,25 @@
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 function DropDownUser({ userRef }) {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',  // Sertakan kredensial untuk memastikan cookie dikirim
+    });
+
+    if (response.ok) {
+      router.push('/auth/login');
+    } else {
+      console.error('Failed to logout');
+    }
+  };
+
   return (
     <div
       ref={userRef}
@@ -8,7 +27,7 @@ function DropDownUser({ userRef }) {
     >
       <Link
         href=""
-        className=" hover:text-dpprimary transition-colors duration-300"
+        className="hover:text-dpprimary transition-colors duration-300"
       >
         Toko
       </Link>
@@ -18,12 +37,12 @@ function DropDownUser({ userRef }) {
       >
         Pengaturan
       </Link>
-      <Link
-        href=""
+      <button
+        onClick={handleLogout}
         className="pt-4 w-full flex justify-center hover:text-dpprimary transition-colors duration-300"
       >
         Keluar
-      </Link>
+      </button>
     </div>
   );
 }

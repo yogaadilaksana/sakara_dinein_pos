@@ -11,7 +11,6 @@ function Page() {
   const { cart, setCart } = useCartDineIn();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const totalPrice = handleCalculatePrice();
-  console.log(cart);
 
   function handleSelectProduct(product) {
     setSelectedProduct((menu) => (menu === product ? null : product));

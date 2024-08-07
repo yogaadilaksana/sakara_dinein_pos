@@ -72,7 +72,6 @@ const BillSummary = ({
       }))
     };
 
-    console.log("Data to be posted:", formattedData);
 
     // Post data to API
     try {
@@ -89,7 +88,6 @@ const BillSummary = ({
       }
 
       const result = await response.json();
-      console.log('Success:', result);
       
       // Clear bill items after successful post
       updateBillItems([]);
