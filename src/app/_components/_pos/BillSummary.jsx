@@ -17,6 +17,7 @@ const BillSummary = ({
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [newTableName, setNewTableName] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState(null);
 
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -50,6 +51,7 @@ const BillSummary = ({
   const total = subTotal + pajak;
   
   const updatePaymentMethod = async (method) => {
+    setPaymentMethod(method)
     const updatedBillItems = billItems.map(item => ({
       ...item,
       paymentMethod: method,
@@ -59,20 +61,20 @@ const BillSummary = ({
 
     setSelectedPaymentMethod(method);
     updateBillItems(updatedBillItems);
-
     // Format data
     const formattedData = {
       tableNumber: selectedTable.match(/\d+/)?.[0],
       type:'CASHIER', // Extract table number as string
+      paymentMethod: method,
       items: updatedBillItems.map(item => ({
         id: item.id,
         name: item.name,
         price: item.price.toString(),
         quantity: item.quantity
-      }))
+      })),
     };
 
-
+    console.log("formatter data", formattedData)
     // Post data to API
     try {
       const response = await fetch('/api/order', {

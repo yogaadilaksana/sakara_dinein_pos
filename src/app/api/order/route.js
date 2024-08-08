@@ -13,7 +13,7 @@ let snap = new midtransClient.Snap({
 });
 
 export async function POST(req, res) {
-  const { tableNumber, items, customerDetails, type='' } = await req.json();
+  const { tableNumber, items, customerDetails, type='', paymentMethod } = await req.json();
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const discount = 0; // Define your discount calculation if applicable
   const tax = total * 0.1; // Define your tax calculation if applicable
@@ -64,7 +64,7 @@ export async function POST(req, res) {
     const payment = await prisma.payment.create({
       data: {
         id: `order-${order.id}`,
-        payment_name: 'Midtrans',
+        payment_name: paymentMethod === '' ? 'Midtrans' : paymentMethod,
         snap_token: type === '' ? transaction.token : '',
         status: type === '' ? 'PENDING_PAYMENT' : 'PAID',
         expiry: new Date(new Date().getTime() + 30 * 60000), // 30 minutes expiry

@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../_components/_shift/sidebar";
 import RightSidebar from "../_components/_shift/righSidebar";
-import { format } from 'date-fns';
+import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
+import { useSession } from 'next-auth/react';
 
 const Page = () => {
   const [isIncome, setIsIncome] = useState(true);
@@ -17,85 +18,71 @@ const Page = () => {
   const [tableContent, setTableContent] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [endingCash, setEndingCash] = useState("");
-  const [startingCashInput, setStartingCashInput] = useState("");
-  const [userId, setUserId] = useState(null);
-  const [outlet, setoutlet] = useState("Sakara Coffe Bali Antasura");
+  const [startingCashInput, setStartingCashInput] = useState(""); // State baru untuk menyimpan input starting cash
+  const [userId, setUserId] = useState(null); //dummy
+  const [outlet, setoutlet] = useState("Sakara Coffe Bali Antasura")
   const [confirmEnd, setConfirmEnd] = useState(false);
-  const [productTerjual, setProductTerjual] = useState(null);
+  const [productTerjual, setProductTerjual] = useState(null)
   const [productRefund, setProductRefund] = useState(null);
-  const [dated, setDated] = useState(new Date().toISOString());
-  const [expansi, setExpansi] = useState(null);
+  const [dated, setDated] = useState(new Date().toISOString()); // Misalnya inisialisasi date
+  const [expansi, setExpansi] = useState(null)
+  const { data: session, status } = useSession(); //getSession
 
-  useEffect(() => {
-    async function fetchUserId() {
-      const response = await fetch('/api/login');
-      if (response.ok) {
-        const data = await response.json();
-        window.sessionStorage.setItem('userId', data.userId);
-        setUserId(parseInt(data.userID));
-      } else {
-        console.error('Failed to fetch userId:', await response.text());
-      }
-    }
-    fetchUserId();
-  }, []);
-
-  useEffect(() => {
-    const storedUserId = window.sessionStorage.getItem('userId');
-    if (storedUserId) {
-      setUserId(parseInt(storedUserId, 10));
-    }
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      if (userId !== null) {
-        try {
-          const response = await fetch(`/api/shift?userId=${encodeURIComponent(userId)}`);
-          if (response.ok) {
-            const data = await response.json();
-            setMemberData(data.shifts);
-            setUserData(data.member);
-          } else {
-            console.error("Failed to fetch data:", await response.text());
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      }
-    }
-
-    fetchData();
-  }, [userId]);
-
-  useEffect(() => {
-    if (dated) {
-      fetch(`/api/product/terjual?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
-        .then(response => response.json())
-        .then(data => setProductTerjual(data));
-    }
-  }, [dated]);
-
-  useEffect(() => {
-    if (dated) {
-      fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
-        .then(response => response.json())
-        .then(data => setProductRefund(data));
-    }
-  }, [dated]);
-
-  useEffect(() => {
-    fetch('/api/expanse')
-      .then(response => response.json())
-      .then(data => setExpansi(data));
-  }, []);
-
+  //fungsi untuk formating nominal rupiah
   const formatRupiah = (amount) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
     }).format(amount);
   };
+  useEffect(() => {
+    if (session && session.user) {
+      setUserId(parseInt(session.user.id));
+    }
+  }, [session]);
+  //end fungsi
+  const date = new Date(Date.now())
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`/api/shift?userId=${encodeURIComponent(userId)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMemberData(data.shifts);
+          setUserData(data.member);
+        } else {
+          console.error("Failed to fetch data:", await response.text());
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, [userId]);
+
+  useEffect(()=>{
+    fetch(`/api/product/terjual?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
+      .then(response => response.json())
+      .then(data => setProductTerjual(data));
+  }, [dated]);
+
+  useEffect(()=>{
+    fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
+      .then(response => response.json())
+      .then(data => setProductRefund(data));
+  }, [dated]);
+
+  //expanse income
+  useEffect(() => {
+    fetch(`/api/expanse?startTime=${encodeURIComponent(dated)}&endTime=${encodeURIComponent(dated)}`)
+      .then(response => response.json())
+      .then(data => setExpansi(data));
+  }, [dated]);
+
+  useEffect(() => {
+  }, [memberData]);
 
   const handleSubmit = async () => {
     const newTransaction = { description, amount: isIncome ? +amount : -amount };
@@ -123,10 +110,11 @@ const Page = () => {
       const data = await response.json();
       setMemberData(data);
       setShiftStarted(true);
-    }
+    } 
   };
 
   const handleEndShift = async () => {
+
     setShowModal(true);
   };
 
@@ -139,19 +127,19 @@ const Page = () => {
     const response = await fetch("/api/shift", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: userId, end_time: new Date(), endingCash: parseFloat(endingCash) })
+      body: JSON.stringify({ user_id: userId, end_time: date, endingCash: parseFloat(endingCash) })
     });
     if (response.ok) {
       setShowModal(false);
+      // setShiftStarted(false);
       setConfirmEnd(true);
+      // handleModalClose()
+
     } else {
       console.error("Failed to end shift:", await response.text());
     }
+    
   };
-
-  if (userId === null) {
-    return <div>Loading...</div>;
-  }
 
   if (!shiftStarted) {
     return (
@@ -203,94 +191,156 @@ const Page = () => {
       <div className="w-3/4 p-4">
         <div className="items-center mb-4">
           <div className="text-lg font-bold">Current Shift</div>
-          <button onClick={handleEndShift} className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+          <button onClick={handleEndShift} className="bg-slate-500 text-white px-4 py-2 rounded-lg">
             End Shift
           </button>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          {memberData ? (
+          {memberData ? ( // Pastikan memberData sudah di-load
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="font-semibold">Name</div>
               <div>{userData.name}</div>
               <div className="font-semibold">Outlet</div>
               <div>{outlet}</div>
               <div className="font-semibold">Starting Shift</div>
-              <div>{format(new Date(memberData.start_time), "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</div>
+              <div>{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</div>
               <div className="font-semibold">Expense/Income</div>
               <div className={expansi.netAmount < 0 ? "text-red-500" : "text-green-500"}>
-                {formatRupiah(expansi.netAmount)}
+                {expansi < 0
+                  ? `-${formatRupiah(Math.abs(expansi.netAmount))}`
+                  : `${formatRupiah(expansi.netAmount)}`}
               </div>
-              {/* Other details */}
+              <div className="font-semibold">Items Sold</div>
+              <div>{productTerjual ? productTerjual : 0}</div>
+              <div className="font-semibold">Items Returned</div>
+              <div>{productRefund ? productRefund : 0}</div>
             </div>
           ) : (
-            <div>No shift data available</div>
+            <p>Loading...</p> // Tampilkan pesan loading saat data belum ada
           )}
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <div className="text-lg font-bold mb-2">Cash</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="font-semibold">Starting Cash</div>
+              <div>{formatRupiah(memberData.start_cash)}</div>
+              <div className="font-semibold">Cash Sales</div>
+              <div>{formatRupiah(memberData.cashSales ? memberData.cashSales : 0)}</div>
+            </div>
+          </div>
         </div>
-        {/* Transaction form */}
-        <div className="bg-white p-4 rounded-lg shadow mt-4">
-          <h2 className="text-2xl font-bold mb-4">Transaction Form</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                Description
-              </label>
+      </div>
+
+      {/* Modal for Ending Cash */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-zinc-100 rounded-lg shadow-lg w-[700px]"> 
+          <div className="p-8"> 
+            <div className="flex justify-between items-center mb-4">
+              <button
+                className="text-red-500 border border-red-500 rounded px-4 py-2"
+                onClick={handleModalClose}
+              >
+                Cancel
+              </button>
+              <h2 className="text-center text-xl font-bold">End Current Shift</h2>
+            </div>
+            <div className="mb-6 border border-gray-300 bg-white p-4 rounded">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-gray-600">Starting Shift</h3>
+                <p className="text-gray-600">{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</p>
+              </div>
+            </div>
+            <div className="mb-6">
+              <h2 className="font-bold text-gray-600 text-2xl">Cash Details</h2>
+              <table className="w-full">
+                <tbody>
+                <tr className="border-b border-gray-300 bg-white">
+                  <td className="py-3 px-4 text-gray-600">Starting Cash</td>
+                  <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(memberData.start_cash ? memberData.start_cash :0)}</td>
+                </tr>
+                  <tr className="border-b border-gray-300 bg-white">
+                    <td className="py-3 px-4 text-gray-600">Cash Sales</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(memberData.cash_sales ? memberData.cash_sales :0)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-300 bg-white">
+                    <td className="py-3 px-4 text-gray-600">Cash from Invoice</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(memberData.cash_invoice ? memberData.cash_invoice :0)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-300 bg-white">
+                    <td className="py-3 px-4 text-gray-600">Cash Refunds</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(memberData.cash_refunds ? memberData.cash_refunds:0)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-300 bg-white">
+                    <td className="py-3-b px-4 text-gray-600">Expense/Income</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(expansi.netAmount)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-300 bg-white">
+                    <td className="py-3 px-4 text-gray-600">Expected Ending Cash</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(1526000)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="mb-6 ">
+              <label className="block font-bold text-gray-600 mb-2">Actual Ending Cash</label>
               <input
                 type="text"
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-gray-300 w-full p-2 rounded"
+                placeholder="Rp. 0"
+                onChange={(e) => setEndingCash(e.target.value)}
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="amount">
-                Amount
-              </label>
-              <input
-                type="number"
-                id="amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="transactionType">
-                Transaction Type
-              </label>
-              <select
-                id="transactionType"
-                value={isIncome}
-                onChange={(e) => setIsIncome(e.target.value === "true")}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="true">Income</option>
-                <option value="false">Expense</option>
-              </select>
-            </div>
-            <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
-              Add Transaction
+            <button
+              className="w-full bg-slate-500 text-white py-2 rounded-lg"
+              onClick={handleModalSubmit}
+            >
+              END SHIFT
             </button>
-          </form>
+          </div>
         </div>
-        {/* Modal for ending shift */}
-        {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-4 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-bold mb-4">End Shift</h2>
-              <p>Are you sure you want to end the shift?</p>
-              <div className="flex justify-end mt-4">
-                <button onClick={handleModalClose} className="bg-gray-500 text-white py-2 px-4 rounded-lg mr-2">
-                  Cancel
-                </button>
-                <button onClick={handleModalSubmit} className="bg-red-500 text-white py-2 px-4 rounded-lg">
-                  End Shift
-                </button>
+      </div>
+      
+      )}
+      {confirmEnd && (
+        <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-xl shadow-xl p-10 w-full max-w-2xl">
+          <h2 class="text-3xl font-bold text-center text-gray-800">Shift Ended</h2>
+          <div class="mt-8">
+            <div class="border-t border-gray-300 py-4">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Name</span>
+                <span class="text-gray-800">{userData.name}</span>
+              </div>
+            </div>
+            <div class="border-t border-gray-300 py-4">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Outlet</span>
+                <span class="text-gray-800">{outlet}</span>
+              </div>
+            </div>
+            <div class="border-t border-gray-300 py-4">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Starting Shift</span>
+                <span class="text-gray-800">{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</span>
+              </div>
+            </div>
+            <div class="border-t border-b border-gray-300 py-4">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Ending Shift</span>
+                <span class="text-gray-800">{format(date, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</span>
               </div>
             </div>
           </div>
-        )}
+          <div class="mt-8 flex justify-center space-x-6">
+            <button onClick={handleModalClose} class="bg-rose-400 text-white py-3 px-8 rounded-full font-semibold hover:bg-rose-600">No, Thanks</button>
+            <button class="bg-slate-500 text-white py-3 px-8 rounded-full font-semibold hover:bg-slate-600">Print Receipt</button>
+          </div>
+        </div>
       </div>
+      
+      
+      
+      )}
     </div>
   );
 };

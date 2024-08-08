@@ -1,11 +1,13 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import Sidebar from "../../_components/_shift/sidebar";
 import RightSidebar from "../../_components/_shift/righSidebar";
 import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [shiftId, setShiftId] = useState(null);
 
   const [dataShifts, setDataShifts] = useState([]);
@@ -14,17 +16,19 @@ const Page = () => {
   const [shiftData, setShiftData] = useState([]);
 
   useEffect(() => {
-    // Fetch shift data when the component mounts
-    fetch('/api/shift/historyshift')
-      .then(response => response.json())
-      .then(data => {
-        setOpenShifts(data.openShifts);
-        setClosedShifts(data.closedShifts);
-        setShiftData(data.detailedShifts);
-        setDataShifts(data);
-      })
-      .catch(error => console.error("Error fetching shift data:", error));
-  }, []); // Empty dependency array ensures this runs only once
+    if (session && session.user) {
+      // Fetch shift data when the component mounts
+      fetch(`/api/shift/historyshift?userId=${session.user.id}`)
+        .then(response => response.json())
+        .then(data => {
+          setOpenShifts(data.openShifts);
+          setClosedShifts(data.closedShifts);
+          setShiftData(data.detailedShifts);
+          setDataShifts(data);
+        })
+        .catch(error => console.error("Error fetching shift data:", error));
+    }
+  }, [session]); // Run this effect whenever the session changes
 
   const [formattedOpenShifts, setFormattedOpenShifts] = useState([]);
   const [formattedClosedShifts, setFormattedClosedShifts] = useState([]);
@@ -56,6 +60,15 @@ const Page = () => {
   };
 
   const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
+
+  if (status === "unauthenticated") {
+    router.push('/api/auth/signin');
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-100">

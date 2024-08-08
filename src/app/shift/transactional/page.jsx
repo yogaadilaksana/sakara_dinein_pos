@@ -9,51 +9,48 @@ const Page = () => {
   const [isIncome, setIsIncome] = useState(true);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
-  // const [transactions, setTransactions] = useState([
-  //   { description: 'Uang jackpot', amount: 300000 },
-  //   { description: 'Es Batu Besar 10kilo', amount: -11000 },
-  //   { description: 'Uang Jackpot Hangus', amount: -300000 },
-  // ]);
-  const [transactions, setTransactions] = useState([])
+  const [transactions, setTransactions] = useState([]);
 
   const handleSubmit = async () => {
     const now = new Date().toISOString(); // Current date and time in ISO 8601 format
-    const payload = {type: isIncome ? "INCOME" : "EXPENSE", amount: amount, description: description, transactionDate: now}
+    const payload = { type: isIncome ? "INCOME" : "EXPENSE", amount: parseFloat(amount), description: description, transactionDate: now };
 
-    const response = await fetch("/api/shift/transaction",{
+    const response = await fetch("/api/shift/transaction", {
       method: "POST",
-      headers: { "Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
-    })
-    const newTransaction = { description, amount: isIncome ? +amount : -amount };
-    setTransactions([...transactions, newTransaction]);
-    setDescription('');
-    setAmount('');
-  };
+    });
 
+    if (response.ok) {
+      const newTransaction = await response.json();
+      setTransactions([...transactions, newTransaction]);
+      setDescription('');
+      setAmount('');
+    } else {
+      console.error("Error submitting transaction:", response.statusText);
+    }
+  };
 
   useEffect(() => {
     // Fetch shift data when the component mounts
     fetch('/api/shift/transaction')
       .then(response => response.json())
       .then(data => {
-        setTransactions(data)
+        setTransactions(data);
       })
       .catch(error => console.error("Error fetching shift data:", error));
   }, []);
 
-  // const total = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-
+  // Calculate total income and total expense
   const totalIncome = transactions
-  .filter(transaction => transaction.type === 'INCOME')
-  .reduce((acc, transaction) => acc + transaction.amount, 0);
+    .filter(transaction => transaction.type === 'INCOME')
+    .reduce((acc, transaction) => acc + transaction.amount, 0);
 
-  // Calculate total expense
   const totalExpense = transactions
     .filter(transaction => transaction.type === 'EXPENSE')
     .reduce((acc, transaction) => acc + transaction.amount, 0);
 
-  const total = parseInt(totalIncome) - parseInt(totalExpense);
+  const total = totalIncome - totalExpense;
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -61,9 +58,7 @@ const Page = () => {
       <div className="w-3/6 pr-6 pl-16 bg-zinc-100">
         <RightSidebar />
       </div>
-      <div className=" bg-gray-100 p-5">
-        
-      </div>
+      <div className=" bg-gray-100 p-5"></div>
       <div className="w-2/3 p-5">
         <h2 className="text-2xl font-bold mb-5">Expense/Income</h2>
         <button
@@ -78,7 +73,7 @@ const Page = () => {
         >
           Expense
         </button>
-        <div className=' pt-9'>
+        <div className='pt-9'>
           <input
             type="text"
             placeholder="Description"
@@ -103,9 +98,7 @@ const Page = () => {
             <li key={index} className="mb-2">
               <span>{transaction.description}</span>
               <span
-                className={`float-right ${
-                  transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'
-                }`}
+                className={`float-right ${transaction.type === 'EXPENSE' ? 'text-red-500' : 'text-green-500'}`}
               >
                 {transaction.type === 'EXPENSE' ? '-' : '+'}Rp.{Math.abs(transaction.amount).toLocaleString()}
               </span>
@@ -117,8 +110,6 @@ const Page = () => {
         </div>
       </div>
     </div>
-
-    
   );
 };
 

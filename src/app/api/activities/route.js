@@ -10,10 +10,23 @@ function toObject(obj) {
   ));
 }
 
-export async function GET(req, res) {
-  if (req.method === 'GET') {
+export async function GET(req) {
     try {
+      // Get the current time
+      const now = new Date();
+
+      // Calculate 8 hours before and after the current time
+      const start = new Date(now.getTime() - 8 * 60 * 60 * 1000); // 8 hours before
+      const end = new Date(now.getTime() + 8 * 60 * 60 * 1000);   // 8 hours after
+
+      // Fetch receipts based on the time window
       const receipts = await prisma.receipt.findMany({
+        where: {
+          date_time: {
+            gte: start, // Greater than or equal to 8 hours before now
+            lte: end,   // Less than or equal to 8 hours after now
+          },
+        },
         include: {
           payment: true,
           Receipt_Detail: {
@@ -51,13 +64,15 @@ export async function GET(req, res) {
         },
       });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch activities' });
+      return new Response(JSON.stringify({ error: 'Failed to fetch activities' }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
 }
+
 
 export async function POST(req, res) {
   const { receiptId, items, refundReason, otherReason, userId, subtotal } = await req.json();

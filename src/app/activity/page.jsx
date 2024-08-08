@@ -6,6 +6,7 @@ import RefundTransaction from '../_components/_activity/RefundTransaction';
 import Sidebar from "../_components/_shift/sidebar";
 import SendReceiptModal from '../_components/_activity/SendReceiptModal';
 import { format, isToday, parseISO } from 'date-fns';
+import { useSession } from 'next-auth/react';
 
 const Page = () => {
   const [activities, setActivities] = useState([]);
@@ -13,6 +14,14 @@ const Page = () => {
   const [showRefundModal, setShowRefundModal] = useState(false);
   const [showSendReceiptModal, setShowSendReceiptModal] = useState(false);
   const [selectedStatus, setSelectedStatus ] = useState(null)
+  const { data: session, status } = useSession(); //getSession
+  const [ userId, setUserId ] = useState(null);
+
+  useEffect(() => {
+    if (session && session.user) {
+      setUserId(parseInt(session.user.id));
+    }
+  }, [session]);
 
   useEffect(() => {
     async function fetchActivities() {

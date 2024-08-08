@@ -10,32 +10,49 @@ function toObject(obj) {
   ));
 }
 
-// GET all products
 export async function GET(req) {
   try {
     const url = new URL(req.url);
-    // const startTime = url.searchParams.get('start');
-    // const endTime = url.searchParams.get('end');
+    const startTime = url.searchParams.get('start');
+    const endTime = url.searchParams.get('end');
 
-    const startTime = '2024-07-31 22:39:16.795'
-    const endTime = '2024-07-31 22:39:16.800'
-    const newStartDate = new Date(startTime.replace(' ', 'T') + 'Z');;
-    const newEndDate = new Date(endTime.replace(' ', 'T') + 'Z');
-    const orderItems = await prisma.orderItem.findMany({
-        where: {
-          order_date: {
-            gte: newStartDate, // Mulai waktu
-            lte: newEndDate,   // Akhir waktu
-          },
+    if (!startTime || !endTime) {
+      return new Response(JSON.stringify({ error: "start and end time are required" }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
         },
       });
-      const productsObj = toObject(orderItems);
+    }
 
-      // Mengelompokkan data berdasarkan orderId dan menghitung total kuantitas untuk setiap produk
-      const orderQuantities = productsObj.reduce((acc, item) => {
-        const quantity = typeof item.quantity === 'number' ? item.quantity : parseFloat(item.quantity);
-        return acc + quantity;
+    const newStartDate = new Date(startTime.replace(' ', 'T'));
+    const newEndDate = new Date(endTime.replace(' ', 'T'));
+
+    if (isNaN(newStartDate.getTime()) || isNaN(newEndDate.getTime())) {
+      return new Response(JSON.stringify({ error: "Invalid date format" }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+    const orderItems = await prisma.orderItem.findMany({
+      where: {
+        order_date: {
+          gte: newStartDate, // Start time
+          lte: newEndDate,   // End time
+        },
+      },
+    });
+
+    const productsObj = toObject(orderItems);
+
+    const orderQuantities = productsObj.reduce((acc, item) => {
+      const quantity = typeof item.quantity === 'number' ? item.quantity : parseFloat(item.quantity);
+      return acc + quantity;
     }, 0);
+
 
     return new Response(JSON.stringify(orderQuantities), {
       status: 200,
@@ -44,92 +61,7 @@ export async function GET(req) {
       },
     });
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-}
-
-// POST a new product
-export async function POST(req) {
-  try {
-    const { name, stock, price, categoryId, description } = await req.json();
-
-    const newProduct = await prisma.product.create({
-      data: {
-        name,
-        description,
-        stock,
-        price,
-        categoryId,
-      },
-    });
-
-    return new Response(JSON.stringify(newProduct), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch (error) {
-    console.error("Error creating product:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-}
-
-// PUT to update a product
-export async function PUT(req) {
-  try {
-    const { id, name, stock, price, categoryId } = await req.json();
-
-    const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: {
-        name,
-        stock,
-        price,
-        categoryId,
-      },
-    });
-
-    return new Response(JSON.stringify(updatedProduct), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch (error) {
-    console.error("Error updating product:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-}
-
-// DELETE a product
-export async function DELETE(req) {
-  try {
-    const { id } = await req.json();
-
-    await prisma.product.delete({
-      where: { id },
-    });
-
-    return new Response(null, { status: 204 });
-  } catch (error) {
-    console.error("Error deleting product:", error);
+    console.error("Error fetching order items:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: {

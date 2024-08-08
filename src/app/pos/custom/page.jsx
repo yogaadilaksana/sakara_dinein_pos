@@ -52,7 +52,7 @@ export default function Page() {
             placeholder="Nama Menu"
             className="w-1/2 p-2 rounded border border-gray-300"
           />
-          <button className="bg-blue-900 text-white py-2 px-4 rounded">Custom Menu</button>
+          <button className="bg-slate-500 text-white py-2 px-4 rounded">Custom Menu</button>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

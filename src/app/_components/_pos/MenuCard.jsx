@@ -40,24 +40,6 @@ const MenuCard = ({ id, image, name, price, addToBill }) => {
       <h2 className="text-lg font-semibold text-center">{name}</h2>
       <p className="text-gray-700 font-medium text-center">Rp. {price.toLocaleString()}</p>
       <div className="mt-4 w-full">
-        <div className="flex justify-between items-center w-full mt-2">
-          <span className="text-gray-700">Extra Espresso</span>
-          <button
-            onClick={(e) => handleAddExtra('extraEspresso', e)}
-            className="bg-blue-500 text-white p-1 rounded-full"
-          >
-            +
-          </button>
-        </div>
-        <div className="flex justify-between items-center w-full mt-2">
-          <span className="text-gray-700">Extra Syrup</span>
-          <button
-            onClick={(e) => handleAddExtra('extraSyrup', e)}
-            className="bg-blue-500 text-white p-1 rounded-full"
-          >
-            +
-          </button>
-        </div>
         <textarea
           value={note}
           onClick={(e) => e.stopPropagation()}

@@ -167,12 +167,6 @@ export default function UserPage() {
                     </TableCell>
                     <TableCell className="text-dpprimary flex justify-end items-center gap-3">
                       <button
-                        className="hover:text-dpaccent duration-300 transition-colors"
-                        onClick={() => handleOpenModal(content)}
-                      >
-                        <FiEdit size="1.4rem" />
-                      </button>
-                      <button
                         className="hover:text-error text-error/60 duration-300 transition-colors"
                         onClick={() => handleDeleteUser(content.id)}
                       >

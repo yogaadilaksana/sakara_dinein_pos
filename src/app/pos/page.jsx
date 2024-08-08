@@ -13,24 +13,34 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [tables, setTables] = useState([]);
   const [dataz, setData] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCustomMenu, setShowCustomMenu] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
-
   useEffect(() => {
-    fetch('/api/product')
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data);
+    const fetchData = async () => {
+      try {
+        const [productResponse, categoryResponse] = await Promise.all([
+          fetch('/api/product'),
+          fetch('/api/category'),
+        ]);
+
+        const productData = await productResponse.json();
+        const categoryData = await categoryResponse.json();
+
+        setData(productData);
+        setCategories(categoryData);
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching data');
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const addToBill = (newItem) => {
@@ -63,65 +73,47 @@ const Page = () => {
   const addTable = (newTable) => {
     setTables([...tables, newTable]);
   };
-  
 
   const updateBillItems = async (updatedItems) => {
     setBillItems(updatedItems);
 
-    //sebelum post kita mapping data supaya sesuai dengan req order api
-
-// Format data
     const formattedData = {
       tableNumber: '1',
-      items: billItems.map(item => ({
+      items: billItems.map((item) => ({
         id: item.id,
         name: item.name,
         price: item.price.toString(),
-        quantity: item.quantity
-      }))
+        quantity: item.quantity,
+      })),
     };
-    // const formattedData = {
-    //   tableNumber: '1',
-    //   items: billItems.map(item => ({
-    //     id: item.id,
-    //     name: item.name,
-    //     price: item.price.toString(), // Mengubah harga ke string
-    //     quantity: item.quantity
-    //   }))
-    // };
 
-
-
-
-    //lakukan post ke api order untuk order item by cashier
-
+    // Post request to the API (commented out for now)
     // try {
     //   const response = await fetch('/api/order', {
     //     method: 'POST',
     //     headers: {
     //       'Content-Type': 'application/json',
     //     },
-    //     body: JSON.stringify({
-    //       tableNumber: 
-    //     }),
+    //     body: JSON.stringify(formattedData),
     //   });
-      
+
     //   if (!response.ok) {
     //     throw new Error('Network response was not ok');
     //   }
-      
+
     //   const result = await response.json();
     //   console.log('Order successful:', result);
-    //   // Tangani hasil setelah berhasil melakukan order
     // } catch (error) {
     //   console.error('Error:', error);
-    //   // Tangani error
     // }
-
   };
 
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   const products = dataz.products;
@@ -136,16 +128,13 @@ const Page = () => {
     return matchesCategory && matchesSearch;
   });
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div className="flex bg-gray-200 min-h-screen">
       <Sidebar
         isMinimized={isSidebarMinimized}
         toggleSidebar={toggleSidebar}
         setSelectedCategory={setSelectedCategory}
+        categories={categories}  // Pass categories to the Sidebar
       />
       <div
         className={`flex flex-col flex-1 p-4 transition-all duration-300 ${isSidebarMinimized ? 'pl-6' : 'pl-64'}`}
