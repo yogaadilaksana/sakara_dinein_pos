@@ -10,20 +10,12 @@
 
 */
 -- AlterTable
-<<<<<<< HEAD
-ALTER TABLE `Order` ADD COLUMN `order_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-=======
 ALTER TABLE `order` ADD COLUMN `order_date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
->>>>>>> dine_in
     ADD COLUMN `table_number` BIGINT NOT NULL,
     ADD COLUMN `total` DECIMAL(65, 30) NOT NULL;
 
 -- AlterTable
-<<<<<<< HEAD
-ALTER TABLE `OrderItem` ADD COLUMN `order_id` BIGINT NOT NULL,
-=======
 ALTER TABLE `orderitem` ADD COLUMN `order_id` BIGINT NOT NULL,
->>>>>>> dine_in
     ADD COLUMN `price` DECIMAL(65, 30) NOT NULL,
     ADD COLUMN `product_id` BIGINT NOT NULL,
     ADD COLUMN `quantity` BIGINT NOT NULL;
