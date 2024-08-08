@@ -70,6 +70,9 @@ const Page = () => {
     setIsSidebarMinimized(!isSidebarMinimized);
   };
 
+
+  //tambahkan commnt
+
   const addTable = (newTable) => {
     setTables([...tables, newTable]);
   };
