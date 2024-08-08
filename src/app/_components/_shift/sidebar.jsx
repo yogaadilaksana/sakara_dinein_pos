@@ -12,7 +12,7 @@ const Sidebar = () => {
         }
       });
       if (response.ok) {
-        window.location.href = '/login'; // Redirect to the login page or home page
+        window.location.href = '/auth/login'; // Redirect to the login page or home page
       } else {
         console.error('Failed to logout:', await response.text());
       }

@@ -75,6 +75,10 @@ export default function UserPage() {
     setIsModalOpen(false);
     setCurrentUser(null);
   };
+  const handleRedirect = () => {
+    window.location.href = '/auth/signup';
+  };
+
 
   const handleSaveUser = async (e) => {
     e.preventDefault();
@@ -141,6 +145,12 @@ export default function UserPage() {
             <h1 className="font-semibold md:text-lg text-sm w-max">
               User Management
             </h1>
+            <button
+              className="bg-slate-500 text-white px-4 py-2 rounded"
+              onClick={handleRedirect}
+            >
+              Create User
+            </button>
           </div>
 
           {tableContent.length > 0 ? (
