@@ -47,7 +47,7 @@ const Page = () => {
           <button onClick={() => router.back()} className="text-blue-500">&lt; Back</button>
           <h2 className="text-2xl font-bold">Shift Details</h2>
         </div>
-        <button className="mb-6 px-4 py-2 border rounded border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white">Print Shift Report</button>
+        <button className="mb-6 px-4 py-2 border rounded border-slate-500 text-blue-500 hover:bg-slate-500 hover:text-white">Print Shift Report</button>
         <div className="bg-white p-4 rounded shadow mb-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="border-b pb-2"><strong>Name</strong></div>

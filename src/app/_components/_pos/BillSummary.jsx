@@ -18,6 +18,7 @@ const BillSummary = ({
   const [newTableName, setNewTableName] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(null);
+  const [orderID, setOrderID] =useState(null);
 
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -74,7 +75,7 @@ const BillSummary = ({
       })),
     };
 
-    console.log("formatter data", formattedData)
+    console.log("formatter data", billItems)
     // Post data to API
     try {
       const response = await fetch('/api/order', {
@@ -90,9 +91,10 @@ const BillSummary = ({
       }
 
       const result = await response.json();
-      
+      alert("SUCCESS Order Pesanan")
+      console.log("this is orderid", result.orderID);
+      setOrderID(result.orderID);
       // Clear bill items after successful post
-      updateBillItems([]);
       setIsPaymentModalOpen(false); // Close payment modal after successful payment
     } catch (error) {
       console.error('Error:', error);
@@ -119,16 +121,56 @@ const BillSummary = ({
 
   const handlePrint = async () => {
     const strukData = `
-      Nama Toko
-      Alamat Toko
-      --------------------
-      ${billItems.map(item => `${item.name}: ${rupiah(item.price * item.quantity)}`).join('\n')}
-      --------------------
-      Subtotal: ${rupiah(subTotal)}
-      Pajak: ${rupiah(pajak)}
-      Total: ${rupiah(total)}
-    `;
+      Sakara Coffee Bali
+
+      Bill Name : ${selectedTable}
+      Order ID  : ${orderID}
+      Cashier   : 
     
+    --------------------
+        *Dine In*
+
+    ${billItems.map(item => `
+    ${item.name}: ${rupiah(item.price * item.quantity)}
+    ${item.note ? `Catatan: ${item.note}` : ''}
+    `).join('\n')}
+
+
+    --------------------
+
+    Subtotal: ${rupiah(subTotal)}
+    
+    --------------------
+    
+    Total: ${rupiah(subTotal)}
+
+
+
+  `;
+
+  const strukDataBar = `
+
+      NEW ORDER
+
+    Bill Name : ${selectedTable}
+    Order ID  : ${orderID}
+
+    ----------------
+
+    ${selectedTable}
+    ----------------
+        Dine In
+    ----------------
+    ${billItems.map(item => `
+      ${item.name}: ${rupiah(item.price * item.quantity)}
+      ${item.note ? `Catatan: ${item.note}` : ''}
+    `).join('\n')}
+
+
+  `;
+    
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
     try {
       const characteristic = await connectToPrinter();
       if (!characteristic) {
@@ -137,7 +179,15 @@ const BillSummary = ({
       }
       const encoder = new TextEncoder();
       const data = encoder.encode(strukData);
+      const dataBar = encoder.encode(strukDataBar);
       await characteristic.writeValue(data);
+      await delay(7000);
+      console.log('Sending second data...');
+      await characteristic.writeValue(dataBar);
+      await delay(5000);
+      await characteristic.writeValue(dataBar);
+      setOrderID(null);
+      updateBillItems([]);
     } catch (error) {
       console.error('Failed to print:', error);
     }
@@ -153,7 +203,7 @@ const BillSummary = ({
         <h2 className="text-base md:text-lg">Bills Summary</h2>
         <div className="flex items-center space-x-2 md:space-x-4">
           <span className="text-xs md:text-sm">{selectedTable}</span>
-          <button onClick={() => setIsTableModalOpen(true)} className="text-blue-500 text-xs md:text-sm">
+          <button onClick={() => setIsTableModalOpen(true)} className="text-slate-500 text-xs md:text-sm">
             <FaTable />
           </button>
         </div>
@@ -197,11 +247,8 @@ const BillSummary = ({
         <p className="flex justify-between">
           Subtotal <span>{rupiah(subTotal)}</span>
         </p>
-        <p className="flex justify-between">
-          Pajak <span>{rupiah(pajak)}</span>
-        </p>
         <p className="flex justify-between font-semibold">
-          Total <span>{rupiah(total)}</span>
+          Total <span>{rupiah(subTotal)}</span>
         </p>
       </div>
       
@@ -224,7 +271,7 @@ const BillSummary = ({
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
-          <button onClick={handleAddTable} className="bg-blue-500 text-white px-4 py-2 rounded mb-4">Add Table</button>
+          <button onClick={handleAddTable} className="bg-slate-500 text-white px-4 py-2 rounded mb-4">Add Table</button>
           <ul className="space-y-2">
             {tables.map((table) => (
               <li key={table.name} className="flex justify-between items-center p-2 border border-gray-300 rounded">

@@ -1,6 +1,6 @@
 // components/Sidebar.js
 import React from 'react';
-import { HomeIcon, CurrencyDollarIcon, ClockIcon, ClipboardDocumentListIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, CurrencyDollarIcon, ClockIcon, ClipboardDocumentListIcon, ArrowLeftOnRectangleIcon, ShoppingCartIcon, ChartPieIcon, CreditCardIcon } from '@heroicons/react/24/outline'; // Import additional icons
 
 const Sidebar = () => {
   const handleLogout = async () => {
@@ -31,6 +31,10 @@ const Sidebar = () => {
         <CurrencyDollarIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">Shift</span>
       </a>
+      <a href="/shift/transactional" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ChartPieIcon className="h-6 w-6 text-black" /> {/* Add icon for income and expenses */}
+        <span className="text-xs mt-1">Income & Expenses</span> {/* Add label */}
+      </a>
       <a href="/shift/history" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <ClockIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">History Penjualan</span>
@@ -39,13 +43,17 @@ const Sidebar = () => {
         <ClockIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">History Refund</span>
       </a>
-      <a href="/shift/transactional" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+      <a href="/shift/historyshift" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <ClipboardDocumentListIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">Reports</span>
       </a>
       <a href="/activity" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <ClipboardDocumentListIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">Activity</span>
+      </a>
+      <a href="/pos" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ShoppingCartIcon className="h-6 w-6 text-black" /> {/* Add the POS icon */}
+        <span className="text-xs mt-1">POS</span> {/* Add label */}
       </a>
       <button onClick={handleLogout} className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <ArrowLeftOnRectangleIcon className="h-6 w-6 text-black" />

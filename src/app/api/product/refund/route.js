@@ -79,6 +79,8 @@ export async function GET(req) {
   }
 }
 
+
+
 // POST a new product
 export async function POST(req) {
   try {

@@ -49,6 +49,7 @@ function Page() {
             try {
               setOrderId(result.order_id);
               alert('Payment Successful!', result.order_id);
+              print
               await printInvoice();
             } catch (error) {
               alert('Failed to update order status.');
@@ -104,6 +105,65 @@ function Page() {
     }
   }, [orderId]);
 
+  const connectToPrinter = async () => {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+      return characteristic;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  };
+
+  const handlePrint = async () => {
+    const strukData = `
+      Sakara Coffee Bali
+
+      Bill Name : ${tableNumber}
+    
+    --------------------
+        *Dine In*
+
+        ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+
+
+    --------------------
+
+    Subtotal: ${rupiah(subTotal)}
+    
+    --------------------
+    
+    Total: ${rupiah(subTotal)}
+
+
+
+  `;
+    
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    try {
+      const characteristic = await connectToPrinter();
+      if (!characteristic) {
+        console.error('Characteristic not found');
+        return;
+      }
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+      updateBillItems([]);
+    } catch (error) {
+      console.error('Failed to print:', error);
+    }
+  };
+  
   const printInvoice = async () => {
     const strukData = `
       Nama Toko

@@ -1,19 +1,37 @@
-// app/api/shifts/route.js
+import { NextResponse } from 'next/server'; // Make sure to import NextResponse
+import { startOfDay, endOfDay } from 'date-fns'; // Import date utilities
 import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+
 
 const prisma = new PrismaClient();
+
 function toObject(obj) {
-  return JSON.parse(JSON.stringify(obj, (key, value) =>
-    typeof value === 'bigint'
-      ? value.toString()
-      : value
-  ));
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      typeof value === "bigint" ? value.toString() : value
+    )
+  );
 }
-export async function GET() {
+export async function GET(req) {
   try {
+    // Get current date and time
+    const now = new Date();
+    
+    // Define start and end of the day
+    const startDate = startOfDay(now);
+    const endDate = endOfDay(now);
+
+    // Fetch transaction details for the current day
     const transaction = await prisma.Receipt_Detail.findMany({
-    include: {
+      where: {
+        receipt: {
+          date_time: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+      },
+      include: {
         receipt: {
           include: {
             payment: true,
@@ -22,43 +40,59 @@ export async function GET() {
         product: true,
       },
     });
+
+    // Aggregate sales summary for the current day
     const salesSummary = await prisma.receipt.aggregate({
-        _count: {
-          id: true, // Menghitung jumlah transaksi
+      where: {
+        date_time: {
+          gte: startDate,
+          lte: endDate,
         },
-        _sum: {
-          total: true, // Menghitung total penjualan
-          diskon: true, // Menghitung total diskon
-          pajak: true, // Menghitung total pajak
-        },
-      });
-    const penjulanBersih = parseInt(salesSummary._sum.total) - parseInt(salesSummary._sum.diskon) - parseInt(salesSummary._sum.pajak);
+      },
+      _count: {
+        id: true, // Count transactions
+      },
+      _sum: {
+        total: true, // Sum of total sales
+        diskon: true, // Sum of discounts
+        pajak: true, // Sum of taxes
+      },
+    });
+
+    // Calculate net sales
+    const penjulanBersih = parseInt(salesSummary._sum.total || 0) - parseInt(salesSummary._sum.diskon || 0) - parseInt(salesSummary._sum.pajak || 0);
     const transactionData = toObject(transaction);
     const allSalesSummary = {
-        ...salesSummary,
-        penjulanBersih
-    }
+      ...salesSummary,
+      penjulanBersih
+    };
+
+    // Format sales summary data
     const salesSummaryFormatted = [
-        {
-          title: "Transaksi",
-          type: "quantity",
-          desc: allSalesSummary._count.id.toString(),
-        },
-        {
-          title: "Keuntungan Dihasilkan",
-          type: "price",
-          desc: allSalesSummary._sum.total.toString(),
-        },
-        {
-          title: "Penjualan bersih",
-          type: "price",
-          desc: allSalesSummary.penjulanBersih.toString(),
-        }
-      ];
+      {
+        title: "Transaksi",
+        type: "quantity",
+        desc: allSalesSummary._count.id.toString(),
+      },
+      {
+        title: "Keuntungan Dihasilkan",
+        type: "price",
+        desc: allSalesSummary._sum.total.toString(),
+      },
+      {
+        title: "Penjualan bersih",
+        type: "price",
+        desc: allSalesSummary.penjulanBersih.toString(),
+      }
+    ];
+
+    // Combine results
     const finalTransactionData = {
-        transactionData,
-        salesSummaryFormatted
-    }
+      transactionData,
+      salesSummaryFormatted
+    };
+
+    // Return the data as JSON
     return NextResponse.json(finalTransactionData, { status: 200 });
   } catch (error) {
     console.error("Something went wrong", error);

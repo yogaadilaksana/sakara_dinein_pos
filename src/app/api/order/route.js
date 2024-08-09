@@ -64,7 +64,7 @@ export async function POST(req, res) {
     const payment = await prisma.payment.create({
       data: {
         id: `order-${order.id}`,
-        payment_name: paymentMethod === '' ? 'Midtrans' : paymentMethod,
+        payment_name: type === '' ? 'Midtrans' : paymentMethod,
         snap_token: type === '' ? transaction.token : '',
         status: type === '' ? 'PENDING_PAYMENT' : 'PAID',
         expiry: new Date(new Date().getTime() + 30 * 60000), // 30 minutes expiry
@@ -89,7 +89,7 @@ export async function POST(req, res) {
       },
     });
 
-    return new Response(JSON.stringify(type === '' ?{ token: transaction.token } : {message: "SUCCESS"}), {
+    return new Response(JSON.stringify(type === '' ?{ token: transaction.token } : {orderID: `order-${order.id}`}), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import Image from 'next/image'
 const MenuCard = ({ id, image, name, price, addToBill }) => {
   const [extras, setExtras] = useState({
     extraEspresso: 0,

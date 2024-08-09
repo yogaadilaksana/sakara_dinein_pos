@@ -59,6 +59,61 @@ const Page = () => {
     setShiftId(id);
   };
 
+  const connectToPrinter = async () => {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+      return characteristic;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  };
+
+  const handlePrint = async () => {
+    // return console.log("this is print data", selectedShiftDetails)
+    const strukData = `
+      Sakara Coffee Bali
+
+    Outlet: ${selectedShiftDetails.outlet}
+    Cashier: ${selectedShiftDetails.name}
+    Shift Start: ${selectedShiftDetails.startingShift}
+    
+    --------------------
+    
+    Starting Cash: ${selectedShiftDetails.cash.startingCash}
+    Cash Sales: ${selectedShiftDetails.cash.cashSales}
+    Cash from Invoice: ${selectedShiftDetails.cash.cashFromInvoice}
+    Cash Refunds: ${selectedShiftDetails.cash.cashRefunds}
+    Expense/Income: ${selectedShiftDetails.cash.expenseIncome}
+    Expected Ending Cash: ${selectedShiftDetails.cash.expectedEndingCash}
+
+
+  `;
+    
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    try {
+      const characteristic = await connectToPrinter();
+      if (!characteristic) {
+        console.error('Characteristic not found');
+        return;
+      }
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+    } catch (error) {
+      console.error('Failed to print:', error);
+    }
+  };
+
   const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
 
   if (status === "loading") {
@@ -84,7 +139,7 @@ const Page = () => {
               <button onClick={() => window.location.reload()} className="text-blue-500">&lt; Back</button>
               <h2 className="text-2xl font-bold">Shift Details</h2>
             </div>
-            <button className="mb-6 px-4 py-2 border rounded border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white">Print Shift Report</button>
+            <button onClick={handlePrint} className="mb-6 px-4 py-2 border rounded border-slate-500 text-slate-500 hover:bg-slate-400 hover:text-white">Print Shift Report</button>
             {selectedShiftDetails && (
               <div className="bg-white p-4 rounded shadow mb-6">
                 <div className="grid grid-cols-2 gap-4">

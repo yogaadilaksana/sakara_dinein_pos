@@ -45,6 +45,76 @@ const RefundTransaction = ({ onClose, transaction, userId }) => {
       setOtherReason('');
     }
   };
+
+  const connectToPrinter = async () => {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+      return characteristic;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  };
+
+  const handlePrint = async () => {
+    const rupiah = (number) => `Rp. ${number.toLocaleString('id-ID')}`;
+    console.log("this is fuckif data", transaction)
+    // Mapping the data to the strukData template
+    const itemsText = transaction.items.map(item => `
+        ${item.name}: ${rupiah(item.product_price * item.quantity)}
+        @x ${item.quantity}
+    `).join('\n');
+
+      const strukData =  `
+        Sakara Coffee Bali
+        receiptId: ${transaction.receiptNumber}
+
+        ${itemsText}
+
+        --------------------
+
+        Subtotal: ${rupiah(transaction.subTotal)}
+                
+        --------------------
+        
+        Total: ${rupiah(transaction.total)}
+
+        ${transaction.refundReason ? `Refund Reason: ${transaction.refundReason}\n` : ''}
+        ${transaction.otherReason ? `Other Reason: ${transaction.otherReason}\n` : ''}
+        User ID: ${transaction.userId || '1'}
+
+
+
+    `;
+
+    
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    try {
+      const characteristic = await connectToPrinter();
+      if (!characteristic) {
+        console.error('Characteristic not found');
+        return;
+      }
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+      setOrderID(null);
+      updateBillItems([]);
+    } catch (error) {
+      console.error('Failed to print:', error);
+    }
+  };
+
+  
   const handleRefund = async () => {
     try {
       const response = await fetch('/api/activities', {
@@ -68,6 +138,7 @@ const RefundTransaction = ({ onClose, transaction, userId }) => {
 
       const result = await response.json();
       if (response.ok) {
+        handlePrint()
         alert('Refund processed successfully');
         onClose();
       } else {

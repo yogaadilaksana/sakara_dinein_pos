@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../_components/_shift/sidebar";
 import RightSidebar from "../_components/_shift/righSidebar";
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { addHours, format, formatDistanceToNow, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { useSession } from 'next-auth/react';
 
@@ -27,6 +27,7 @@ const Page = () => {
   const [dated, setDated] = useState(new Date().toISOString()); // Misalnya inisialisasi date
   const [expansi, setExpansi] = useState(null)
   const { data: session, status } = useSession(); //getSession
+  const [loading, setLoading] = useState(false);
 
   //fungsi untuk formating nominal rupiah
   const formatRupiah = (amount) => {
@@ -42,7 +43,10 @@ const Page = () => {
   }, [session]);
   //end fungsi
   const date = new Date(Date.now())
+  const startDate = new Date(memberData?.start_shift ?? date)
+  const endDate = addHours(startDate, 8);
 
+  console.log("this is endDate", endDate)
   useEffect(() => {
     async function fetchData() {
       try {
@@ -61,25 +65,94 @@ const Page = () => {
 
     fetchData();
   }, [userId]);
+  console.log('this is member data', memberData)
 
-  useEffect(()=>{
-    fetch(`/api/product/terjual?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
-      .then(response => response.json())
-      .then(data => setProductTerjual(data));
-  }, [dated]);
+  useEffect(() => {
+    if (memberData && memberData.start_shift) {
+      try {
+        // Convert start_shift to a valid Date object
+        const startDate = new Date(memberData.start_shift);
+  
+        // Check if the startDate is valid
+        if (!isNaN(startDate.getTime())) { 
+          const endDate = addHours(startDate, 8);
+  
+          fetch(`/api/product/terjual?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(endDate.toISOString())}`)
+            .then(response => response.json())
+            .then(data => setProductTerjual(data))
+            .catch(error => console.error("Failed to fetch product data:", error));
+        } else {
+          console.error("Invalid start date:", memberData.start_shift);
+        }
+      } catch (error) {
+        console.error("Error processing date:", error);
+      }
+    }
+  }, [memberData]);
+  
+  useEffect(() => {
+    if (memberData && memberData.start_shift) {
+      try {
+        // Convert start_shift to a valid Date object
+        const startDate = new Date(memberData.start_shift);
+  
+        // Check if the startDate is valid
+        if (!isNaN(startDate.getTime())) { 
+          const endDate = addHours(startDate, 8);
+  
+          fetch(`/api/product/refund?startTime=${encodeURIComponent(startDate.toISOString())}&endTime=${encodeURIComponent(endDate.toISOString())}`)
+            .then(response => response.json())
+            .then(data => setProductTerjual(data))
+            .catch(error => console.error("Failed to fetch product data:", error));
+        } else {
+          console.error("Invalid start date:", memberData.start_shift);
+        }
+      } catch (error) {
+        console.error("Error processing date:", error);
+      }
+    }
+  }, [memberData]);
 
-  useEffect(()=>{
-    fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
-      .then(response => response.json())
-      .then(data => setProductRefund(data));
-  }, [dated]);
+  // useEffect(()=>{
+  //   fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
+  //     .then(response => response.json())
+  //     .then(data => setProductRefund(data));
+  // }, [dated]);
 
   //expanse income
   useEffect(() => {
-    fetch(`/api/expanse?startTime=${encodeURIComponent(dated)}&endTime=${encodeURIComponent(dated)}`)
-      .then(response => response.json())
-      .then(data => setExpansi(data));
-  }, [dated]);
+    if (memberData && memberData.start_shift) {
+      try {
+        // Convert start_shift to a valid Date object
+        const startDate = new Date(memberData.start_shift);
+  
+        // Check if the startDate is valid
+        if (!isNaN(startDate.getTime())) { 
+          const endDate = addHours(startDate, 8);
+          fetch(`/api/expanse?startTime=${encodeURIComponent(memberData.start_time)}&endTime=${encodeURIComponent(dated)}`)
+            .then(response => response.json())
+            .then(data => setExpansi(data));
+          } else {
+            console.error("Invalid start date:", memberData.start_shift);
+          }
+        } catch (error) {
+          console.error("Error processing date:", error);
+        }
+      }
+  }, [memberData]);
+
+  console.log("this is data expanse", expansi)
+
+  useEffect(() => {
+  }, [memberData]);
+
+
+  // //expanse income
+  // useEffect(() => {
+  //   fetch('/api/expanse') 
+  //     .then(response => response.json())
+  //     .then(data => setExpansi(data));
+  // }, []);
 
   useEffect(() => {
   }, [memberData]);
@@ -97,6 +170,7 @@ const Page = () => {
     setAmount("");
   };
 
+  console.log("this is memeber data from member", userData)
   const total = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 
   const handleStartShift = async () => {
@@ -121,6 +195,7 @@ const Page = () => {
   const handleModalClose = () => {
     setShowModal(false);
     setConfirmEnd(false);
+    window.location.href = '/shift'
   };
 
   const handleModalSubmit = async () => {
@@ -140,6 +215,73 @@ const Page = () => {
     }
     
   };
+
+  const connectToPrinter = async () => {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+      return characteristic;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  };
+
+  const handlePrint = async () => {
+    const strukData = `
+      Sakara Coffee Bali
+
+     -----------------------
+
+      Shift Name  : ${userData.name}
+      Start Shift : ${format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}
+      Shift End   : ${format(date, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}
+      Item Sold   : ${productTerjual}
+      Refund Item : ${productRefund}
+
+      -----------------------
+
+      Cash Ending : ${format(endingCash)}
+
+
+  `;
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    try {
+      const characteristic = await connectToPrinter();
+      if (!characteristic) {
+        console.error('Characteristic not found');
+        return;
+      }
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+      await delay(7000);
+      console.log('Sending second data...');
+      await characteristic.writeValue(dataBar);
+      setOrderID(null);
+      updateBillItems([]);
+    } catch (error) {
+      console.error('Failed to print:', error);
+    }
+  };
+
+
+  {loading ? (
+    <p>Loading...</p> // Display a loading indicator while fetching data
+  ) : (
+    <div>
+      {/* Your component's content that depends on productTerjual */}
+    </div>
+  )}
+
 
   if (!shiftStarted) {
     return (
@@ -205,10 +347,12 @@ const Page = () => {
               <div className="font-semibold">Starting Shift</div>
               <div>{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</div>
               <div className="font-semibold">Expense/Income</div>
-              <div className={expansi.netAmount < 0 ? "text-red-500" : "text-green-500"}>
-                {expansi < 0
-                  ? `-${formatRupiah(Math.abs(expansi.netAmount))}`
-                  : `${formatRupiah(expansi.netAmount)}`}
+              <div className={expansi?.netAmount < 0 ? "text-red-500" : "text-green-500"}>
+                {expansi
+                  ? expansi.netAmount < 0
+                    ? `-${formatRupiah(Math.abs(expansi.netAmount))}`
+                    : `${formatRupiah(expansi.netAmount)}`
+                  : 0}
               </div>
               <div className="font-semibold">Items Sold</div>
               <div>{productTerjual ? productTerjual : 0}</div>
@@ -247,7 +391,7 @@ const Page = () => {
             <div className="mb-6 border border-gray-300 bg-white p-4 rounded">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-600">Starting Shift</h3>
-                <p className="text-gray-600">{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</p>
+                <p className="text-gray-600">{memberData.start_time}</p>
               </div>
             </div>
             <div className="mb-6">
@@ -272,7 +416,7 @@ const Page = () => {
                   </tr>
                   <tr className="border-b border-gray-300 bg-white">
                     <td className="py-3-b px-4 text-gray-600">Expense/Income</td>
-                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(expansi.netAmount)}</td>
+                    <td className="py-3 px-4 text-right text-gray-600">{formatRupiah(expansi?.netAmount ?? 0)}</td>
                   </tr>
                   <tr className="border-b border-gray-300 bg-white">
                     <td className="py-3 px-4 text-gray-600">Expected Ending Cash</td>
@@ -333,7 +477,7 @@ const Page = () => {
           </div>
           <div class="mt-8 flex justify-center space-x-6">
             <button onClick={handleModalClose} class="bg-rose-400 text-white py-3 px-8 rounded-full font-semibold hover:bg-rose-600">No, Thanks</button>
-            <button class="bg-slate-500 text-white py-3 px-8 rounded-full font-semibold hover:bg-slate-600">Print Receipt</button>
+            <button onClick={handlePrint} class="bg-slate-500 text-white py-3 px-8 rounded-full font-semibold hover:bg-slate-600">Print Receipt</button>
           </div>
         </div>
       </div>
