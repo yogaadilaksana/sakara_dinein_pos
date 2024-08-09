@@ -4,6 +4,31 @@ import { useSession } from 'next-auth/react';
 import Sidebar from "../../_components/_shift/sidebar";
 import RightSidebar from "../../_components/_shift/righSidebar";
 import { useRouter } from 'next/navigation';
+import { format, addHours } from 'date-fns';
+import { id } from 'date-fns/locale';
+//import { zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
+import { enUS } from 'date-fns/locale';
+
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  
+  // Manually adjust date for Makassar time (UTC+8)
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZone: 'Asia/Makassar',
+    hour12: false // 24-hour format
+  };
+
+  const formatter = new Intl.DateTimeFormat('id-ID', options);
+  return formatter.format(date).replace(',', ' at');
+};
 
 const Page = () => {
   const router = useRouter();
@@ -33,10 +58,11 @@ const Page = () => {
   const [formattedOpenShifts, setFormattedOpenShifts] = useState([]);
   const [formattedClosedShifts, setFormattedClosedShifts] = useState([]);
 
+/*
   useEffect(() => {
     // Format dates after the component mounts
     const formatDate = (dateStr) => {
-      return new Intl.DateTimeFormat('en-GB', {
+      return new Intl.DateTimeFormat('id-ID', {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -54,9 +80,17 @@ const Page = () => {
       formattedDate: formatDate(shift.date),
     })));
   }, [openShifts, closedShifts]);
+*/
 
-  const handleShiftClick = (id) => {
-    setShiftId(id);
+const formatAndAdjustDate = (dateStr) => {
+    // Parse the input date string to a JavaScript Date object
+    const date = new Date(dateStr);
+
+    // Add 8 hours to the date
+    const adjustedDate = addHours(date, 8);
+
+    // Format the adjusted date in English
+    return format(adjustedDate, "eeee, d MMMM 'at' h:mm a", { locale: enUS });
   };
 
   const connectToPrinter = async () => {
@@ -115,6 +149,27 @@ const Page = () => {
   };
 
   const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
+  useEffect(() => {
+    // Format and adjust dates after the component mounts
+    setFormattedOpenShifts(openShifts.map(shift => ({
+      ...shift,
+      formattedDate: formatAndAdjustDate(shift.date),
+    })));
+
+    setFormattedClosedShifts(closedShifts.map(shift => ({
+      ...shift,
+      formattedDate: formatAndAdjustDate(shift.date),
+    })));
+  }, [openShifts, closedShifts]);
+
+
+
+
+   const handleShiftClick = (id) => {
+    setShiftId(id);
+   };
+
+    const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
 
   if (status === "loading") {
     return <p>Loading...</p>;
