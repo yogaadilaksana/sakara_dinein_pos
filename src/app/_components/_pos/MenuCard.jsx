@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Image from 'next/image'
+
 const MenuCard = ({ id, image, name, price, addToBill }) => {
   const [extras, setExtras] = useState({
     extraEspresso: 0,
@@ -35,7 +36,9 @@ const MenuCard = ({ id, image, name, price, addToBill }) => {
       className="border rounded-2xl p-4 flex flex-col items-center bg-white shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300 transform lg:scale-100"
       onClick={handleAddToBill}
     >
-      <img src={image} alt={name} className="w-full h-48 object-cover rounded-xl mb-4" />
+      <Image src={image} alt={name} className="w-full h-48 object-cover rounded-xl mb-4" width={300}  // Adjust width as needed
+      height={200} // Adjust height as needed
+      className="w-full h-48 object-cover rounded-xl mb-4" />
       <p>{id}</p>
       <h2 className="text-lg font-semibold text-center">{name}</h2>
       <p className="text-gray-700 font-medium text-center">Rp. {price.toLocaleString()}</p>

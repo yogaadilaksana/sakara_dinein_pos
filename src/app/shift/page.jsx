@@ -47,10 +47,11 @@ const Page = () => {
   const endDate = addHours(startDate, 8);
 
   console.log("this is endDate", endDate)
+  console.log("this is session id", session)
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`/api/shift?userId=${encodeURIComponent(userId)}`);
+        const response = await fetch(`/api/shift?userId=${encodeURIComponent(session.user.id)}`);
         if (response.ok) {
           const data = await response.json();
           setMemberData(data.shifts);

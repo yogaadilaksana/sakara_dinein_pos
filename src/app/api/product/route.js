@@ -108,11 +108,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+//export const config = {
+//  api: {
+//    bodyParser: false,
+//  },
+//};
 
 
 

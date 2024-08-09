@@ -96,7 +96,7 @@ export async function POST(req) {
   }
 }
 
-const uploadDir = path.join(process.cwd(), 'public/uploads');
+/*const uploadDir = path.join(process.cwd(), 'public/uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -118,7 +118,7 @@ export const config = {
     bodyParser: false,
   },
 };
-
+*/
 // export async function POST(req, res) {
 //   try {
 //     // Wait for the middleware to process the request
@@ -172,10 +172,10 @@ export const config = {
 export async function PUT(req) {
   try {
     const { id, name, stock, price, categoryId, description, image } = await req.json();
-    const form = new formidable.IncomingForm({
-      uploadDir: './public/uploads', // Directory to save uploads
-      keepExtensions: true,
-  });
+//    const form = new formidable.IncomingForm({
+//      uploadDir: './public/uploads', // Directory to save uploads
+//      keepExtensions: true,
+//  });
   
     const updatedProduct = await prisma.product.update({
       where: { id },
