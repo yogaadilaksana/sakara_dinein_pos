@@ -42,7 +42,7 @@ export async function POST(req, res) {
     // Create Midtrans transaction parameters
     const parameter = {
       transaction_details: {
-        order_id: `order-${order.id}`,
+        order_id: `order--${order.id}`,
         gross_amount: total,
       },
       item_details: items.map(item => ({
@@ -57,7 +57,7 @@ export async function POST(req, res) {
     if(type === ''){
       transaction = await snap.createTransaction(parameter);
     }
-
+    console.log("this is data order id", order.id);
     // Create Midtrans transaction
 
     // Create payment record

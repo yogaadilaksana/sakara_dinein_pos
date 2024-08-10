@@ -41,7 +41,6 @@ function Page() {
         </div>
       )}
 
-      // aku adalah anak gembala
 
       <div className="relative mb-32 grid min-h-screen grid-rows-[auto_1fr_auto]">
         {/* Header */}

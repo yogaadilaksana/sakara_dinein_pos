@@ -169,7 +169,6 @@ const formatAndAdjustDate = (dateStr) => {
     setShiftId(id);
    };
 
-    const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
 
   if (status === "loading") {
     return <p>Loading...</p>;

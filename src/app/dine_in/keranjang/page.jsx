@@ -4,7 +4,7 @@ import { PiArrowUUpLeft } from 'react-icons/pi';
 import Link from 'next/link';
 import { NumericFormat } from 'react-number-format';
 import { useCartDineIn } from '@/app/_stores/dineInStore';
-import { loadSnap } from '../../utils/loadSnap';
+import { loadSnap } from '../../../utils/loadSnap';
 import { useEffect, useState } from 'react';
 import EmptyList from '@/app/_components/_dine_in/EmptyList';
 import Modal from '@/app/_components/_dine_in/Modal';
@@ -29,7 +29,7 @@ function Page() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          tableNumber: parseInt(tableNumber, 10),  // Use the input table number
+          tableNumber: parseInt(tableNumber, 10),
           items: cart,
           customerDetails: {
             first_name: 'Uncle',
@@ -49,7 +49,6 @@ function Page() {
             try {
               setOrderId(result.order_id);
               alert('Payment Successful!', result.order_id);
-              print
               await printInvoice();
             } catch (error) {
               alert('Failed to update order status.');
@@ -197,20 +196,20 @@ function Page() {
   };
 
   return (
-    <div className="grid grid-rows-[auto_1fr_auto] overflow-y-auto overflow-x-hidden min-h-screen">
-      <div className="fixed flex w-full items-center space-x-6 border-b border-qraccent/20 bg-bcprimary px-6 pb-6 pt-8">
+    <div className="grid grid-rows-[auto_1fr_auto] min-h-screen overflow-hidden">
+      <header className="fixed top-0 left-0 w-full flex items-center justify-between border-b border-qraccent/20 bg-bcprimary px-4 py-2 md:px-6 md:py-4 z-10">
         <Link href="/dine_in">
           <PiArrowUUpLeft
             size="1.5rem"
-            className="text-qrprimary hover:drop-shadow-lg hover:size-7 duration-300 transition-all"
+            className="text-qrprimary hover:drop-shadow-lg transition-all"
           />
         </Link>
-        <h1 className="grow text-lg text-qrprimary">Keranjang Belanja</h1>
-      </div>
-      {cart.length > 0 ? (
-        <div>
-          <div className="mb-40 mt-28 px-2">
-            <ul>
+        <h1 className="text-lg text-qrprimary md:text-xl">Keranjang Belanja</h1>
+      </header>
+      <main className="pt-20 md:pt-24 pb-16 md:pb-24 flex-1 overflow-y-auto">
+        {cart.length > 0 ? (
+          <div className="px-4 md:px-6">
+            <ul className="space-y-2">
               {cart.map((items, i) => (
                 <CartItem
                   product={items}
@@ -221,12 +220,14 @@ function Page() {
               ))}
             </ul>
           </div>
-          <div className="fixed bottom-0 w-full border-t border-qraccent/20 bg-bcsecondary px-6 py-6">
-            <TotalPriceCard
-              totalPriceToPay={totalPriceToPay}
-              onCheckout={() => setShowModal(true)} // Open modal on checkout
+        ) : (
+          <div className="mt-16 px-4 md:px-6">
+            <EmptyList
+              title={"Belum Ada Pesanan"}
+              description={"Mulai pesan menu favoritmu!"}
             />
           </div>
+<<<<<<< HEAD
           {showModal && (
             <Modal onClose={() => setShowModal(false)}>
               <div className="p-6">
@@ -256,8 +257,40 @@ function Page() {
           <EmptyList
             title={"Belum Ada Pesanan"}
             description={"Mulai pesan menu favoritmu!"}
+=======
+        )}
+      </main>
+      {cart.length > 0 && (
+        <footer className="fixed bottom-0 left-0 w-full border-t border-qraccent/20 bg-bcsecondary px-4 py-2 md:px-6 md:py-4 z-10">
+          <TotalPriceCard
+            totalPriceToPay={totalPriceToPay}
+            onCheckout={() => setShowModal(true)} // Open modal on checkout
+>>>>>>> 1d8601d (update server)
           />
-        </div>
+        </footer>
+      )}
+      {showModal && (
+        <Modal onClose={() => setShowModal(false)}>
+          <div className="p-4 md:p-6">
+            <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja</h2>
+            <input
+              type="text"
+              value={tableNumber}
+              onChange={(e) => setTableNumber(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Nomor Meja"
+            />
+            <button
+              onClick={() => {
+                handleCheckout();
+                setShowModal(false);
+              }}
+              className="bg-qrprimary text-bcprimary py-2 px-4 rounded"
+            >
+              Konfirmasi
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );
@@ -265,15 +298,10 @@ function Page() {
 
 function CartItem({ product, onAddQty, onSubtractQty }) {
   return (
-    <li className="space-x-4 border border-qraccent/20 bg-bcsecondary px-8 py-6 mb-2">
-      <div>
-        <div className="flex w-full items-start">
-          <p className="truncate text-md font-semibold text-qrprimary">
-            {product.name}
-          </p>
-        </div>
-
-        <div className="flex justify-between items-center">
+    <li className="space-y-4 border border-qraccent/20 bg-bcsecondary p-4 md:p-6">
+      <div className="flex flex-col md:flex-row md:items-center">
+        <p className="text-md font-semibold text-qrprimary truncate">{product.name}</p>
+        <div className="flex justify-between items-center mt-2 md:mt-0 md:ml-auto">
           <p className="font-semibold text-qrprimary text-lg">
             <NumericFormat
               displayType="text"
@@ -282,10 +310,10 @@ function CartItem({ product, onAddQty, onSubtractQty }) {
               thousandSeparator
             />
           </p>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <button
               type="button"
-              className="border border-qraccent px-2 text-xs text-qraccent focus:bg-qraccent focus:text-bcprimary"
+              className="border border-qraccent px-2 py-1 text-xs text-qraccent rounded hover:bg-qraccent hover:text-bcprimary transition-all"
               onClick={() => onSubtractQty(product.id)}
             >
               -
@@ -293,7 +321,7 @@ function CartItem({ product, onAddQty, onSubtractQty }) {
             <p className="my-2 font-semibold">{product.quantity}</p>
             <button
               type="button"
-              className="border border-qraccent px-2 text-xs text-qraccent focus:bg-qraccent focus:text-bcprimary"
+              className="border border-qraccent px-2 py-1 text-xs text-qraccent rounded hover:bg-qraccent hover:text-bcprimary transition-all"
               onClick={() => onAddQty(product.id)}
             >
               +
@@ -307,13 +335,13 @@ function CartItem({ product, onAddQty, onSubtractQty }) {
 
 function TotalPriceCard({ totalPriceToPay, onCheckout }) {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col md:flex-row justify-between items-center">
       <p className="text-lg font-semibold text-qrprimary">
         Total: <NumericFormat value={totalPriceToPay} prefix={"Rp."} thousandSeparator />
       </p>
       <button
         onClick={onCheckout}
-        className="bg-qrprimary text-bcprimary py-2 px-4 rounded"
+        className="bg-qrprimary text-bcprimary py-2 px-4 rounded mt-4 md:mt-0"
       >
         Checkout
       </button>
