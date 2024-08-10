@@ -207,9 +207,10 @@ function Page() {
         <h1 className="text-lg text-qrprimary md:text-xl">Keranjang Belanja</h1>
       </header>
       <main className="pt-20 md:pt-24 pb-16 md:pb-24 flex-1 overflow-y-auto">
-        {cart.length > 0 ? (
-          <div className="px-4 md:px-6">
-            <ul className="space-y-2">
+	{cart.length > 0 ? (
+        <div>
+          <div className="mb-40 mt-28 px-2">
+            <ul>
               {cart.map((items, i) => (
                 <CartItem
                   product={items}
@@ -220,18 +221,16 @@ function Page() {
               ))}
             </ul>
           </div>
-        ) : (
-          <div className="mt-16 px-4 md:px-6">
-            <EmptyList
-              title={"Belum Ada Pesanan"}
-              description={"Mulai pesan menu favoritmu!"}
+          <div className="fixed bottom-0 w-full border-t border-qraccent/20 bg-bcsecondary px-6 py-6">
+            <TotalPriceCard
+              totalPriceToPay={totalPriceToPay}
+              onCheckout={() => setShowModal(true)} // Open modal on checkout
             />
           </div>
-<<<<<<< HEAD
           {showModal && (
             <Modal onClose={() => setShowModal(false)}>
               <div className="p-6">
-                <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja (Terdapat pada Meja)</h2>
+                <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja</h2>
                 <input
                   type="text"
                   value={tableNumber}
@@ -257,40 +256,17 @@ function Page() {
           <EmptyList
             title={"Belum Ada Pesanan"}
             description={"Mulai pesan menu favoritmu!"}
-=======
-        )}
+          />
+        </div>
+      )}
       </main>
       {cart.length > 0 && (
         <footer className="fixed bottom-0 left-0 w-full border-t border-qraccent/20 bg-bcsecondary px-4 py-2 md:px-6 md:py-4 z-10">
           <TotalPriceCard
             totalPriceToPay={totalPriceToPay}
             onCheckout={() => setShowModal(true)} // Open modal on checkout
->>>>>>> 1d8601d (update server)
           />
         </footer>
-      )}
-      {showModal && (
-        <Modal onClose={() => setShowModal(false)}>
-          <div className="p-4 md:p-6">
-            <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja</h2>
-            <input
-              type="text"
-              value={tableNumber}
-              onChange={(e) => setTableNumber(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded mb-4"
-              placeholder="Nomor Meja"
-            />
-            <button
-              onClick={() => {
-                handleCheckout();
-                setShowModal(false);
-              }}
-              className="bg-qrprimary text-bcprimary py-2 px-4 rounded"
-            >
-              Konfirmasi
-            </button>
-          </div>
-        </Modal>
       )}
     </div>
   );
