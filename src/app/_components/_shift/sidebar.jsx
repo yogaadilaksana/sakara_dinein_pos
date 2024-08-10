@@ -1,6 +1,5 @@
-// components/Sidebar.js
 import React from 'react';
-import { HomeIcon, CurrencyDollarIcon, ClockIcon, ClipboardDocumentListIcon, ArrowLeftOnRectangleIcon, ShoppingCartIcon, ChartPieIcon, CreditCardIcon } from '@heroicons/react/24/outline'; // Import additional icons
+import { HomeIcon, CurrencyDollarIcon, ClockIcon, ClipboardDocumentListIcon, ArrowLeftOnRectangleIcon, ShoppingCartIcon, ChartPieIcon } from '@heroicons/react/24/outline'; // Import additional icons
 
 const Sidebar = () => {
   const handleLogout = async () => {
@@ -22,10 +21,22 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-16 h-screen bg-gray-100 text-black flex flex-col items-center py-8 space-y-9 fixed top-20 left-0">
+    <aside className="w-16 h-screen bg-gray-100 text-black flex flex-col items-center py-8 space-y-9 fixed left-0 overflow-y-auto">
       <a href="/shift" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <HomeIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">Home</span>
+      </a>
+      <a href="/pos" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ShoppingCartIcon className="h-6 w-6 text-black" /> {/* Add the POS icon */}
+        <span className="text-xs mt-1">POS</span> {/* Add label */}
+      </a>
+      <a href="/shift/history" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ClockIcon className="h-6 w-6 text-black" />
+        <span className="text-xs mt-1">History Penjualan</span>
+      </a>
+      <a href="/activity" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ClipboardDocumentListIcon className="h-6 w-6 text-black" />
+        <span className="text-xs mt-1">Activity</span>
       </a>
       <a href="/shift/historyshift" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <CurrencyDollarIcon className="h-6 w-6 text-black" />
@@ -35,30 +46,14 @@ const Sidebar = () => {
         <ChartPieIcon className="h-6 w-6 text-black" /> {/* Add icon for income and expenses */}
         <span className="text-xs mt-1">Income & Expenses</span> {/* Add label */}
       </a>
-      <a href="/shift/history" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
-        <ClockIcon className="h-6 w-6 text-black" />
-        <span className="text-xs mt-1">History Penjualan</span>
-      </a>
-      <a href="/shift/history/refund" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
-        <ClockIcon className="h-6 w-6 text-black" />
-        <span className="text-xs mt-1">History Refund</span>
-      </a>
-      <a href="/shift/historyshift" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
-        <ClipboardDocumentListIcon className="h-6 w-6 text-black" />
-        <span className="text-xs mt-1">Reports</span>
-      </a>
-      <a href="/activity" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
-        <ClipboardDocumentListIcon className="h-6 w-6 text-black" />
-        <span className="text-xs mt-1">Activity</span>
-      </a>
-      <a href="/pos" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
-        <ShoppingCartIcon className="h-6 w-6 text-black" /> {/* Add the POS icon */}
-        <span className="text-xs mt-1">POS</span> {/* Add label */}
-      </a>
       <button onClick={handleLogout} className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
         <ArrowLeftOnRectangleIcon className="h-6 w-6 text-black" />
         <span className="text-xs mt-1">Logout</span>
       </button>
+      <a href="/shift/history/refund" className="flex flex-col items-center hover:bg-gray-700 p-2 rounded">
+        <ClockIcon className="h-6 w-6 text-black" />
+        <span className="text-xs mt-1">History Refund</span>
+      </a>
     </aside>
   );
 };

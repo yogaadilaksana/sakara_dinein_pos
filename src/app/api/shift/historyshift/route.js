@@ -82,6 +82,11 @@ export async function GET(req) {
             const totalItemsSold = shiftOrderItems
                 .reduce((sum, oi) => sum + parseInt(oi.quantity), 0);
 
+	    const totalSales = shiftOrderItems
+                .reduce((sum, oi) => sum + parseInt(oi.subtotal),0 )
+
+            const totalCashFromInvoice = totalSales;
+
             const shiftRefundDetails = refundDetailsData.filter(rd => {
                 const rdDate = new Date(rd.refundDate);
                 return rdDate >= shiftStart && rdDate < shiftEnd;
@@ -89,6 +94,9 @@ export async function GET(req) {
 
             const totalItemsReturned = shiftRefundDetails
                 .reduce((sum, rd) => sum + rd.quantity, 0);
+
+            const totalRefundPrice = shiftRefundDetails
+                .reduce((sum, bd) => sum + parseInt(bd.subtotal), 0)
 
             return {
                 id: shift.id,
@@ -99,9 +107,9 @@ export async function GET(req) {
                 itemsReturned: totalItemsReturned,
                 cash: {
                     startingCash: `Rp.${Number(shift.start_cash).toLocaleString()}`,
-                    cashSales: `Rp.${(Number(shift.total_actual) - Number(shift.start_cash)).toLocaleString()}`,
+                    cashSales: `Rp.${totalCashFromInvoice.toLocaleString()}`,
                     cashFromInvoice: `Rp.0`,
-                    cashRefunds: `Rp.0`,
+                    cashRefunds: `Rp.${totalRefundPrice.toLocaleString()}`,
                     expenseIncome: `-${totalExpenses.toLocaleString()}`,
                     expectedEndingCash: `Rp.${Number(shift.total_actual).toLocaleString()}`
                 }

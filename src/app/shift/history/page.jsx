@@ -1,4 +1,4 @@
-"use client"
+/*"use client"
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Sidebar from "../../_components/_shift/sidebar";
@@ -160,3 +160,52 @@ const Page = () => {
 }
 
 export default Page;
+*/
+
+
+"use client"
+
+import Sidebar from "@/app/_components/_shift/sidebar";
+import RightSidebar from "@/app/_components/_shift/righSidebar";
+
+import { useEffect, useState } from "react";
+
+const Page = () => {
+  const [itemsSold, setItemSold]= useState([]);
+
+  useEffect(() => {
+    // Fetch shift data when the component mounts
+    fetch('/api/shift/historypenjualan')
+      .then(response => response.json())
+      .then(data => {
+        setItemSold(data.itemsSold);
+      })
+      .catch(error => console.error("Error fetching shift data:", error));
+  }, []); 
+
+  
+    const totalItems = itemsSold.length ? itemsSold.length :0;
+  
+    return (
+      <div className="flex">
+        <Sidebar />
+        <div className="w-3/6 pr-6 pl-16 bg-zinc-100">
+            <RightSidebar />
+        </div>
+        <div className="w-2/3 p-5">
+          <h2 className="text-2xl font-bold mb-5">Items Sold: {totalItems} Items</h2>
+          <ul className="list-none mt-3">
+            {itemsSold.map((item, index) => (
+              <li key={index} className="flex justify-between border-b py-2">
+                <span>{item.name}</span>
+                <span>{item.quantity}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  };
+  
+  export default Page;
+  
