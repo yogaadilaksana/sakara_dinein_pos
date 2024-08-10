@@ -230,7 +230,7 @@ function Page() {
           {showModal && (
             <Modal onClose={() => setShowModal(false)}>
               <div className="p-6">
-                <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja</h2>
+                <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja (Terdapat pada Meja)</h2>
                 <input
                   type="text"
                   value={tableNumber}
