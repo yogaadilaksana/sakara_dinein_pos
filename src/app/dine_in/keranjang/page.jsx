@@ -227,37 +227,6 @@ function Page() {
               description={"Mulai pesan menu favoritmu!"}
             />
           </div>
-<<<<<<< HEAD
-          {showModal && (
-            <Modal onClose={() => setShowModal(false)}>
-              <div className="p-6">
-                <h2 className="text-lg font-semibold mb-4">Masukkan Nomor Meja (Terdapat pada Meja)</h2>
-                <input
-                  type="text"
-                  value={tableNumber}
-                  onChange={(e) => setTableNumber(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded mb-4"
-                  placeholder="Nomor Meja"
-                />
-                <button
-                  onClick={() => {
-                    handleCheckout();
-                    setShowModal(false);
-                  }}
-                  className="bg-qrprimary text-bcprimary py-2 px-4 rounded"
-                >
-                  Konfirmasi
-                </button>
-              </div>
-            </Modal>
-          )}
-        </div>
-      ) : (
-        <div className="mt-20 mb-56">
-          <EmptyList
-            title={"Belum Ada Pesanan"}
-            description={"Mulai pesan menu favoritmu!"}
-=======
         )}
       </main>
       {cart.length > 0 && (
@@ -265,7 +234,6 @@ function Page() {
           <TotalPriceCard
             totalPriceToPay={totalPriceToPay}
             onCheckout={() => setShowModal(true)} // Open modal on checkout
->>>>>>> 1d8601d (update server)
           />
         </footer>
       )}
