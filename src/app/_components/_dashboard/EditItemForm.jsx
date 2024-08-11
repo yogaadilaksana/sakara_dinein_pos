@@ -71,7 +71,8 @@ function EditItemForm() {
         if (!fileUploadResponse.ok) throw new Error('File upload failed');
 
         const fileUploadResult = await fileUploadResponse.json();
-        imageFilePath = fileUploadResult.filePath;
+        imageFilePath = fileUploadResult.newFilePath;
+        console.log("this is fileUpload response", fileUploadResult)
       }
 
       const response = await fetch(endpoint, {

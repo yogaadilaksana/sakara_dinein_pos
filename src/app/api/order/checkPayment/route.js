@@ -21,7 +21,7 @@ export async function POST(req, res) {
       where: { id: orderId },
     });
 
-    if (!payment) {
+/*    if (!payment) {
       return new Response(JSON.stringify({ error: 'Payment record not found' }), {
         status: 404,
         headers: {
@@ -29,9 +29,9 @@ export async function POST(req, res) {
         },
       });
     }
-
+*/
     // Check the payment status with Midtrans
-    const response = await fetch(`https://api.sandbox.midtrans.com/v2/${orderId}/status`, {
+    const response = await fetch(`https://api.midtrans.com/v2/${orderId}/status`, {
       method: 'GET',
       headers: {
         'Authorization': `Basic ${Buffer.from(serverKey + ':').toString('base64')}`,
@@ -99,7 +99,7 @@ export async function POST(req, res) {
   } catch (error) {
     console.error('Error processing payment status:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
