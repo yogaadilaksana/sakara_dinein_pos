@@ -109,14 +109,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Before (Deprecated)
-export const config = {
+/*export const config = {
   api: {
     bodyParser: {
       sizeLimit: '1mb',
     },
   },
 };
-
+*/
 // After (Updated)
 export const sizeLimit = '1mb';
 

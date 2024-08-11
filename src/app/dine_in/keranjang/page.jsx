@@ -49,7 +49,7 @@ function Page() {
             try {
               setOrderId(result.order_id);
               alert('Payment Successful!', result.order_id);
-              await printInvoice();
+              await handlePrint();
             } catch (error) {
               alert('Failed to update order status.');
             }
@@ -129,9 +129,9 @@ function Page() {
       Bill Name : ${tableNumber}
     
     --------------------
-        *Dine In*
+           *Dine In*
 
-        ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+     ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
 
 
     --------------------

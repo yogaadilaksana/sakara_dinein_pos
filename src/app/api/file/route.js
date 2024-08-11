@@ -61,7 +61,8 @@ export async function POST(req) {
 
     revalidatePath("/");
 
-    return NextResponse.json({ status: "success", filePath });
+    const newFilePath = `/dine_in/${file.name}`
+    return NextResponse.json({ status: "success", newFilePath });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ status: "fail", error: e });

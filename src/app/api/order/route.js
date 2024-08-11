@@ -2,14 +2,15 @@ import { PrismaClient } from '@prisma/client';
 import midtransClient from 'midtrans-client';
 
 const prisma = new PrismaClient();
+const prod = process.env.MIDTRANS_SERVER_KEY_PRODUCTION;
 
 const serverKey = process.env.NODE_ENV === 'production'
   ? process.env.MIDTRANS_SERVER_KEY_PRODUCTION
   : process.env.MIDTRANS_SERVER_KEY_SANDBOX;
 
 let snap = new midtransClient.Snap({
-  isProduction: process.env.NODE_ENV === 'production',
-  serverKey: serverKey,
+  isProduction: true,//process.env.NODE_ENV === 'production',
+  serverKey: prod,
 });
 
 export async function POST(req, res) {
@@ -17,6 +18,7 @@ export async function POST(req, res) {
   const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const discount = 0; // Define your discount calculation if applicable
   const tax = total * 0.1; // Define your tax calculation if applicable
+ console.log("this is data", serverKey, snap);
   var transaction;
   try {
     // Create the order

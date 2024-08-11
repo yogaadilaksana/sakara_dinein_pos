@@ -9,7 +9,7 @@ export function loadSnap() {
           : process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY_SANDBOX;
         script.src = process.env.NODE_ENV === 'production'
           ? "https://app.midtrans.com/snap/snap.js"
-          : "https://app.sandbox.midtrans.com/snap/snap.js";
+          : "https://app.midtrans.com/snap/snap.js";
         script.setAttribute("data-client-key", clientKey);
         script.onload = () => resolve(window.snap);
         script.onerror = reject;
