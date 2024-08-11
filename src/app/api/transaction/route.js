@@ -67,22 +67,23 @@ export async function GET(req) {
       penjulanBersih
     };
 
+    console.log("this is data allSalesSumarry", allSalesSummary)
     // Format sales summary data
     const salesSummaryFormatted = [
       {
         title: "Transaksi",
         type: "quantity",
-        desc: allSalesSummary._count.id.toString(),
+        desc: (allSalesSummary._count?.id != null ? allSalesSummary._count.id.toString() : "0"),
       },
       {
         title: "Keuntungan Dihasilkan",
         type: "price",
-        desc: allSalesSummary._sum.total.toString(),
+        desc: (allSalesSummary._count?.total != null ? allSalesSummary._count.total.toString() : "0"),
       },
       {
         title: "Penjualan bersih",
         type: "price",
-        desc: allSalesSummary.penjulanBersih.toString(),
+        desc: allSalesSummary?.penjulanBersih.toString() ?? "0",
       }
     ];
 

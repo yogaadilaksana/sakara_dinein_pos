@@ -29,6 +29,7 @@ const Page = () => {
         .catch(error => console.error("Error fetching shift data:", error));
     }
   }, [session]); // Run this effect whenever the session changes
+  console.log("this is fucking data", openShifts);
 
   const [formattedOpenShifts, setFormattedOpenShifts] = useState([]);
   const [formattedClosedShifts, setFormattedClosedShifts] = useState([]);
@@ -116,6 +117,7 @@ const Page = () => {
 
   const selectedShiftDetails = shiftData.find(shift => shift.id === shiftId);
 
+  console.log("this is motherfucker", selectedShiftDetails);
   if (status === "loading") {
     return <p>Loading...</p>;
   }

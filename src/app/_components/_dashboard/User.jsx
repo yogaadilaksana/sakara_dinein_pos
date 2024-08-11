@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import UserIcon from "@/../../public/dashboard/user.png";
+import UserIcon from "../../../../public/dashboard/user.png";
 import { FiList, FiX } from "react-icons/fi";
 
 function User({ isOpen, setIsOpen }) {

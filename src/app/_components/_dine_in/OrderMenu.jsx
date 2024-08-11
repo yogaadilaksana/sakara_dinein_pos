@@ -57,7 +57,7 @@ function OrderMenu({ menu, onCloseSelectedProduct, onSubmitProduct }) {
               alt={menu.name}
               fill
               style={{ objectFit: "cover" }}
-              className="rounded-t-2xl sm"
+              className="object-cover rounded-t-2xl sm"
             />
           </div>
           <PiArrowUUpLeft

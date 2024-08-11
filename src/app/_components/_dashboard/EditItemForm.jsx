@@ -1,7 +1,7 @@
 import { NumericFormat } from "react-number-format";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -17,16 +17,79 @@ const categories = ["Signature", "Coffee", "Tea", "Snack", "Main Course"];
 
 function EditItemForm() {
   const { setCloseSelectedItem, selectedItemData } = useToggleUiStore();
-  const [picture, setPicture] = useState([]);
-  const [productName, setProductName] = useState(selectedItemData.itemName);
-  const [category, setCategory] = useState(selectedItemData.category);
-  const [quantity, setQuantity] = useState(selectedItemData.quantity);
-  const [price, setPrice] = useState(selectedItemData.price);
+  const [picture, setPicture] = useState(null);
+  const [productName, setProductName] = useState("");
+  const [category, setCategory] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [price, setPrice] = useState(0);
+  const [id, setProductID] = useState(null);
 
+  useEffect(() => {
+    if (selectedItemData) {
+      setProductName(selectedItemData.name || "");
+      setCategory(selectedItemData.category_id || "");
+      setQuantity(selectedItemData.stock || 0);
+      setPrice(selectedItemData.price || 0);
+      setPicture(selectedItemData.image || null);
+      setProductID(selectedItemData.id || null);
+    }
+  }, [selectedItemData]);
 
   const handleFileChange = (e) => {
     if (e.target.files) {
       setPicture(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const itemData = {
+      name: productName,
+      category_id: category,
+      stock: quantity,
+      price: price,
+      image: picture ? picture.name : picture || null, // Use old image if new one is not provided
+    };
+
+    console.log("Item data before saving:", itemData);
+
+    const endpoint = `/api/product`;
+    const method = "PUT";
+
+    try {
+      let imageFilePath = itemData.image; // Initialize with existing image path
+
+      if (picture) {
+        const formData = new FormData();
+        formData.append('file', picture);
+
+        const fileUploadResponse = await fetch(`/api/file`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!fileUploadResponse.ok) throw new Error('File upload failed');
+
+        const fileUploadResult = await fileUploadResponse.json();
+        imageFilePath = fileUploadResult.filePath;
+      }
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...itemData, id: id, image: imageFilePath }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Item updated successfully:", result);
+        // Optionally call a function to update state
+      } else {
+        const errorText = await response.text();
+        console.error("Error updating item:", errorText);
+      }
+    } catch (error) {
+      console.error("Error saving item:", error);
     }
   };
 
@@ -36,18 +99,15 @@ function EditItemForm() {
         <h3 className="font-semibold md:text-lg text-sm text-dpaccent w-max">
           Ubah Produk
         </h3>
-        <p className="font-semibold md:text-lg text-sm text-dpaccent w-max">
-          {}
-        </p>
       </div>
-      <form className="flex flex-col gap-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-y-4">
+        {/* Form fields */}
         <div className="flex xl:justify-between sm:flex-row flex-wrap gap-x-7 gap-y-3 mt-2">
           <div className="w-[230px] space-y-1">
             <Label className="cursor-pointer" htmlFor="picture">
               Gambar
             </Label>
             <Input
-              value={picture}
               className="text-xs text-dpaccent cursor-pointer"
               id="picture"
               type="file"
@@ -58,7 +118,7 @@ function EditItemForm() {
             <Label htmlFor="productName">Nama Produk</Label>
             <Input
               value={productName}
-              onChange={() => setProductName()}
+              onChange={(e) => setProductName(e.target.value)}
               className="text-xs text-dpaccent"
               id="productName"
               type="text"
@@ -110,7 +170,7 @@ function EditItemForm() {
               customInput={Input}
               thousandSeparator
               className="text-xs text-dpaccent"
-              onChange={() => setPrice()}
+              onValueChange={(values) => setPrice(values.value)}
             />
           </div>
         </div>

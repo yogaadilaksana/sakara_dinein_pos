@@ -4,7 +4,7 @@ import { PiArrowUUpLeft } from 'react-icons/pi';
 import Link from 'next/link';
 import { NumericFormat } from 'react-number-format';
 import { useCartDineIn } from '@/app/_stores/dineInStore';
-import { loadSnap } from '../../utils/loadSnap';
+import { loadSnap } from '../../../utils/loadSnap';
 import { useEffect, useState } from 'react';
 import EmptyList from '@/app/_components/_dine_in/EmptyList';
 import Modal from '@/app/_components/_dine_in/Modal';
@@ -163,7 +163,7 @@ function Page() {
       console.error('Failed to print:', error);
     }
   };
-  
+
   const printInvoice = async () => {
     const strukData = `
       Nama Toko

@@ -20,6 +20,7 @@ const Page = () => {
       .catch(error => console.error("Error fetching shift data:", error));
   }, []); // Empty dependency array ensures this runs only once
 
+  console.log("this is data shift", dataShifts);
   const shiftData = {
     name: 'Ari Pratama',
     outlet: 'Sakara Kopi Bali Antasura',

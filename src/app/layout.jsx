@@ -20,12 +20,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} flex flex-col min-h-screen bg-bcprimary`}
+        className={`${poppins.className} flex flex-col bg-bcprimary`}
       >
         <SessionProviderWrapper> {/* Use the wrapper here */}
           <AuthProvider> {/* Wrap with AuthProvider */}
             <main>{children}</main>
-            <Footer />
+            {/* <Footer /> */}
           </AuthProvider>
         </SessionProviderWrapper>
       </body>

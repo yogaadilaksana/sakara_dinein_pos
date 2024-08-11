@@ -4,7 +4,7 @@
 
 @layer base {
   html, body {
-    @apply m-0 p-0 w-full h-full box-border;
+    @apply m-0 p-0 w-full h-full box-border overflow-hidden;
   }
 
   #root, #__next {
@@ -17,18 +17,20 @@
     margin: 0;
   }
 
+  /* Uncomment these if you want to hide scrollbars */
+
   /* For WebKit browsers (e.g., Chrome, Safari) */
-  .custom-scrollbar-x::-webkit-scrollbar {
+  /* .custom-scrollbar-x::-webkit-scrollbar {
     display: none;
-  }
+  } */
 
   /* For Firefox */
-  .custom-scrollbar-x {
-    scrollbar-width: none; /* Firefox */
-  }
+  /* .custom-scrollbar-x {
+    scrollbar-width: none;
+  } */
 
   /* Optional: Disable scrollbar visibility but keep functionality */
-  .custom-scrollbar-x {
-    -ms-overflow-style: none; /* IE and Edge */
-  }
+  /* .custom-scrollbar-x {
+    -ms-overflow-style: none;
+  } */
 }

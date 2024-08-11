@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import Image from "next/image";
-import cashierIcon from "@/../../public/shift/cash-register.png";
+import cashierIcon from "../../../../public/shift/cash-register.png";
 
 const Sidebar = () => {
   const [activeItem, setActiveItem] = useState('currentShift');

@@ -18,7 +18,7 @@ const BillSummary = ({
   const [newTableName, setNewTableName] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(null);
-  const [orderID, setOrderID] =useState(null);
+  const [orderID, setOrderID] = useState(null);
 
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -50,9 +50,9 @@ const BillSummary = ({
   const subTotal = billItems.reduce((total, item) => total + item.price * item.quantity, 0);
   const pajak = subTotal * 0.1;
   const total = subTotal + pajak;
-  
+
   const updatePaymentMethod = async (method) => {
-    setPaymentMethod(method)
+    setPaymentMethod(method);
     const updatedBillItems = billItems.map(item => ({
       ...item,
       paymentMethod: method,
@@ -91,7 +91,7 @@ const BillSummary = ({
       }
 
       const result = await response.json();
-      alert("SUCCESS Order Pesanan")
+      alert("SUCCESS Order Pesanan");
       console.log("this is orderid", result.orderID);
       setOrderID(result.orderID);
       // Clear bill items after successful post
@@ -142,7 +142,7 @@ const BillSummary = ({
     
     --------------------
     
-    Total: ${rupiah(subTotal)}
+    Total: ${rupiah(total)}
 
 
 
@@ -197,6 +197,25 @@ const BillSummary = ({
     setIsPaymentModalOpen(true);
   };
 
+  const handleQuantityChange = (itemName, newQuantity) => {
+    console.log("Item Name:", itemName);
+    console.log("New Quantity:", newQuantity);
+  
+    if (newQuantity <= 0) {
+      // Remove item from billItems if quantity is zero or less
+      const updatedItems = billItems.filter(item => item.name !== itemName);
+      console.log("Updated Items (Removed):", updatedItems);
+      updateBillItems(updatedItems);
+    } else {
+      // Update item quantity
+      const updatedItems = billItems.map(item =>
+        item.name === itemName ? { ...item, quantity: newQuantity } : item
+      );
+      console.log("Updated Items (Modified):", updatedItems);
+      updateBillItems(updatedItems);
+    }
+  };
+
   return (
     <div className="border p-4 w-full border-gray-300 bg-white rounded-2xl overflow-y-auto">
       <div className="flex flex-col md:flex-row justify-between items-start mb-4">
@@ -225,15 +244,15 @@ const BillSummary = ({
             </div>
             <div className="flex items-center space-x-1 md:space-x-2 mt-2 md:mt-0">
               <button
-                onClick={() => updateQuantity(item.name, item.quantity - 1)}
+                onClick={() => handleQuantityChange(item.name, item.quantity - 1)}
                 className="bg-slate-500 text-white px-1 py-0.5 rounded-l text-xs md:text-sm"
-                disabled={item.quantity === 1}
+                disabled={item.quantity === 0}
               >
                 <FaMinus />
               </button>
               <span className="px-1 md:px-2">{item.quantity}</span>
               <button
-                onClick={() => updateQuantity(item.name, item.quantity + 1)}
+                onClick={() => handleQuantityChange(item.name, item.quantity + 1)}
                 className="bg-slate-500 text-white px-1 py-0.5 rounded-r text-xs md:text-sm"
               >
                 <FaPlus />
@@ -248,7 +267,7 @@ const BillSummary = ({
           Subtotal <span>{rupiah(subTotal)}</span>
         </p>
         <p className="flex justify-between font-semibold">
-          Total <span>{rupiah(subTotal)}</span>
+          Total <span>{rupiah(total)}</span>
         </p>
       </div>
       

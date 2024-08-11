@@ -391,7 +391,7 @@ const Page = () => {
             <div className="mb-6 border border-gray-300 bg-white p-4 rounded">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-gray-600">Starting Shift</h3>
-                <p className="text-gray-600">{memberData.start_time}</p>
+                <p className="text-gray-600">{format(memberData.start_time, "eeee, do 'of' MMMM yyyy 'at' hh:mm a", { locale: enUS })}</p>
               </div>
             </div>
             <div className="mb-6">

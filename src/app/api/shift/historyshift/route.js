@@ -21,7 +21,12 @@ export async function GET(req) {
         const users = await prisma.user.findMany();
         const incomeExpenses = await prisma.income_Expanses.findMany();
         const orderItems = await prisma.orderItem.findMany();
-        const refundDetails = await prisma.refund_Detail.findMany();
+        // const refundDetails = await prisma.refund.findMany();
+        const refundDetails = await prisma.refund.findMany({
+          include: {
+            refund_detail: true, // Include the related refund_detail
+          },
+        });
 
         const shiftData = toObject(shifts);
         const userData = toObject(users);
@@ -76,19 +81,39 @@ export async function GET(req) {
 
             const shiftOrderItems = orderItemsData.filter(oi => {
                 const oiDate = new Date(oi.order_date);
-                return oiDate >= shiftStart;
+                return oiDate >= shiftStart && shiftStart <= oiDate;
             });
 
             const totalItemsSold = shiftOrderItems
-                .reduce((sum, oi) => sum + parseInt(oi.quantity), 0);
+                .reduce((sum, oi) => sum + parseInt(oi.quantity, 10), 0);
 
+            // Calculate subtotal for each order item
+            // console.log("this is shiftOredersItems", shiftOrderItems)
+            const totalSales = shiftOrderItems
+                .reduce((sum, oi) => sum + parseInt(oi.subtotal),0 )
+
+            // console.log("this is data from total sales", totalSales);            
+            // Total cash from invoices
+            const totalCashFromInvoice = totalSales;
+
+            // Filter refund details berdasarkan shift time
             const shiftRefundDetails = refundDetailsData.filter(rd => {
-                const rdDate = new Date(rd.refundDate);
-                return rdDate >= shiftStart && rdDate < shiftEnd;
+              const rdDate = new Date(rd.date_time);
+              return rdDate >= shiftStart && shiftStart <=rdDate;
             });
 
-            const totalItemsReturned = shiftRefundDetails
-                .reduce((sum, rd) => sum + rd.quantity, 0);
+            // Menghitung total item yang dikembalikan
+            const totalItemsReturned = shiftRefundDetails.reduce((sum, rd) => {
+              return sum + rd.refund_detail.reduce((innerSum, detail) => innerSum + parseInt(detail.quantity), 0);
+            }, 0);
+
+            // Menghitung total harga refund
+            const totalRefundPrice = shiftRefundDetails.reduce((sum, rd) => {
+              return sum + parseInt(rd.total);
+            }, 0);
+
+              // console.log("this is total price refund", shiftRefundDetails[0].refund_detail);
+            const expanseIncomePrice = parseInt(totalIncome) - parseInt(totalExpenses);
 
             return {
                 id: shift.id,
@@ -96,13 +121,14 @@ export async function GET(req) {
                 outlet: 'Sakara Kopi Bali Antasura',
                 startingShift: convertUTCToLocalTime(shift.start_time), // Menggunakan format lokal
                 itemsSold: totalItemsSold,
+                totalSales: `Rp.${totalSales.toLocaleString()}`, // Total harga dari item yang terjual
                 itemsReturned: totalItemsReturned,
                 cash: {
                     startingCash: `Rp.${Number(shift.start_cash).toLocaleString()}`,
-                    cashSales: `Rp.${(Number(shift.total_actual) - Number(shift.start_cash)).toLocaleString()}`,
-                    cashFromInvoice: `Rp.0`,
-                    cashRefunds: `Rp.0`,
-                    expenseIncome: `-${totalExpenses.toLocaleString()}`,
+                    cashSales: `Rp.${totalCashFromInvoice.toLocaleString()}`,
+                    cashFromInvoice:`Rp.${totalCashFromInvoice.toLocaleString()}`, // Cash from invoices
+                    cashRefunds: `Rp.${totalRefundPrice.toLocaleString()}`,
+                    expenseIncome: `-${expanseIncomePrice.toLocaleString()}`,
                     expectedEndingCash: `Rp.${Number(shift.total_actual).toLocaleString()}`
                 }
             };
