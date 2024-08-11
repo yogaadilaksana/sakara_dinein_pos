@@ -4,7 +4,7 @@ import { NumericFormat } from "react-number-format";
 function MenuList({ menu, onSelectProduct }) {
   const placeholderImage = "/dine_in/placeholder-image.png";
   return (
-    <li>
+    <li className="p-2">
       <div
         className="items-center flex flex-col"
         onClick={() => onSelectProduct(menu)}
@@ -41,6 +41,7 @@ function MenuList({ menu, onSelectProduct }) {
         </div>
       </div>
     </li>
+
   );
 }
 

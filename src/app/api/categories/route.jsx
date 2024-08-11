@@ -18,6 +18,7 @@ export const GET = async () => {
         const category = toObject(categories);
         return new NextResponse(JSON.stringify(category, {status: 200}))
     } catch (err) {
+      console.log("babi", err);
         return new NextResponse(JSON.stringify({message: "ada yang error"}), {status: 500})
     }
     

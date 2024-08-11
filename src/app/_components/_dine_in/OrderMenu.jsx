@@ -42,7 +42,7 @@ function OrderMenu({ menu, onCloseSelectedProduct, onSubmitProduct }) {
 
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-qrprimary/30 to-qraccent/5 backdrop-blur-sm">
-      <div className="mx-14 min-h-[360px] w-full rounded-2xl bg-bcsecondary">
+      <div className="mx-14 min-h-[360px] rounded-2xl bg-bcsecondary">
         <div className="relative h-330">
           <div
             className="items-center"

@@ -21,7 +21,7 @@ function AddItemForm() {
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
-
+  const [description, setDescription ] = useState("");
   const { setCloseAddItemForm } = useToggleUiStore();
 
   // console.log(category);
@@ -59,6 +59,17 @@ function AddItemForm() {
               id="productName"
               type="text"
               placeholder="Nama produkmu"
+            />
+          </div>
+          <div className="w-[260px] space-y-1">
+            <Label htmlFor="productName">Deskripsi</Label>
+            <Input
+              value={description}
+              onChange={() => setDescription()}
+              className="text-xs text-dpaccent"
+              id="description"
+              type="text"
+              placeholder="Deskripsi Produk"
             />
           </div>
           <div className="space-y-1">
@@ -116,13 +127,6 @@ function AddItemForm() {
             className="px-3 py-2 rounded-lg bg-dpprimary duration-300 transition-colors hover:bg-dpprimary/30 text-sm text-bcaccent"
           >
             Simpan
-          </button>
-          <button
-            type="button"
-            className="px-3 py-2 rounded-lg bg-error duration-300 transition-colors hover:bg-dpprimary/30 text-sm text-bcaccent"
-            onClick={setCloseAddItemForm}
-          >
-            Tutup
           </button>
         </div>
       </form>

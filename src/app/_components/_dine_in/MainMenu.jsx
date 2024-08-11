@@ -45,53 +45,56 @@ function MainMenu({ onSelectProduct }) {
 
   function handleSelectedCat(selection) {
     setCatSelected((cat) =>
-      selection === 0 ? 0 : cat.id === selection ? "" : selection
+      selection === 0 ? 0 : cat === selection ? "" : selection
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center">
-      <div className="w-screen custom-scrollbar-x to-transparent xs:top-24 z-10 sticky top-20 overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
+      <div className="w-screen custom-scrollbar-x to-transparent xs:top-24 z-10 sticky overflow-x-auto bg-gradient-to-b from-bcprimary via-bcprimary backdrop-blur-sm border-b border-bcprimary/20">
         <Category
           category={category}
           catSelected={catSelected}
           onSelectedCat={handleSelectedCat}
         />
       </div>
-      {menu.length > 0 ? (
-        <div className="overflow-y-auto pt-10 w-screen flex flex-col">
-          {catSelected ? (
+      <div className="flex-1 overflow-y-auto pt-10 w-screen flex flex-col items-center bg-gray-100">
+        {menu.length > 0 ? (
+          catSelected ? (
             <ul className="container grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {menu
-                .filter((items) => items.category_id === catSelected)
-                .map((items) => (
+                .filter((item) => item.category_id === catSelected)
+                .map((item) => (
                   <MenuList
-                    menu={items}
-                    key={items.id}
+                    menu={item}
+                    key={item.id}
                     onSelectProduct={onSelectProduct}
                   />
                 ))}
             </ul>
           ) : (
             <ul className="container grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-6">
-              {menu.map((items) => (
+              {menu.map((item) => (
                 <MenuList
-                  menu={items}
-                  key={items.id}
+                  menu={item}
+                  key={item.id}
                   onSelectProduct={onSelectProduct}
                 />
               ))}
             </ul>
-          )}
-        </div>
-      ) : (
-        <div className="px-12">
-          <EmptyList
-            title={"Menu Kosong"}
-            description={"Tambah menu yang akan dijual!"}
-          />
-        </div>
-      )}
+          )
+        ) : (
+          <div className="px-12">
+            <EmptyList
+              title={"Menu Kosong"}
+              description={"Tambah menu yang akan dijual!"}
+            />
+            
+          </div>
+        )}
+      </div>
+
+
     </div>
   );
 }

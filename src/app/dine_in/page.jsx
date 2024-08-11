@@ -41,7 +41,7 @@ function Page() {
         </div>
       )}
 
-      <div className="relative mb-32 grid min-h-screen grid-rows-[auto_1fr_auto]">
+      <div className="relative mb-32 grid min-h-screen overflow-y-auto grid-rows-[auto_1fr_auto]">
         {/* Header */}
         <div className="fixed w-full z-10">
           <Header />
@@ -49,7 +49,7 @@ function Page() {
         {/* Header */}
 
         {/* Main */}
-        <div className="mt-24">
+        <div className="mt-24 overflow-y-auto">
           <MainMenu onSelectProduct={handleSelectProduct} />
         </div>
         {/* Main */}

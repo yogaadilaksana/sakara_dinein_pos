@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
         <SessionProviderWrapper> {/* Use the wrapper here */}
           <AuthProvider> {/* Wrap with AuthProvider */}
             <main>{children}</main>
-            {/* <Footer /> */}
+            <Footer />
           </AuthProvider>
         </SessionProviderWrapper>
       </body>
