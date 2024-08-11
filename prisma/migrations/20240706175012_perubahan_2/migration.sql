@@ -18,27 +18,27 @@
 
 */
 -- DropForeignKey
-ALTER TABLE `orderitem` DROP FOREIGN KEY `OrderItem_order_id_fkey`;
+ALTER TABLE `OrderItem` DROP FOREIGN KEY `OrderItem_order_id_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `orderitem` DROP FOREIGN KEY `OrderItem_product_id_fkey`;
+ALTER TABLE `OrderItem` DROP FOREIGN KEY `OrderItem_product_id_fkey`;
 
 -- DropForeignKey
-ALTER TABLE `product` DROP FOREIGN KEY `Product_category_id_fkey`;
+ALTER TABLE `Product` DROP FOREIGN KEY `Product_category_id_fkey`;
 
 -- AlterTable
-ALTER TABLE `category` DROP PRIMARY KEY,
+ALTER TABLE `Category` DROP PRIMARY KEY,
     MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
     ADD PRIMARY KEY (`id`);
 
 -- AlterTable
-ALTER TABLE `order` DROP PRIMARY KEY,
+ALTER TABLE `Order` DROP PRIMARY KEY,
     MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
     MODIFY `table_number` INTEGER NOT NULL,
     ADD PRIMARY KEY (`id`);
 
 -- AlterTable
-ALTER TABLE `orderitem` DROP PRIMARY KEY,
+ALTER TABLE `OrderItem` DROP PRIMARY KEY,
     MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
     MODIFY `order_id` INTEGER NOT NULL,
     MODIFY `product_id` INTEGER NOT NULL,
@@ -46,7 +46,7 @@ ALTER TABLE `orderitem` DROP PRIMARY KEY,
     ADD PRIMARY KEY (`id`);
 
 -- AlterTable
-ALTER TABLE `product` DROP PRIMARY KEY,
+ALTER TABLE `Product` DROP PRIMARY KEY,
     MODIFY `id` INTEGER NOT NULL AUTO_INCREMENT,
     MODIFY `stock` INTEGER NOT NULL DEFAULT 0,
     MODIFY `category_id` INTEGER NOT NULL,

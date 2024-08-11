@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server'; // Make sure to import NextResponse
 import { startOfDay, endOfDay } from 'date-fns'; // Import date utilities
 import { PrismaClient } from '@prisma/client';
 
-
-const prisma = new PrismaClient();
-
 function toObject(obj) {
   return JSON.parse(
     JSON.stringify(obj, (key, value) =>
@@ -12,6 +9,9 @@ function toObject(obj) {
     )
   );
 }
+
+
+const prisma = new PrismaClient();
 export async function GET(req) {
   try {
     // Get current date and time

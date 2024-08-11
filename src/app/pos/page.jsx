@@ -146,7 +146,7 @@ const Page = () => {
           <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <button
             onClick={() => setShowCustomMenu(!showCustomMenu)}
-            className="mt-2 md:mt-0 p-2 bg-blue-500 text-white rounded"
+            className="mt-2 md:mt-0 p-2 bg-slate-500 text-white rounded"
           >
             Custom Menu
           </button>

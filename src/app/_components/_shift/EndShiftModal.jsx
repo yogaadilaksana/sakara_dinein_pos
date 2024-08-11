@@ -1,4 +1,5 @@
 // components/ShiftManagement.js
+import Image from 'next/image';
 
 const ShiftManagement = () => {
     const shiftData = {
@@ -18,7 +19,7 @@ const ShiftManagement = () => {
           <div className="text-lg font-bold mb-4">Shift Management</div>
           <div className="mb-4">
             <div className="bg-gray-100 p-4 rounded-lg">
-              <img
+              <Image
                 src="/cash-register.png"
                 alt="Cash Register"
                 className="w-16 h-16 mb-4"

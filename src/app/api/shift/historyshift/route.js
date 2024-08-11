@@ -101,19 +101,19 @@ export async function GET(req) {
               const rdDate = new Date(rd.date_time);
               return rdDate >= shiftStart && shiftStart <=rdDate;
             });
-
+            
             // Menghitung total item yang dikembalikan
             const totalItemsReturned = shiftRefundDetails.reduce((sum, rd) => {
               return sum + rd.refund_detail.reduce((innerSum, detail) => innerSum + parseInt(detail.quantity), 0);
             }, 0);
 
             // Menghitung total harga refund
-            const totalRefundPrice = shiftRefundDetails.reduce((sum, rd) => {
-              return sum + parseInt(rd.total);
-            }, 0);
 
               // console.log("this is total price refund", shiftRefundDetails[0].refund_detail);
             const expanseIncomePrice = parseInt(totalIncome) - parseInt(totalExpenses);
+
+            const totalRefundPrice = shiftRefundDetails
+                .reduce((sum, bd) => sum + parseInt(bd.subtotal), 0)
 
             return {
                 id: shift.id,
