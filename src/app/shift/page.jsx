@@ -50,7 +50,7 @@ const Page = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`/api/shift?userId=${encodeURIComponent(userId)}`);
+        const response = await fetch(`/api/shift?userId=${encodeURIComponent(parseInt(userId))}`);
         if (response.ok) {
           const data = await response.json();
           setMemberData(data.shifts);
@@ -67,95 +67,119 @@ const Page = () => {
   }, [userId]);
   console.log('this is member data', memberData)
 
-  useEffect(() => {
-    if (memberData && memberData.start_shift) {
-      try {
-        // Convert start_shift to a valid Date object
-        const startDate = new Date(memberData.start_shift);
+  // useEffect(() => {
+  //   if (memberData && memberData.start_shift) {
+  //     try {
+  //       // Convert start_shift to a valid Date object
+  //       const startDate = new Date(memberData.start_shift);
   
-        // Check if the startDate is valid
-        if (!isNaN(startDate.getTime())) { 
-          const endDate = addHours(startDate, 8);
+  //       // Check if the startDate is valid
+  //       if (!isNaN(startDate.getTime())) { 
+  //         const endDate = addHours(startDate, 8);
   
-          fetch(`/api/product/terjual?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(endDate.toISOString())}`)
-            .then(response => response.json())
-            .then(data => setProductTerjual(data))
-            .catch(error => console.error("Failed to fetch product data:", error));
-        } else {
-          console.error("Invalid start date:", memberData.start_shift);
-        }
-      } catch (error) {
-        console.error("Error processing date:", error);
-      }
-    }
-  }, [memberData]);
+  //         fetch(`/api/product/terjual?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(endDate.toISOString())}`)
+  //           .then(response => response.json())
+  //           .then(data => setProductTerjual(data))
+  //           .catch(error => console.error("Failed to fetch product data:", error));
+  //       } else {
+  //         console.error("Invalid start date:", memberData.start_shift);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error processing date:", error);
+  //     }
+  //   }
+  // }, [memberData]);
   
-  useEffect(() => {
-    if (memberData && memberData.start_shift) {
-      try {
-        // Convert start_shift to a valid Date object
-        const startDate = new Date(memberData.start_shift);
+  // useEffect(() => {
+  //   if (memberData && memberData.start_shift) {
+  //     try {
+  //       // Convert start_shift to a valid Date object
+  //       const startDate = new Date(memberData.start_shift);
+  //       console.log("babi", startDate);
+  //       // Check if the startDate is valid
+  //       if (!isNaN(startDate.getTime())) { 
+  //         const endDate = addHours(startDate, 8);
   
-        // Check if the startDate is valid
-        if (!isNaN(startDate.getTime())) { 
-          const endDate = addHours(startDate, 8);
-  
-          fetch(`/api/product/refund?startTime=${encodeURIComponent(startDate.toISOString())}&endTime=${encodeURIComponent(endDate.toISOString())}`)
-            .then(response => response.json())
-            .then(data => setProductTerjual(data))
-            .catch(error => console.error("Failed to fetch product data:", error));
-        } else {
-          console.error("Invalid start date:", memberData.start_shift);
-        }
-      } catch (error) {
-        console.error("Error processing date:", error);
-      }
-    }
-  }, [memberData]);
+  //         fetch(`/api/product/refund?startTime=${encodeURIComponent(startDate.toISOString())}&endTime=${encodeURIComponent(endDate.toISOString())}`)
+  //           .then(response => response.json())
+  //           .then(data => setProductTerjual(data))
+  //           .catch(error => console.error("Failed to fetch product data:", error));
+  //       } else {
+  //         console.error("Invalid start date:", memberData.start_shift);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error processing date:", error);
+  //     }
+  //   }
+  // }, [memberData]);
 
-  // useEffect(()=>{
-  //   fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
-  //     .then(response => response.json())
-  //     .then(data => setProductRefund(data));
-  // }, [dated]);
+  // // useEffect(()=>{
+  // //   fetch(`/api/product/refund?start=${encodeURIComponent(dated)}&end=${encodeURIComponent(dated)}`)
+  // //     .then(response => response.json())
+  // //     .then(data => setProductRefund(data));
+  // // }, [dated]);
 
-  //expanse income
-  useEffect(() => {
-    if (memberData && memberData.start_shift) {
-      try {
-        // Convert start_shift to a valid Date object
-        const startDate = new Date(memberData.start_shift);
-  
-        // Check if the startDate is valid
-        if (!isNaN(startDate.getTime())) { 
-          const endDate = addHours(startDate, 8);
-          fetch(`/api/expanse?startTime=${encodeURIComponent(memberData.start_time)}&endTime=${encodeURIComponent(dated)}`)
-            .then(response => response.json())
-            .then(data => setExpansi(data));
-          } else {
-            console.error("Invalid start date:", memberData.start_shift);
-          }
-        } catch (error) {
-          console.error("Error processing date:", error);
-        }
-      }
-  }, [memberData]);
-
-  console.log("this is data expanse", expansi)
-
-  useEffect(() => {
-  }, [memberData]);
-
-
+  // console.log("this is fetch from terjual", productTerjual, productRefund)
   // //expanse income
   // useEffect(() => {
-  //   fetch('/api/expanse') 
-  //     .then(response => response.json())
-  //     .then(data => setExpansi(data));
-  // }, []);
+  //   if (memberData && memberData.start_shift) {
+  //     try {
+  //       // Convert start_shift to a valid Date object
+  //       const startDate = new Date(memberData.start_shift);
+  
+  //       // Check if the startDate is valid
+  //       if (!isNaN(startDate.getTime())) { 
+  //         const endDate = addHours(startDate, 8);
+  //         fetch(`/api/expanse?startTime=${encodeURIComponent(memberData.start_time)}&endTime=${encodeURIComponent(dated)}`)
+  //           .then(response => response.json())
+  //           .then(data => setExpansi(data));
+  //         } else {
+  //           console.error("Invalid start date:", memberData.start_shift);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error processing date:", error);
+  //       }
+  //     }
+  // }, [memberData]);
+
 
   useEffect(() => {
-  }, [memberData]);
+    if (memberData?.start_time) {
+      const startDate = new Date(memberData.start_time);
+      if (!isNaN(startDate.getTime())) {
+        const endDate = addHours(startDate, 8);
+        
+        const fetchData = async () => {
+          try {
+            const [terjualRes, refundRes, expanseRes] = await Promise.all([
+              fetch(`/api/product/terjual?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(endDate.toISOString())}`),
+              fetch(`/api/product/refund?startTime=${encodeURIComponent(startDate.toISOString())}&endTime=${encodeURIComponent(endDate.toISOString())}`),
+              fetch(`/api/expanse?startTime=${encodeURIComponent(memberData.start_time)}&endTime=${encodeURIComponent(dated)}`)
+            ]);
+            
+            if (terjualRes.ok) {
+              const terjualData = await terjualRes.json();
+              setProductTerjual(terjualData);
+            }
+            
+            if (refundRes.ok) {
+              const refundData = await refundRes.json();
+              setProductRefund(refundData);
+            }
+            
+            if (expanseRes.ok) {
+              const expanseData = await expanseRes.json();
+              setExpansi(expanseData);
+            }
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+        
+        fetchData();
+      }
+    }
+  }, [memberData, dated]);
 
   const handleSubmit = async () => {
     const newTransaction = { description, amount: isIncome ? +amount : -amount };

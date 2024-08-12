@@ -31,25 +31,41 @@ export async function GET() {
 
     const data = toObject(transactions);
 
-    // Prepare data for pie chart
-    const categoryVolume = data.reduce((acc, item) => {
-      const categoryName = item.product.category.name;
-      const quantity = Number(item.quantity)
-      acc[categoryName] = (acc[categoryName] || 0) + quantity;
+    // Prepare data for product volume
+    const productVolume = data.reduce((acc, item) => {
+      const productName = item.product.name;
+      const quantity = Number(item.quantity);
+      acc[productName] = (acc[productName] || 0) + quantity;
       return acc;
     }, {});
-    const pieChartData = {
-      labels: Object.keys(categoryVolume),
+
+    // Prepare data for top-selling products
+    const sortedProducts = Object.entries(productVolume)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5); // Top 5 products
+    const topSellingProductChartData = {
+      labels: sortedProducts.map(([name]) => name),
       datasets: [
         {
-          label: 'Category Volume',
-          data: Object.values(categoryVolume),
+          label: 'Top Selling Products',
+          data: sortedProducts.map(([, quantity]) => quantity),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+        },
+      ],
+    };
+
+    const pieChartData = {
+      labels: Object.keys(productVolume),
+      datasets: [
+        {
+          label: 'Product Volume',
+          data: Object.values(productVolume),
           backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF'],
         },
       ],
     };
 
-    // Prepare data for bar chart
+    // Prepare data for bar chart (remains unchanged)
     const barChartData = data.reduce((acc, item) => {
       const month = new Date(item.receipt.date_time).toLocaleString('default', { month: 'long', year: 'numeric' });
       const category = item.product.category.name;
@@ -83,9 +99,16 @@ export async function GET() {
       }))
     }));
 
-    return NextResponse.json({ pieChart: pieChartData, barChart: formattedBarChartData }, { status: 200 });
+    return NextResponse.json({
+      pieChart: pieChartData,
+      topSellingProductChart: topSellingProductChartData, // Send top-selling product chart data
+      barChart: formattedBarChartData,
+    }, { status: 200 });
   } catch (error) {
     console.error("Something went wrong", error);
     return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
   }
 }
+
+
+

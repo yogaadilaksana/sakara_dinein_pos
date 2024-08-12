@@ -21,18 +21,23 @@ export async function GET(req) {
         const users = await prisma.user.findMany();
         const incomeExpenses = await prisma.income_Expanses.findMany();
         const orderItems = await prisma.orderItem.findMany();
-        // const refundDetails = await prisma.refund.findMany();
         const refundDetails = await prisma.refund.findMany({
           include: {
-            refund_detail: true, // Include the related refund_detail
+            refund_detail: true,
           },
         });
+
+        // Tambahkan query untuk mengambil data receipt dan payment
+        const receipts = await prisma.receipt.findMany();
+        const payments = await prisma.payment.findMany();
 
         const shiftData = toObject(shifts);
         const userData = toObject(users);
         const incomeExpensesData = toObject(incomeExpenses);
         const orderItemsData = toObject(orderItems);
         const refundDetailsData = toObject(refundDetails);
+        const receiptData = toObject(receipts);
+        const paymentData = toObject(payments);
 
         const combinedData = shiftData.map(shift => {
             const user = userData.find(user => user.id === shift.user_id);
@@ -73,68 +78,79 @@ export async function GET(req) {
 
             const totalIncome = shiftIncomeExpenses
                 .filter(ie => ie.type === 'INCOME')
-                .reduce((sum, ie) => sum + ie.amount, 0);
+                .reduce((sum, ie) => sum + (parseInt(ie.amount) || 0), 0);
 
             const totalExpenses = shiftIncomeExpenses
                 .filter(ie => ie.type === 'EXPENSE')
-                .reduce((sum, ie) => sum + ie.amount, 0);
+                .reduce((sum, ie) => sum + (parseInt(ie.amount) || 0), 0);
 
             const shiftOrderItems = orderItemsData.filter(oi => {
                 const oiDate = new Date(oi.order_date);
-                return oiDate >= shiftStart && shiftStart <= oiDate;
+                return oiDate >= shiftStart && (shiftEnd ? oiDate <= shiftEnd : true);
             });
 
             const totalItemsSold = shiftOrderItems
-                .reduce((sum, oi) => sum + parseInt(oi.quantity, 10), 0);
+                .reduce((sum, oi) => sum + (parseInt(oi.quantity) || 0), 0);
 
-            // Calculate subtotal for each order item
-            // console.log("this is shiftOredersItems", shiftOrderItems)
             const totalSales = shiftOrderItems
-                .reduce((sum, oi) => sum + parseInt(oi.subtotal),0 )
+                .reduce((sum, oi) => sum + (parseInt(oi.subtotal) || 0), 0);
 
-            // console.log("this is data from total sales", totalSales);            
-            // Total cash from invoices
             const totalCashFromInvoice = totalSales;
 
-            // Filter refund details berdasarkan shift time
-            const shiftRefundDetails = refundDetailsData.filter(rd => {
-              const rdDate = new Date(rd.date_time);
-              return rdDate >= shiftStart && shiftStart <=rdDate;
+            const cashPayments = paymentData.filter(payment => payment.payment_name === 'Cash');
+            const cashReceipts = receiptData.filter(receipt => {
+                const receiptDate = new Date(receipt.date);
+                return receiptDate >= shiftStart && (shiftEnd ? receiptDate <= shiftEnd : true);
             });
-            
-            // Menghitung total item yang dikembalikan
+
+            const totalCashSales = cashReceipts
+                .filter(receipt => cashPayments.some(payment => payment.receipt_id === receipt.id))
+                .reduce((sum, receipt) => sum + (parseInt(receipt.amount) || 0), 0);
+
+                const shiftRefundDetails = refundDetailsData.filter(rd => {
+                    // Memastikan rd.date_time valid
+                    const rdDate = new Date(rd.date_time);
+                    const isValidDate = !isNaN(rdDate.getTime());
+                
+                    // Memastikan rd.refund_detail valid dan merupakan array
+                    const hasValidRefundDetails = Array.isArray(rd.refund_detail) && rd.refund_detail.length > 0;
+                
+                    // Mengembalikan hanya entri yang valid
+                    return isValidDate &&
+                           rdDate >= shiftStart &&
+                           (shiftEnd ? rdDate <= shiftEnd : true) &&
+                           hasValidRefundDetails;
+                });
+            console.log("this is data from refund", shiftRefundDetails);
             const totalItemsReturned = shiftRefundDetails.reduce((sum, rd) => {
-              return sum + rd.refund_detail.reduce((innerSum, detail) => innerSum + parseInt(detail.quantity), 0);
+              return sum + rd.refund_detail.reduce((innerSum, detail) => innerSum + (parseInt(detail.quantity) || 0), 0);
             }, 0);
 
-            // Menghitung total harga refund
-
-              // console.log("this is total price refund", shiftRefundDetails[0].refund_detail);
-            const expanseIncomePrice = parseInt(totalIncome) - parseInt(totalExpenses);
+            const expanseIncomePrice = totalIncome - totalExpenses;
 
             const totalRefundPrice = shiftRefundDetails
-                .reduce((sum, bd) => sum + parseInt(bd.subtotal), 0)
+                .reduce((sum, bd) => sum + (parseInt(bd.total) || 0), 0);
 
+                console.log("this is data from totalRefundPrice", totalRefundPrice)
             return {
                 id: shift.id,
                 name: shift.user ? shift.user.name : 'Unknown',
                 outlet: 'Sakara Kopi Bali Antasura',
-                startingShift: convertUTCToLocalTime(shift.start_time), // Menggunakan format lokal
+                startingShift: convertUTCToLocalTime(shift.start_time),
                 itemsSold: totalItemsSold,
-                totalSales: `Rp.${totalSales.toLocaleString()}`, // Total harga dari item yang terjual
+                totalSales: `Rp.${totalSales.toLocaleString()}`,
                 itemsReturned: totalItemsReturned,
                 cash: {
                     startingCash: `Rp.${Number(shift.start_cash).toLocaleString()}`,
-                    cashSales: `Rp.${totalCashFromInvoice.toLocaleString()}`,
-                    cashFromInvoice:`Rp.${totalCashFromInvoice.toLocaleString()}`, // Cash from invoices
+                    cashSales: `Rp.${totalCashSales.toLocaleString()}`, // Updated cash sales
+                    cashFromInvoice: `Rp.${totalCashFromInvoice.toLocaleString()}`,
                     cashRefunds: `Rp.${totalRefundPrice.toLocaleString()}`,
-                    expenseIncome: `-${expanseIncomePrice.toLocaleString()}`,
+                    expenseIncome: `${expanseIncomePrice.toLocaleString()}`,
                     expectedEndingCash: `Rp.${Number(shift.total_actual).toLocaleString()}`
                 }
             };
         });
 
-        // Sort detailedShifts by start_time in descending order
         detailedShifts.sort((a, b) => new Date(b.startingShift) - new Date(a.startingShift));
 
         return new Response(JSON.stringify({ openShifts, closedShifts, detailedShifts }), {
@@ -153,3 +169,4 @@ export async function GET(req) {
         });
     }
 }
+

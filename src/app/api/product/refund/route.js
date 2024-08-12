@@ -18,6 +18,7 @@ export async function GET(req) {
     const url = new URL(req.url);
     const startTime = url.searchParams.get('startTime');
     const endTime = url.searchParams.get('endTime');
+    console.log("this is start end", startTime, endTime)
 
     // Check if startTime and endTime are provided and valid dates
     if (!startTime || !endTime || isNaN(Date.parse(startTime)) || isNaN(Date.parse(endTime))) {
@@ -36,12 +37,13 @@ export async function GET(req) {
     // Fetch data from database
     const data = await prisma.Income_Expanses.findMany({
       where: {
-        date: {
+        transactionDate: {
           gte: startDate,
           lte: endDate,
         },
       },
     });
+
 
     // Calculate total income and total expense
     const totalIncome = data

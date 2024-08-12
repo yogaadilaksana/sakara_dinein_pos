@@ -1,3 +1,16 @@
+import { PrismaClient } from "@prisma/client";
+import { parseISO } from 'date-fns';
+
+const prisma = new PrismaClient();
+
+function toObject(obj) {
+  return JSON.parse(JSON.stringify(obj, (key, value) =>
+    typeof value === 'bigint'
+      ? value.toString()
+      : value
+  ));
+}
+
 export async function GET(req) {
   try {
     const url = new URL(req.url);

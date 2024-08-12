@@ -9,6 +9,7 @@ import cashierIcon from "@/../../public/shift/cash-register.png";
 const Page = () => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
+  const [currentShift, setCurrentShift] =useState(null);
 
   useEffect(() => {
     fetch('/api/currentshift')
@@ -23,6 +24,22 @@ const Page = () => {
       .catch(error => setError('An unexpected error occurred.'));
   }, []);
 
+  // useEffect(() => {
+  //   // Fetch shift data when the component mounts
+  //   fetch('/api/shift/historyshift')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // if (data.openShifts && data.closedShifts) {
+  //       //   setOpenShifts(data.openShifts);
+  //       //   setClosedShifts(data.closedShifts);
+  //       // }
+  //       setCurrentShift(data);
+  //     })
+  //     .catch(error => console.error("Error fetching shift data:", error));
+  // }, []);
+
+
+  console.log("this is shiftData", currentShift)
   // Render error message if present
   if (error) {
     return (

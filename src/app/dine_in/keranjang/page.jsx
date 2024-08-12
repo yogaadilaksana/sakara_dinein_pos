@@ -104,97 +104,160 @@ function Page() {
     }
   }, [orderId]);
 
+  // const connectToPrinter = async () => {
+  //   try {
+  //     const device = await navigator.bluetooth.requestDevice({
+  //       acceptAllDevices: true,
+  //       optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+  //     });
+
+  //     const server = await device.gatt.connect();
+  //     const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+  //     const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+  //     return characteristic;
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     throw error;
+  //   }
+  // };
+
+  // const handlePrint = async () => {
+  //   const strukData = `
+  //     Sakara Coffee Bali
+
+  //     Bill Name : ${tableNumber}
+    
+  //   --------------------
+  //          *Dine In*
+
+  //    ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+
+
+  //   --------------------
+
+  //   Subtotal: ${rupiah(subTotal)}
+    
+  //   --------------------
+    
+  //   Total: ${rupiah(subTotal)}
+
+
+
+  // `;
+    
+  // const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  //   try {
+  //     const characteristic = await connectToPrinter();
+  //     if (!characteristic) {
+  //       console.error('Characteristic not found');
+  //       return;
+  //     }
+  //     const encoder = new TextEncoder();
+  //     const data = encoder.encode(strukData);
+  //     await characteristic.writeValue(data);
+  //     updateBillItems([]);
+  //   } catch (error) {
+  //     console.error('Failed to print:', error);
+  //   }
+  // };
+
+  // const printInvoice = async () => {
+  //   const strukData = `
+  //     Nama Toko
+  //     Alamat Toko
+  //     --------------------
+  //     ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+  //     --------------------
+  //     Total: Rp ${totalPriceToPay}
+  //   `;
+
+  //   try {
+  //     const device = await navigator.bluetooth.requestDevice({
+  //       acceptAllDevices: true,
+  //       optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
+  //     });
+
+  //     const server = await device.gatt.connect();
+  //     const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
+  //     const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
+
+  //     if (!characteristic) {
+  //       console.error('Characteristic not found');
+  //       return;
+  //     }
+  //     const encoder = new TextEncoder();
+  //     const data = encoder.encode(strukData);
+  //     await characteristic.writeValue(data);
+  //   } catch (error) {
+  //     console.error('Failed to print:', error);
+  //   }
+  // };
+
+
   const connectToPrinter = async () => {
     try {
       const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
+        filters: [{ name: 'rpp02n' }], // Nama printer yang spesifik
         optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
       });
-
+  
       const server = await device.gatt.connect();
       const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
       const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
-
-      return characteristic;
+  
+      return { characteristic, server }; // Mengembalikan server untuk pemutusan koneksi nanti
     } catch (error) {
       console.error('Error:', error);
       throw error;
     }
   };
-
+  
+  const printData = async (characteristic, strukData) => {
+    try {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(strukData);
+      await characteristic.writeValue(data);
+    } catch (error) {
+      console.error('Error printing data:', error);
+      throw error;
+    }
+  };
+  
   const handlePrint = async () => {
-    const strukData = `
-      Sakara Coffee Bali
-
-      Bill Name : ${tableNumber}
-    
-    --------------------
-           *Dine In*
-
-     ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
-
-
-    --------------------
-
-    Subtotal: ${rupiah(subTotal)}
-    
-    --------------------
-    
-    Total: ${rupiah(subTotal)}
-
-
-
-  `;
-    
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
     try {
-      const characteristic = await connectToPrinter();
-      if (!characteristic) {
-        console.error('Characteristic not found');
-        return;
-      }
-      const encoder = new TextEncoder();
-      const data = encoder.encode(strukData);
-      await characteristic.writeValue(data);
-      updateBillItems([]);
+      const { characteristic, server } = await connectToPrinter();
+  
+      const strukData = `
+        Sakara Coffee Bali
+  
+        Bill Name : ${tableNumber}
+  
+        --------------------
+             *Dine In*
+  
+       ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
+  
+        --------------------
+  
+      Subtotal: ${rupiah(subTotal)}
+  
+        --------------------
+  
+      Total: ${rupiah(subTotal)}
+  
+      `;
+  
+      await printData(characteristic, strukData);
+  
+      // Setelah selesai mencetak, putuskan koneksi
+      await server.disconnect();
     } catch (error) {
-      console.error('Failed to print:', error);
+      console.error('Error in handlePrint:', error);
     }
   };
-
-  const printInvoice = async () => {
-    const strukData = `
-      Nama Toko
-      Alamat Toko
-      --------------------
-      ${cart.map(item => `Item: ${item.name} Rp ${item.price * item.quantity}`).join('\n')}
-      --------------------
-      Total: Rp ${totalPriceToPay}
-    `;
-
-    try {
-      const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['49535343-fe7d-4ae5-8fa9-9fafd205e455']
-      });
-
-      const server = await device.gatt.connect();
-      const service = await server.getPrimaryService('49535343-fe7d-4ae5-8fa9-9fafd205e455');
-      const characteristic = await service.getCharacteristic('49535343-8841-43f4-a8d4-ecbe34729bb3');
-
-      if (!characteristic) {
-        console.error('Characteristic not found');
-        return;
-      }
-      const encoder = new TextEncoder();
-      const data = encoder.encode(strukData);
-      await characteristic.writeValue(data);
-    } catch (error) {
-      console.error('Failed to print:', error);
-    }
-  };
-
+  
   return (
     <div className="grid grid-rows-[auto_1fr_auto] min-h-screen overflow-hidden">
       <header className="fixed top-0 left-0 w-full flex items-center justify-between border-b border-qraccent/20 bg-bcprimary px-4 py-2 md:px-6 md:py-4 z-10">

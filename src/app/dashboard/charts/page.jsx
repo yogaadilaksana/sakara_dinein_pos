@@ -1,6 +1,4 @@
-// pages/dashboard.js
 'use client'
-
 import { useEffect, useState } from 'react';
 import PieChart from '../../_components/_dashboard/pieCharts';
 import BarChart from '../../_components/_dashboard/barChart';
@@ -16,8 +14,9 @@ const routes = [
       path: "/dashboard/charts",
     },
   ];
+
 const Page = () => {
-    const [data, setData] = useState({ pieChart: null, barChart: [] });
+    const [data, setData] = useState({ pieChart: null, barChart: [], topSellingProductChart: null });
 
     useEffect(() => {
       fetch('/api/charts')
@@ -39,13 +38,12 @@ const Page = () => {
           </div>
           <div className="flex justify-between">
             <div className="w-1/2">
-              <h3 className="text-center text-sm font-medium mb-2">Category Volume</h3>
+              <h3 className="text-center text-sm font-medium mb-2">Product Volume</h3>
               {data.pieChart && <PieChart data={data.pieChart} />}
             </div>
             <div className="w-1/2 p-2">
-              <h3 className="text-center text-sm font-medium mb-2">Category Sales</h3>
-              {/* Add another PieChart component for Category Sales if applicable */}
-              {data.pieChart && <PieChart data={data.pieChart} />}
+              <h3 className="text-center text-sm font-medium mb-2">Top Selling Products</h3>
+              {data.topSellingProductChart && <PieChart data={data.topSellingProductChart} />}
             </div>
           </div>
         </div>
@@ -66,3 +64,4 @@ const Page = () => {
   };
 
 export default Page;
+

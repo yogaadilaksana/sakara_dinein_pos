@@ -13,20 +13,20 @@ function toObject(obj) {
 // GET all products
 export async function GET(req) {
   try {
-    // const products = await prisma.product.findMany({
-    //   include: {
-    //     category: true, // Include category if needed
-    //   },
-    // });
+    const products = await prisma.product.findMany({
+      include: {
+        category: true, // Include category if needed
+      },
+    });
 
-    // const productsObj = toObject(products);
+    const productsObj = toObject(products);
 
-    // return new Response(JSON.stringify(productsObj), {
-    //   status: 200,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
+    return new Response(JSON.stringify(productsObj), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     let data = {
         name: 'Ari Pratama',
         outlet: 'Sakara Kopi Bali Antasura',
